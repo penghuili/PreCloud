@@ -5,6 +5,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Input,
   ScrollView,
   TextArea,
   useToast,
@@ -73,7 +74,7 @@ function EncryptText({ jumpTo }) {
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
-          <TextArea onChangeText={setText} value={text} />
+          <TextArea onChangeText={setText} value={text} h={40} />
           <HStack space="sm">
             <IconButton
               icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
@@ -110,7 +111,7 @@ function EncryptText({ jumpTo }) {
           <Divider my="8" />
 
           <Heading>Decryption</Heading>
-          <TextArea onChangeText={setEncryptedText} value={encryptedText} />
+          <TextArea onChangeText={setEncryptedText} value={encryptedText} h={40} />
           <HStack space="sm">
             <IconButton
               icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
