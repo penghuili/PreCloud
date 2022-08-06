@@ -40,7 +40,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "bundle": "react-native bundle"
+    "build-android": "cd android && ./gradlew assembleRelease && cd .."
   },
   "jest": {
     "preset": "react-native",
