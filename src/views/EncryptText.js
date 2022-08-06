@@ -11,14 +11,19 @@ import {
   VStack,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 import AppBar from '../components/AppBar';
+import Icon from '../components/Icon';
+import PasswordAlert from '../components/PasswordAlert';
+import useColors from '../hooks/useColors';
+import usePassword from '../hooks/usePassword';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function EncryptText() {
+function EncryptText({ jumpTo }) {
   const toast = useToast();
+  const password = usePassword();
+  const colors = useColors();
   const [text, setText] = useState('');
   const [encryptedText, setEncryptedText] = useState('');
 
@@ -43,7 +48,7 @@ function EncryptText() {
     try {
       nodejs.channel.send({
         type: 'encrypt-text',
-        data: { text: message, password: '12345678' },
+        data: { text: message, password },
       });
     } catch (error) {
       console.log(error);
@@ -54,7 +59,7 @@ function EncryptText() {
     try {
       nodejs.channel.send({
         type: 'decrypt-text',
-        data: { encryptedText: message, password: '12345678' },
+        data: { encryptedText: message, password },
       });
     } catch (error) {
       console.log(error);
@@ -64,13 +69,14 @@ function EncryptText() {
   return (
     <>
       <AppBar title="Encrypt & decrypt text" />
-      <ScrollView>
-        <VStack space="sm" alignItems="center" px={4} py={4}>
+      <ScrollView px={4} py={4}>
+        <VStack space="sm" alignItems="center">
+          <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
-          <TextArea onChangeText={setText} value={text} numberOfLines={10} />
+          <TextArea onChangeText={setText} value={text} />
           <HStack space="sm">
             <IconButton
-              icon={<Icon name="clipboard-outline" size={24} />}
+              icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
               onPress={async () => {
                 const copied = await Clipboard.getString();
                 setText(copied);
@@ -78,7 +84,7 @@ function EncryptText() {
               }}
             />
             <IconButton
-              icon={<Icon name="copy-outline" size={24} />}
+              icon={<Icon name="copy-outline" size={24} color={colors.text} />}
               isDisabled={!text}
               onPress={() => {
                 Clipboard.setString(text);
@@ -86,12 +92,12 @@ function EncryptText() {
               }}
             />
             <IconButton
-              icon={<Icon name="close-outline" size={24} />}
+              icon={<Icon name="close-outline" size={24} color={colors.text} />}
               onPress={() => {
                 setText('');
               }}
             />
-            <Button isDisabled={!text} onPress={() => encryptText(text)}>
+            <Button isDisabled={!text || !password} onPress={() => encryptText(text)}>
               Encrypt
             </Button>
           </HStack>
@@ -99,10 +105,10 @@ function EncryptText() {
           <Divider my="8" />
 
           <Heading>Decryption</Heading>
-          <TextArea onChangeText={setEncryptedText} value={encryptedText} numberOfLines={10} />
+          <TextArea onChangeText={setEncryptedText} value={encryptedText} />
           <HStack space="sm">
             <IconButton
-              icon={<Icon name="clipboard-outline" size={24} />}
+              icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
               onPress={async () => {
                 const copied = await Clipboard.getString();
                 setEncryptedText(copied);
@@ -110,7 +116,7 @@ function EncryptText() {
               }}
             />
             <IconButton
-              icon={<Icon name="copy-outline" size={24} />}
+              icon={<Icon name="copy-outline" size={24} color={colors.text} />}
               isDisabled={!encryptedText}
               onPress={() => {
                 Clipboard.setString(encryptedText);
@@ -118,12 +124,17 @@ function EncryptText() {
               }}
             />
             <IconButton
-              icon={<Icon name="close-outline" size={24} />}
+              icon={<Icon name="close-outline" size={24} color={colors.text} />}
               onPress={() => {
                 setEncryptedText('');
               }}
             />
-            <Button isDisabled={!encryptedText} onPress={() => decryptText(encryptedText)}>Decrypt</Button>
+            <Button
+              isDisabled={!encryptedText || !password}
+              onPress={() => decryptText(encryptedText)}
+            >
+              Decrypt
+            </Button>
           </HStack>
         </VStack>
       </ScrollView>

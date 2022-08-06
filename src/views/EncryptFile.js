@@ -1,14 +1,18 @@
-import { Button, Divider, Heading, Image, ScrollView, Text, useToast, VStack } from 'native-base';
+import { Button, Divider, Heading, ScrollView, Text, useToast, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { isInProgress, types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
+
 import AppBar from '../components/AppBar';
+import PasswordAlert from '../components/PasswordAlert';
+import usePassword from '../hooks/usePassword';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function EncryptFile() {
+function EncryptFile({ jumpTo }) {
   const toast = useToast();
+  const password = usePassword();
   const [originalFile, setOriginalFile] = useState(null);
   const [encryptedFilePath, setEncryptedFilePath] = useState(null);
   const [encryptedFile, setEncryptedFile] = useState(null);
@@ -57,7 +61,7 @@ function EncryptFile() {
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
       nodejs.channel.send({
         type: 'encrypt-file',
-        data: { fileBase64, password: '12345678', path: file.path },
+        data: { fileBase64, password, path: file.path },
       });
     } catch (e) {
       if (DocumentPicker.isCancel(e)) {
@@ -109,7 +113,7 @@ function EncryptFile() {
 
       nodejs.channel.send({
         type: 'decrypt-file',
-        data: { fileBase64, password: '12345678', path: file.path },
+        data: { fileBase64, password, path: file.path },
       });
     } catch (e) {
       if (DocumentPicker.isCancel(e)) {
@@ -183,14 +187,15 @@ function EncryptFile() {
       <AppBar title="Encrypt & decrypt file" />
       <ScrollView>
         <VStack space="sm" alignItems="center" px={4} py={4}>
+          <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
-          <Button onPress={pickOrignalFile}>Pick file to encrypt</Button>
+          <Button isDisabled={!password} onPress={pickOrignalFile}>Pick a file to encrypt</Button>
           {renderEncryptFile()}
 
           <Divider my={8} />
 
           <Heading>Decryption</Heading>
-          <Button onPress={pickEncryptedFile}>Pick file to decrypt</Button>
+          <Button isDisabled={!password} onPress={pickEncryptedFile}>Pick a file to decrypt</Button>
           {renderDecryptFile()}
         </VStack>
       </ScrollView>

@@ -365,6 +365,8 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
+  - RNKeychain (8.1.1):
+    - React-Core
   - RNShare (7.6.6):
     - React-Core
   - RNSVG (12.4.3):
@@ -438,6 +440,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNFS (from `../node_modules/react-native-fs`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -536,6 +539,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
   RNShare:
     :path: "../node_modules/react-native-share"
   RNSVG:
@@ -596,6 +601,7 @@ SPEC CHECKSUMS:
   ReactCommon: 095366164a276d91ea704ce53cb03825c487a3f2
   RNCClipboard: f1736c75ab85b627a4d57587edb4b60999c4dd80
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
+  RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNShare: d56424e3926cbc239db1cc1c168adcb051aad50b
   RNSVG: f3b60aeeaa81960e2e0536c3a9eef50b667ef3a9
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8

@@ -1,27 +1,23 @@
-import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
-import Icon from 'react-native-vector-icons/Ionicons';
-import useColors from '../hooks/useColors';
 
+import Icon from '../components/Icon';
+import useColors from '../hooks/useColors';
 import EncryptFile from '../views/EncryptFile';
 import EncryptText from '../views/EncryptText';
 import Passwords from '../views/Passwords';
-import Settings from '../views/Settings';
 
-const routeNames = {
+export const routeNames = {
   encryptFile: 'encryptFile',
   encryptText: 'encryptText',
   passwords: 'passwords',
-  settings: 'settings',
 };
 
 const renderScene = SceneMap({
   [routeNames.encryptText]: EncryptText,
   [routeNames.encryptFile]: EncryptFile,
   [routeNames.passwords]: Passwords,
-  [routeNames.settings]: Settings,
 });
 
 function Router() {
@@ -33,7 +29,6 @@ function Router() {
     { key: routeNames.encryptText },
     { key: routeNames.encryptFile },
     { key: routeNames.passwords },
-    { key: routeNames.settings },
   ]);
 
   function getIconName(routeName, focused) {
