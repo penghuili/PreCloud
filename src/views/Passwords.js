@@ -54,6 +54,24 @@ function Passwords() {
       <AppBar title="Set up master password" />
       <ScrollView px={4} py={4}>
         <VStack space="sm" alignItems="flex-end">
+          <Alert w="100%" status="warning" mb={8}>
+            <VStack space={1} flexShrink={1} w="100%" alignItems="center">
+              <Alert.Icon size="md" />
+              <Text fontSize="md" fontWeight="medium">
+                Save your password in a safe place!
+              </Text>
+
+              <Box
+                _text={{
+                  textAlign: 'center',
+                }}
+              >
+                Save your password in a password manager. You can't decrypt your texts or files, if
+                you lose your password.
+              </Box>
+            </VStack>
+          </Alert>
+
           <FormControl isInvalid={!!error}>
             <FormControl.Label>Master password</FormControl.Label>
             <Input
@@ -98,24 +116,6 @@ function Passwords() {
           <Button isDisabled={!password || !passwordRepeat} onPress={() => handleSavePassword()}>
             Save
           </Button>
-
-          <Alert w="100%" status="warning" mt={8}>
-            <VStack space={1} flexShrink={1} w="100%" alignItems="center">
-              <Alert.Icon size="md" />
-              <Text fontSize="md" fontWeight="medium">
-                Save your password in a safe place!
-              </Text>
-
-              <Box
-                _text={{
-                  textAlign: 'center',
-                }}
-              >
-                Save your password in a password manager. You can't decrypt your texts or files, if
-                you lose your password.
-              </Box>
-            </VStack>
-          </Alert>
         </VStack>
       </ScrollView>
     </>

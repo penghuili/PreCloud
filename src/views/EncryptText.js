@@ -79,8 +79,12 @@ function EncryptText({ jumpTo }) {
               icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
               onPress={async () => {
                 const copied = await Clipboard.getString();
-                setText(copied);
-                toast.show({ title: 'Pasted!', placement: 'bottom' });
+                if (copied) {
+                  setText(copied);
+                  toast.show({ title: 'Pasted!', placement: 'bottom' });
+                } else {
+                  toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
+                }
               }}
             />
             <IconButton
@@ -111,8 +115,12 @@ function EncryptText({ jumpTo }) {
               icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
               onPress={async () => {
                 const copied = await Clipboard.getString();
-                setEncryptedText(copied);
-                toast.show({ title: 'Pasted!', placement: 'bottom' });
+                if (copied) {
+                  setEncryptedText(copied);
+                  toast.show({ title: 'Pasted!', placement: 'bottom' });
+                } else {
+                  toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
+                }
               }}
             />
             <IconButton
