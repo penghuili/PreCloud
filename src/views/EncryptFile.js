@@ -6,7 +6,7 @@ import Share from 'react-native-share';
 
 import AppBar from '../components/AppBar';
 import PasswordAlert from '../components/PasswordAlert';
-import usePassword from '../hooks/usePassword';
+import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
@@ -15,7 +15,7 @@ const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
 
 function EncryptFile({ jumpTo }) {
   const toast = useToast();
-  const password = usePassword();
+  const password = useStore(state => state.masterPassword);
   const [originalFile, setOriginalFile] = useState(null);
   const [encryptedFilePath, setEncryptedFilePath] = useState(null);
   const [encryptedFile, setEncryptedFile] = useState(null);

@@ -1,11 +1,11 @@
 import { Alert, Button, Text, VStack } from 'native-base';
 import React from 'react';
 
-import usePassword from '../hooks/usePassword';
 import { routeNames } from '../router/Router';
+import { useStore } from '../store/store';
 
 function PasswordAlert({ navigate }) {
-  const password = usePassword();
+  const password = useStore(state => state.masterPassword);
 
   if (!password) {
     return (

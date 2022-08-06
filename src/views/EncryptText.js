@@ -16,13 +16,13 @@ import AppBar from '../components/AppBar';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import useColors from '../hooks/useColors';
-import usePassword from '../hooks/usePassword';
+import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
 function EncryptText({ jumpTo }) {
   const toast = useToast();
-  const password = usePassword();
+  const password = useStore(state => state.masterPassword);
   const colors = useColors();
   const [text, setText] = useState('');
   const [encryptedText, setEncryptedText] = useState('');

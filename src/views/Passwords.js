@@ -15,12 +15,13 @@ import React, { useEffect, useState } from 'react';
 import AppBar from '../components/AppBar';
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
-import usePassword from '../hooks/usePassword';
 import { savePassword } from '../lib/keychain';
+import { useStore } from '../store/store';
 
 function Passwords() {
   const toast = useToast();
-  const savedPassword = usePassword();
+  const savedPassword = useStore(state => state.masterPassword);
+  const setMasterPassword = useStore(state => state.setMasterPassword);
   const colors = useColors();
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -42,6 +43,7 @@ function Passwords() {
 
     try {
       await savePassword(password);
+      setMasterPassword(password);
       toast.show({ title: 'Password is saved in secure storage.' });
     } catch (e) {
       setError('Save password failed. Please choose another password.');
