@@ -44,7 +44,6 @@ function Passwords() {
       await savePassword(password);
       toast.show({ title: 'Password is saved in secure storage.' });
     } catch (e) {
-      console.log(e);
       setError('Save password failed. Please choose another password.');
     }
   }

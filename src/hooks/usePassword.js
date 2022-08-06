@@ -1,5 +1,5 @@
-import { useTheme } from 'native-base';
 import { useEffect, useState } from 'react';
+
 import { getPassword } from '../lib/keychain';
 
 function usePassword() {
@@ -7,7 +7,6 @@ function usePassword() {
 
   useEffect(() => {
     getPassword().then(p => {
-      console.log('saved password', p)
       setPassword(p || '');
     });
   }, []);

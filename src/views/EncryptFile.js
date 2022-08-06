@@ -53,7 +53,7 @@ function EncryptFile({ jumpTo }) {
         allowMultiSelection: false,
         type: types.allFiles,
         presentationStyle: 'fullScreen',
-        copyTo: 'documentDirectory',
+        copyTo: 'cachesDirectory',
       });
       const file = { ...result[0], path: extractPath(result[0].fileCopyUri) };
       setOriginalFile(file);
@@ -104,7 +104,7 @@ function EncryptFile({ jumpTo }) {
         allowMultiSelection: false,
         type: types.allFiles,
         presentationStyle: 'fullScreen',
-        copyTo: 'documentDirectory',
+        copyTo: 'cachesDirectory',
       });
       const file = { ...result[0], path: extractPath(result[0].fileCopyUri) };
       setEncryptedFile(file);
