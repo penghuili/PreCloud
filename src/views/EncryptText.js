@@ -69,7 +69,7 @@ function EncryptText({ jumpTo }) {
   return (
     <>
       <AppBar title="Encrypt & decrypt text" />
-      <ScrollView px={4} py={4}>
+      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
@@ -97,6 +97,7 @@ function EncryptText({ jumpTo }) {
             />
             <IconButton
               icon={<Icon name="close-outline" size={24} color={colors.text} />}
+              isDisabled={!text}
               onPress={() => {
                 setText('');
               }}
@@ -133,6 +134,7 @@ function EncryptText({ jumpTo }) {
             />
             <IconButton
               icon={<Icon name="close-outline" size={24} color={colors.text} />}
+              isDisabled={!encryptedText}
               onPress={() => {
                 setEncryptedText('');
               }}

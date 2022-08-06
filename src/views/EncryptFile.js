@@ -10,6 +10,9 @@ import usePassword from '../hooks/usePassword';
 
 const nodejs = require('nodejs-mobile-react-native');
 
+const MAX_FILE_SIZE_MEGA_BYTES = 20;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
+
 function EncryptFile({ jumpTo }) {
   const toast = useToast();
   const password = usePassword();
@@ -56,6 +59,12 @@ function EncryptFile({ jumpTo }) {
         copyTo: 'cachesDirectory',
       });
       const file = { ...result[0], path: extractPath(result[0].fileCopyUri) };
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        toast.show({ title: `File size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.` });
+        await RNFS.unlink(file.path);
+        return;
+      }
+
       setOriginalFile(file);
 
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
@@ -189,13 +198,17 @@ function EncryptFile({ jumpTo }) {
         <VStack space="sm" alignItems="center" px={4} py={4}>
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
-          <Button isDisabled={!password} onPress={pickOrignalFile}>Pick a file to encrypt</Button>
+          <Button isDisabled={!password} onPress={pickOrignalFile}>
+            Pick a file to encrypt
+          </Button>
           {renderEncryptFile()}
 
           <Divider my={8} />
 
           <Heading>Decryption</Heading>
-          <Button isDisabled={!password} onPress={pickEncryptedFile}>Pick a file to decrypt</Button>
+          <Button isDisabled={!password} onPress={pickEncryptedFile}>
+            Pick a file to decrypt
+          </Button>
           {renderDecryptFile()}
         </VStack>
       </ScrollView>

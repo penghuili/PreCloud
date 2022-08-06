@@ -5,7 +5,7 @@ import SplashScreen from 'react-native-splash-screen';
 import AppWrapper from './components/AppWrapper';
 import Router from './router/Router';
 
-// primary color: #051726
+// primary color: #39DAA2
 
 function App() {
   const theme = extendTheme({
