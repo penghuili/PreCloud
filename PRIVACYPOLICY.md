@@ -2,7 +2,7 @@
 
 PreCloud has no tracking, it's open sourced, you can check the code [here](https://github.com/penghuili/PreCloud).
 
-PreCloud has no server, everything happens on your phone** (your master password, the encryption process, the encrypted texts or files).
+PreCloud has no server, everything happens on your phone** (your master password, the encryption process, the encrypted texts and files).
 You can safely upload the encrypted texts or files to wherever you want, making any cloud provider an encrypted storage.
 
 All your texts and files are encrypted with your master password via [openpgpjs](https://github.com/openpgpjs/openpgpjs).
@@ -14,5 +14,5 @@ Contact me for anything: peng@duck.com
 ---
 
 ## Donate
-<a href="https://paypal.me/penghuili/"><img src="paypal.svg" height="40"></a>  
+<a href="https://paypal.me/penghuili/" target="_blank"><img src="paypal.svg" height="40"></a> 
 If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
