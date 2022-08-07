@@ -4,26 +4,13 @@ const { execSync } = require('child_process');
 
 const plist = require('simple-plist');
 const properties = require('properties-parser');
-const semver = require('semver');
 
 const pkg = require('../package.json');
 
 let version = process.argv[2];
 
-if (!semver.valid(version)) {
-  console.error('Please pass the new version as an argument');
-  process.exit(1);
-}
-
-if (semver.lte(version, pkg.version)) {
-  console.error('Please pass a version that is higher than the old one');
-  process.exit(1);
-}
-
-version = semver.clean(version);
-
 console.log(
-  `Performing a ${semver.diff(version, pkg.version)} bump from ${
+  `Performing a bump from ${
     pkg.version
   } to ${version}.`
 );
