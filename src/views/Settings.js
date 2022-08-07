@@ -10,7 +10,9 @@ function Settings() {
       <AppBar title="Settings" />
       <ScrollView px={4} py={4}>
         <VStack space="sm" alignItems="center">
-          <Text>{DeviceInfoModule.getVersion()}</Text>
+          <Text>
+            {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
+          </Text>
         </VStack>
       </ScrollView>
     </>

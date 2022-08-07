@@ -1,52 +1,63 @@
 const rn_bridge = require('rn-bridge');
-const {
-  encryptFile,
-  decryptFile,
-  encryptText,
-  decryptText,
-} = require('./openpgp');
+const { encryptFile, decryptFile, encryptText, decryptText } = require('./openpgp');
 
 rn_bridge.channel.on('message', async msg => {
-  try {
-    if (msg.type === 'encrypt-file') {
-      const encrypted = await encryptFile(
-        msg.data.fileBase64,
-        msg.data.password,
-      );
+  if (msg.type === 'encrypt-file') {
+    const { data: encrypted, error } = await encryptFile(msg.data.fileBase64, msg.data.password);
+    if (encrypted) {
       rn_bridge.channel.send({
         type: 'encrypted-file',
-        data: {encrypted, path: msg.data.path},
-      });
-    } else if (msg.type === 'decrypt-file') {
-      const decrypted = await decryptFile(
-        msg.data.fileBase64,
-        msg.data.password,
-      );
-      rn_bridge.channel.send({
-        type: 'decrypted-file',
-        data: {decrypted, path: msg.data.path},
-      });
-    } else if (msg.type === 'encrypt-text') {
-      const encrypted = await encryptText(msg.data.text, msg.data.password);
-      rn_bridge.channel.send({
-        type: 'encrypted-text',
-        data: {encrypted},
-      });
-    } else if (msg.type === 'decrypt-text') {
-      const decrypted = await decryptText(
-        msg.data.encryptedText,
-        msg.data.password,
-      );
-      rn_bridge.channel.send({
-        type: 'decrypted-text',
-        data: {decrypted},
+        payload: { data: encrypted, error: null, path: msg.data.path },
       });
     } else {
-      rn_bridge.channel.send(msg);
+      rn_bridge.channel.send({
+        type: 'encrypted-file',
+        payload: { data: null, error, path: msg.data.path },
+      });
     }
-  } catch (e) {
-    rn_bridge.channel.send(JSON.stringify(e));
+  } else if (msg.type === 'decrypt-file') {
+    const { data: decrypted, error } = await decryptFile(msg.data.fileBase64, msg.data.password);
+
+    if (decrypted) {
+      rn_bridge.channel.send({
+        type: 'decrypted-file',
+        payload: { data: decrypted, error: null, path: msg.data.path },
+      });
+    } else {
+      rn_bridge.channel.send({
+        type: 'decrypted-file',
+        payload: { data: null, error, path: msg.data.path },
+      });
+    }
+  } else if (msg.type === 'encrypt-text') {
+    const { data: encrypted, error } = await encryptText(msg.data.text, msg.data.password);
+
+    if (encrypted) {
+      rn_bridge.channel.send({
+        type: 'encrypted-text',
+        payload: { data: encrypted, error: null, path: msg.data.path },
+      });
+    } else {
+      rn_bridge.channel.send({
+        type: 'encrypted-text',
+        payload: { data: null, error, path: msg.data.path },
+      });
+    }
+  } else if (msg.type === 'decrypt-text') {
+    const { data: decrypted, error } = await decryptText(msg.data.encryptedText, msg.data.password);
+
+    if (decrypted) {
+      rn_bridge.channel.send({
+        type: 'decrypted-text',
+        payload: { data: decrypted, error: null, path: msg.data.path },
+      });
+    } else {
+      rn_bridge.channel.send({
+        type: 'decrypted-text',
+        payload: { data: null, error, path: msg.data.path },
+      });
+    }
   }
 });
 
-rn_bridge.channel.send({type: 'initiated nodejs'});
+rn_bridge.channel.send({ type: 'initiated nodejs' });

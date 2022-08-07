@@ -26,18 +26,26 @@ function EncryptFile({ jumpTo }) {
 
     const listener = async msg => {
       if (msg.type === 'encrypted-file') {
-        const newPath = `${msg.data.path}.preupload`;
-        await RNFS.writeFile(newPath, msg.data.encrypted, 'base64');
-        setEncryptedFilePath(newPath);
-        toast.show({ title: 'File is encrypted, ready for download.' });
+        if (msg.payload.data) {
+          const newPath = `${msg.payload.path}.preupload`;
+          await RNFS.writeFile(newPath, msg.payload.data, 'base64');
+          setEncryptedFilePath(newPath);
+          toast.show({ title: 'File is encrypted, ready for download.' });
+        } else {
+          toast.show({ title: 'Encrypt file failed.' });
+        }
       } else if (msg.type === 'decrypted-file') {
-        const paths = msg.data.path.split('.');
-        paths.pop();
-        const fileExtension = paths.pop();
-        const newPath = `${paths.join('.')}_${Date.now()}.${fileExtension}`;
-        await RNFS.writeFile(newPath, msg.data.decrypted, 'base64');
-        setDecryptedFilePath(newPath);
-        toast.show({ title: 'File is decrypted, ready for download.' });
+        if (msg.payload.data) {
+          const paths = msg.payload.path.split('.');
+          paths.pop();
+          const fileExtension = paths.pop();
+          const newPath = `${paths.join('.')}.${fileExtension}`;
+          await RNFS.writeFile(newPath, msg.payload.data, 'base64');
+          setDecryptedFilePath(newPath);
+          toast.show({ title: 'File is decrypted, ready for download.' });
+        } else {
+          toast.show({ title: 'Decrypt file failed.' });
+        }
       }
     };
     nodejs.channel.addListener('message', listener);

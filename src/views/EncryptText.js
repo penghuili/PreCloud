@@ -33,9 +33,19 @@ function EncryptText({ jumpTo }) {
 
     const listner = async msg => {
       if (msg.type === 'encrypted-text') {
-        setEncryptedText(msg.data.encrypted);
+        if (msg.payload.data) {
+          setEncryptedText(msg.payload.data);
+          toast.show({ title: 'Encrypted.' });
+        } else {
+          toast.show({ title: 'Encrypt text failed.' });
+        }
       } else if (msg.type === 'decrypted-text') {
-        setText(msg.data.decrypted);
+        if (msg.payload.data) {
+          setText(msg.payload.data);
+          toast.show({ title: 'Decrypted.' });
+        } else {
+          toast.show({ title: 'Decrypt text failed.' });
+        }
       }
     };
     nodejs.channel.addListener('message', listner);
