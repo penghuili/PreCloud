@@ -1,5 +1,6 @@
-import { Heading, ScrollView, VStack } from 'native-base';
+import { ScrollView, Text, VStack } from 'native-base';
 import React from 'react';
+import DeviceInfoModule from 'react-native-device-info';
 
 import AppBar from '../components/AppBar';
 
@@ -7,9 +8,9 @@ function Settings() {
   return (
     <>
       <AppBar title="Settings" />
-      <ScrollView>
-        <VStack space="sm" alignItems="center" px={4} py={4}>
-          <Heading>Settings</Heading>
+      <ScrollView px={4} py={4}>
+        <VStack space="sm" alignItems="center">
+          <Text>{DeviceInfoModule.getVersion()}</Text>
         </VStack>
       </ScrollView>
     </>

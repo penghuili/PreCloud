@@ -7,17 +7,20 @@ import useColors from '../hooks/useColors';
 import EncryptFile from '../views/EncryptFile';
 import EncryptText from '../views/EncryptText';
 import Passwords from '../views/Passwords';
+import Settings from '../views/Settings';
 
 export const routeNames = {
   encryptFile: 'encryptFile',
   encryptText: 'encryptText',
   passwords: 'passwords',
+  settings: 'settings',
 };
 
 const renderScene = SceneMap({
   [routeNames.encryptText]: EncryptText,
   [routeNames.encryptFile]: EncryptFile,
   [routeNames.passwords]: Passwords,
+  [routeNames.settings]: Settings,
 });
 
 function Router() {
@@ -29,6 +32,7 @@ function Router() {
     { key: routeNames.encryptText },
     { key: routeNames.encryptFile },
     { key: routeNames.passwords },
+    { key: routeNames.settings },
   ]);
 
   function getIconName(routeName, focused) {
