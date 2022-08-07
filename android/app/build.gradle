@@ -138,8 +138,8 @@ android {
         applicationId "com.precloud"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode releaseVersionCode
-        versionName releaseVersionName
+        versionCode 6
+        versionName "${releaseVersionName}"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
