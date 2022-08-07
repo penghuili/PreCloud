@@ -20,5 +20,6 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 ---
 
 ## Donate
-<a href="https://paypal.me/penghuili/" target="_blank"><img src="paypal.svg" height="40"></a>  
+<a href="https://paypal.me/penghuili/" target="_blank"><img src="paypal.svg" height="40"></a> 
+
 If you enjoyed this project — or just feeling generous, consider buying me a beer. Cheers! :beers:
