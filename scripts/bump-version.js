@@ -1,5 +1,6 @@
 const { join } = require('path');
 const { writeFileSync, readFileSync } = require('fs');
+const { execSync } = require('child_process');
 
 const plist = require('simple-plist');
 const properties = require('properties-parser');

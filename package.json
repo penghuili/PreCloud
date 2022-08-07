@@ -1,6 +1,6 @@
 {
   "name": "precloud",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": true,
   "dependencies": {
     "@react-native-clipboard/clipboard": "1.10.0",
@@ -44,7 +44,8 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "build-android": "cd android && ./gradlew assembleRelease && cd .."
+    "build-android": "cd android && ./gradlew assembleRelease && cd ..",
+    "bump-version": "node ./scripts/bump-version.js"
   },
   "jest": {
     "preset": "react-native",
