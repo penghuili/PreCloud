@@ -13,7 +13,7 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 
 ---
 
-**What's coming next**:
+## What's coming next:
 - [ ] Encrypt large files. Currently you can only encrypt files that are smaller than 20MB.
 - [ ] Create web version. So you can also encrypt and decrypt on your laptop.
 
