@@ -16,8 +16,10 @@ const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
 function EncryptFile({ jumpTo }) {
   const toast = useToast();
   const password = useStore(state => state.masterPassword);
+  const [isEncrypting, setIsEncrypting] = useState(false);
   const [originalFile, setOriginalFile] = useState(null);
   const [encryptedFilePath, setEncryptedFilePath] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
   const [encryptedFile, setEncryptedFile] = useState(null);
   const [decryptedFilePath, setDecryptedFilePath] = useState(null);
 
@@ -26,6 +28,7 @@ function EncryptFile({ jumpTo }) {
 
     const listener = async msg => {
       if (msg.type === 'encrypted-file') {
+        setIsEncrypting(false);
         if (msg.payload.data) {
           const newPath = `${msg.payload.path}.preupload`;
           await RNFS.writeFile(newPath, msg.payload.data, 'base64');
@@ -35,6 +38,7 @@ function EncryptFile({ jumpTo }) {
           toast.show({ title: 'Encrypt file failed.' });
         }
       } else if (msg.type === 'decrypted-file') {
+        setIsDecrypting(false);
         if (msg.payload.data) {
           const paths = msg.payload.path.split('.');
           paths.pop();
@@ -75,12 +79,14 @@ function EncryptFile({ jumpTo }) {
 
       setOriginalFile(file);
 
+      setIsEncrypting(true);
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
       nodejs.channel.send({
         type: 'encrypt-file',
         data: { fileBase64, password, path: file.path },
       });
     } catch (e) {
+      setIsEncrypting(false);
       if (DocumentPicker.isCancel(e)) {
         console.warn('pick document cancelled');
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -126,6 +132,7 @@ function EncryptFile({ jumpTo }) {
       const file = { ...result[0], path: extractPath(result[0].fileCopyUri) };
       setEncryptedFile(file);
 
+      setIsDecrypting(true);
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
 
       nodejs.channel.send({
@@ -133,6 +140,7 @@ function EncryptFile({ jumpTo }) {
         data: { fileBase64, password, path: file.path },
       });
     } catch (e) {
+      setIsDecrypting(false);
       if (DocumentPicker.isCancel(e)) {
         console.warn('pick document cancelled');
         // User cancelled the picker, exit any dialogs or menus and move on
@@ -206,7 +214,7 @@ function EncryptFile({ jumpTo }) {
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
-          <Button isDisabled={!password} onPress={pickOrignalFile}>
+          <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickOrignalFile}>
             Pick a file to encrypt
           </Button>
           {renderEncryptFile()}
@@ -214,7 +222,7 @@ function EncryptFile({ jumpTo }) {
           <Divider my={8} />
 
           <Heading>Decryption</Heading>
-          <Button isDisabled={!password} onPress={pickEncryptedFile}>
+          <Button isDisabled={!password} isLoading={isDecrypting} onPress={pickEncryptedFile}>
             Pick a file to decrypt
           </Button>
           {renderDecryptFile()}
