@@ -11,8 +11,6 @@ function Settings({ currentRoute }) {
   const [cacheSize, setCacheSize] = useState(0);
 
   useEffect(() => {
-    console.log(currentRoute);
-
     if (currentRoute === routeNames.settings) {
       getFolderSize(RNFS.CachesDirectoryPath).then(size => {
         setCacheSize(bytesToMB(size));

@@ -44,7 +44,8 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "build-android": "cd android && ./gradlew clean && ./gradlew assembleRelease && cd ..",
+    "build-android-apk": "cd android && ./gradlew clean && ./gradlew assembleRelease && cd ..",
+    "build-android-aab": "cd android && ./gradlew clean && ./gradlew bundleRelease && cd ..",
     "bump-version": "node ./scripts/bump-version.js"
   },
   "jest": {
