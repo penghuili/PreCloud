@@ -202,8 +202,8 @@ function EncryptFile({ jumpTo }) {
   return (
     <>
       <AppBar title="Encrypt & decrypt file" />
-      <ScrollView>
-        <VStack space="sm" alignItems="center" px={4} py={4}>
+      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
+        <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
           <Button isDisabled={!password} onPress={pickOrignalFile}>

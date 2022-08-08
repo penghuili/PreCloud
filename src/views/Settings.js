@@ -8,7 +8,7 @@ function Settings() {
   return (
     <>
       <AppBar title="Settings" />
-      <ScrollView px={4} py={4}>
+      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="lg" alignItems="flex-start">
           <Heading>PreCloud: Encrypt before upload</Heading>
           <Link href="https://github.com/penghuili/PreCloud#precloud---encrypt-before-upload">

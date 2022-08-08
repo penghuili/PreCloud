@@ -53,7 +53,7 @@ function Passwords() {
   return (
     <>
       <AppBar title="Set up master password" />
-      <ScrollView px={4} py={4}>
+      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="sm" alignItems="flex-end">
           <Alert w="100%" status="warning" mb={8}>
             <VStack space={1} flexShrink={1} w="100%" alignItems="center">
