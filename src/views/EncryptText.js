@@ -85,7 +85,7 @@ function EncryptText({ jumpTo }) {
     return (
       <>
         <HStack alignItems="center">
-          <Heading>Encryption</Heading>
+          <Heading>Encrypt text</Heading>
 
           <Popover
             trigger={triggerProps => {
@@ -147,7 +147,7 @@ function EncryptText({ jumpTo }) {
     return (
       <>
         <HStack alignItems="center">
-          <Heading>Decryption</Heading>
+          <Heading>Decrypt text</Heading>
 
           <Popover
             trigger={triggerProps => {

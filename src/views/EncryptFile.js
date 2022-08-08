@@ -223,7 +223,7 @@ function EncryptFile({ jumpTo }) {
       <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
-          <Heading>Encryption</Heading>
+          <Heading>Encrypt file</Heading>
           <Alert w="100%" status="info">
             <Box
               _text={{
@@ -240,7 +240,7 @@ function EncryptFile({ jumpTo }) {
 
           <Divider my={8} />
 
-          <Heading>Decryption</Heading>
+          <Heading>Decrypt file</Heading>
           <Alert w="100%" status="info">
             <Box
               _text={{
