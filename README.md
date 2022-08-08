@@ -20,6 +20,10 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 
 ---
 
+Contact me for anything: peng@duck.com
+
+---
+
 ## Donate
 <a href="https://paypal.me/penghuili/" target="_blank"><img src="paypal.svg" height="40"></a> 
 

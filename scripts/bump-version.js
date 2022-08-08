@@ -23,9 +23,7 @@ if (semver.lte(version, pkg.version)) {
 version = semver.clean(version);
 
 console.log(
-  `Performing a ${semver.diff(version, pkg.version)} bump from ${
-    pkg.version
-  } to ${version}.`
+  `Performing a ${semver.diff(version, pkg.version)} bump from ${pkg.version} to ${version}.`
 );
 
 const pkgPath = join(__dirname, '../package.json');
@@ -45,6 +43,7 @@ const infoPlist = plist.parse(String(readFileSync(plistPath)));
 const content = plist.stringify({
   ...infoPlist,
   CFBundleShortVersionString: version,
+  CFBundleVersion: ((+infoPlist.CFBundleVersion || 0) + 1).toString(),
 });
 const contentTabbed = content.replace(/^\s+/gm, spaces => {
   const indent = spaces.length / 2;
