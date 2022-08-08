@@ -103,7 +103,7 @@ function EncryptFile({ jumpTo }) {
       } else if (isInProgress(e)) {
         console.warn('multiple pickers were opened, only the last will be considered');
       } else {
-        console.log(e);
+        toast.show({ title: 'Pick file failed, please try again.' });
       }
     }
   }
@@ -124,7 +124,7 @@ function EncryptFile({ jumpTo }) {
       setEncryptedFilePath(null);
       toast.show({ title: 'Downloaded.' });
     } catch (error) {
-      console.log(error);
+      toast.show({ title: 'Download file failed.' });
     }
   };
 
@@ -157,7 +157,7 @@ function EncryptFile({ jumpTo }) {
       } else if (isInProgress(e)) {
         console.warn('multiple pickers were opened, only the last will be considered');
       } else {
-        console.log(e);
+        toast.show({ title: 'Pick file failed, please only pick file ending with .precloud' });
       }
     }
   }
@@ -178,7 +178,7 @@ function EncryptFile({ jumpTo }) {
       setDecryptedFilePath(null);
       toast.show({ title: 'Downloaded.' });
     } catch (error) {
-      console.log(error);
+      toast.show({ title: 'Download file failed.' });
     }
   };
   function extractPath(path) {

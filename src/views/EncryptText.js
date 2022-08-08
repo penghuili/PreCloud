@@ -99,7 +99,7 @@ function EncryptText({ jumpTo }) {
           >
             <Popover.Content accessibilityLabel="Delete Customerd" w="56">
               <Popover.Body>
-                Type or paste something to encrypt. The encrypted text will be shown below.
+                Type or paste some text to encrypt. The encrypted text will be shown below.
               </Popover.Body>
             </Popover.Content>
           </Popover>
@@ -161,7 +161,7 @@ function EncryptText({ jumpTo }) {
           >
             <Popover.Content accessibilityLabel="Delete Customerd" w="56">
               <Popover.Body>
-                Type or paste encrypted text to decrypt. The decrypted text will be shown above.
+                Paste encrypted text to decrypt. The decrypted text will be shown above.
               </Popover.Body>
             </Popover.Content>
           </Popover>

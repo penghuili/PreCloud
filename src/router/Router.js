@@ -16,24 +16,19 @@ export const routeNames = {
   settings: 'settings',
 };
 
-const renderScene = SceneMap({
-  [routeNames.encryptText]: EncryptText,
-  [routeNames.encryptFile]: EncryptFile,
-  [routeNames.passwords]: Passwords,
-  [routeNames.settings]: Settings,
-});
+const routesArray = [
+  { key: routeNames.encryptText },
+  { key: routeNames.encryptFile },
+  { key: routeNames.passwords },
+  { key: routeNames.settings },
+];
 
 function Router() {
   const layout = useWindowDimensions();
   const colors = useColors();
 
   const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: routeNames.encryptText },
-    { key: routeNames.encryptFile },
-    { key: routeNames.passwords },
-    { key: routeNames.settings },
-  ]);
+  const [routes] = useState(routesArray);
 
   function getIconName(routeName, focused) {
     if (routeName === routeNames.encryptText) {
@@ -48,6 +43,23 @@ function Router() {
       return null;
     }
   }
+
+  const renderScene = ({ route, jumpTo }) => {
+    const currentRouteObj = routesArray[index];
+    const currentRoute = currentRouteObj ? currentRouteObj.key : null;
+    switch (route.key) {
+      case routeNames.encryptText:
+        return <EncryptText route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
+      case routeNames.encryptFile:
+        return <EncryptFile route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
+      case routeNames.passwords:
+        return <Passwords route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
+      case routeNames.settings:
+        return <Settings route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
+      default:
+        return null;
+    }
+  };
 
   function renderTabBar(props) {
     return (
