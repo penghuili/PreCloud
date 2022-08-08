@@ -5,7 +5,6 @@ import {
   Heading,
   HStack,
   IconButton,
-  Input,
   ScrollView,
   TextArea,
   useToast,
@@ -84,10 +83,11 @@ function EncryptText({ jumpTo }) {
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
-          <TextArea onChangeText={setText} value={text} h={40} />
+          <TextArea isDisabled={!password} onChangeText={setText} value={text} h={40} />
           <HStack space="sm">
             <IconButton
               icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
+              isDisabled={!password}
               onPress={async () => {
                 const copied = await Clipboard.getString();
                 if (copied) {
@@ -100,7 +100,7 @@ function EncryptText({ jumpTo }) {
             />
             <IconButton
               icon={<Icon name="copy-outline" size={24} color={colors.text} />}
-              isDisabled={!text}
+              isDisabled={!password || !text}
               onPress={() => {
                 Clipboard.setString(text);
                 toast.show({ title: 'Copied!', placement: 'bottom' });
@@ -108,12 +108,12 @@ function EncryptText({ jumpTo }) {
             />
             <IconButton
               icon={<Icon name="close-outline" size={24} color={colors.text} />}
-              isDisabled={!text}
+              isDisabled={!password || !text}
               onPress={() => {
                 setText('');
               }}
             />
-            <Button isDisabled={!text || !password} onPress={() => encryptText(text)}>
+            <Button isDisabled={!password || !text} onPress={() => encryptText(text)}>
               Encrypt
             </Button>
           </HStack>
@@ -121,10 +121,11 @@ function EncryptText({ jumpTo }) {
           <Divider my="8" />
 
           <Heading>Decryption</Heading>
-          <TextArea onChangeText={setEncryptedText} value={encryptedText} h={40} />
+          <TextArea isDisabled={!password} onChangeText={setEncryptedText} value={encryptedText} h={40} />
           <HStack space="sm">
             <IconButton
               icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
+              isDisabled={!password}
               onPress={async () => {
                 const copied = await Clipboard.getString();
                 if (copied) {
@@ -137,7 +138,7 @@ function EncryptText({ jumpTo }) {
             />
             <IconButton
               icon={<Icon name="copy-outline" size={24} color={colors.text} />}
-              isDisabled={!encryptedText}
+              isDisabled={!password || !encryptedText}
               onPress={() => {
                 Clipboard.setString(encryptedText);
                 toast.show({ title: 'Copied!', placement: 'bottom' });
@@ -145,13 +146,13 @@ function EncryptText({ jumpTo }) {
             />
             <IconButton
               icon={<Icon name="close-outline" size={24} color={colors.text} />}
-              isDisabled={!encryptedText}
+              isDisabled={!password || !encryptedText}
               onPress={() => {
                 setEncryptedText('');
               }}
             />
             <Button
-              isDisabled={!encryptedText || !password}
+              isDisabled={!password || !encryptedText}
               onPress={() => decryptText(encryptedText)}
             >
               Decrypt
