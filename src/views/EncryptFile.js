@@ -1,4 +1,14 @@
-import { Button, Divider, Heading, ScrollView, Text, useToast, VStack } from 'native-base';
+import {
+  Alert,
+  Box,
+  Button,
+  Divider,
+  Heading,
+  ScrollView,
+  Text,
+  useToast,
+  VStack,
+} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { isInProgress, types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
@@ -214,6 +224,15 @@ function EncryptFile({ jumpTo }) {
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encryption</Heading>
+          <Alert w="100%" status="info">
+            <Box
+              _text={{
+                textAlign: 'center',
+              }}
+            >
+              {`Pick any file to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
+            </Box>
+          </Alert>
           <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickOrignalFile}>
             Pick a file to encrypt
           </Button>
@@ -222,6 +241,15 @@ function EncryptFile({ jumpTo }) {
           <Divider my={8} />
 
           <Heading>Decryption</Heading>
+          <Alert w="100%" status="info">
+            <Box
+              _text={{
+                textAlign: 'center',
+              }}
+            >
+              Only pick file ending with .precloud
+            </Box>
+          </Alert>
           <Button isDisabled={!password} isLoading={isDecrypting} onPress={pickEncryptedFile}>
             Pick a file to decrypt
           </Button>

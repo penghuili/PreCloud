@@ -1,10 +1,13 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import {
+  Alert,
+  Box,
   Button,
   Divider,
   Heading,
   HStack,
   IconButton,
+  Popover,
   ScrollView,
   TextArea,
   useToast,
@@ -43,7 +46,9 @@ function EncryptText({ jumpTo }) {
           setText(msg.payload.data);
           toast.show({ title: 'Decrypted.' });
         } else {
-          toast.show({ title: 'Decrypt text failed.' });
+          toast.show({
+            title: 'Decrypt text failed. Please only decrypt texts that are encrypted by this app.',
+          });
         }
       }
     };
@@ -76,88 +81,150 @@ function EncryptText({ jumpTo }) {
     }
   };
 
+  function rendrEncryption() {
+    return (
+      <>
+        <HStack alignItems="center">
+          <Heading>Encryption</Heading>
+
+          <Popover
+            trigger={triggerProps => {
+              return (
+                <IconButton
+                  {...triggerProps}
+                  icon={<Icon name="information-circle-outline" size={24} color={colors.text} />}
+                />
+              );
+            }}
+          >
+            <Popover.Content accessibilityLabel="Delete Customerd" w="56">
+              <Popover.Body>
+                Type or paste something to encrypt. The encrypted text will be shown below.
+              </Popover.Body>
+            </Popover.Content>
+          </Popover>
+        </HStack>
+
+        <TextArea isDisabled={!password} onChangeText={setText} value={text} h={40} />
+        <HStack space="sm">
+          <IconButton
+            icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
+            isDisabled={!password}
+            onPress={async () => {
+              const copied = await Clipboard.getString();
+              if (copied) {
+                setText(copied);
+                toast.show({ title: 'Pasted!', placement: 'bottom' });
+              } else {
+                toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
+              }
+            }}
+          />
+          <IconButton
+            icon={<Icon name="copy-outline" size={24} color={colors.text} />}
+            isDisabled={!password || !text}
+            onPress={() => {
+              Clipboard.setString(text);
+              toast.show({ title: 'Copied!', placement: 'bottom' });
+            }}
+          />
+          <IconButton
+            icon={<Icon name="close-outline" size={24} color={colors.text} />}
+            isDisabled={!password || !text}
+            onPress={() => {
+              setText('');
+            }}
+          />
+          <Button isDisabled={!password || !text} onPress={() => encryptText(text)}>
+            Encrypt
+          </Button>
+        </HStack>
+      </>
+    );
+  }
+
+  function renderDecryption() {
+    return (
+      <>
+        <HStack alignItems="center">
+          <Heading>Decryption</Heading>
+
+          <Popover
+            trigger={triggerProps => {
+              return (
+                <IconButton
+                  {...triggerProps}
+                  icon={<Icon name="information-circle-outline" size={24} color={colors.text} />}
+                />
+              );
+            }}
+          >
+            <Popover.Content accessibilityLabel="Delete Customerd" w="56">
+              <Popover.Body>
+                Type or paste encrypted text to decrypt. The decrypted text will be shown above.
+              </Popover.Body>
+            </Popover.Content>
+          </Popover>
+        </HStack>
+
+        <TextArea
+          isDisabled={!password}
+          onChangeText={setEncryptedText}
+          value={encryptedText}
+          h={40}
+        />
+        <HStack space="sm">
+          <IconButton
+            icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
+            isDisabled={!password}
+            onPress={async () => {
+              const copied = await Clipboard.getString();
+              if (copied) {
+                setEncryptedText(copied);
+                toast.show({ title: 'Pasted!', placement: 'bottom' });
+              } else {
+                toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
+              }
+            }}
+          />
+          <IconButton
+            icon={<Icon name="copy-outline" size={24} color={colors.text} />}
+            isDisabled={!password || !encryptedText}
+            onPress={() => {
+              Clipboard.setString(encryptedText);
+              toast.show({ title: 'Copied!', placement: 'bottom' });
+            }}
+          />
+          <IconButton
+            icon={<Icon name="close-outline" size={24} color={colors.text} />}
+            isDisabled={!password || !encryptedText}
+            onPress={() => {
+              setEncryptedText('');
+            }}
+          />
+          <Button
+            isDisabled={!password || !encryptedText}
+            onPress={() => decryptText(encryptedText)}
+          >
+            Decrypt
+          </Button>
+        </HStack>
+      </>
+    );
+  }
+
   return (
     <>
       <AppBar title="Encrypt & decrypt text" />
       <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
-          <Heading>Encryption</Heading>
-          <TextArea isDisabled={!password} onChangeText={setText} value={text} h={40} />
-          <HStack space="sm">
-            <IconButton
-              icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
-              isDisabled={!password}
-              onPress={async () => {
-                const copied = await Clipboard.getString();
-                if (copied) {
-                  setText(copied);
-                  toast.show({ title: 'Pasted!', placement: 'bottom' });
-                } else {
-                  toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
-                }
-              }}
-            />
-            <IconButton
-              icon={<Icon name="copy-outline" size={24} color={colors.text} />}
-              isDisabled={!password || !text}
-              onPress={() => {
-                Clipboard.setString(text);
-                toast.show({ title: 'Copied!', placement: 'bottom' });
-              }}
-            />
-            <IconButton
-              icon={<Icon name="close-outline" size={24} color={colors.text} />}
-              isDisabled={!password || !text}
-              onPress={() => {
-                setText('');
-              }}
-            />
-            <Button isDisabled={!password || !text} onPress={() => encryptText(text)}>
-              Encrypt
-            </Button>
-          </HStack>
+
+          {rendrEncryption()}
 
           <Divider my="8" />
 
-          <Heading>Decryption</Heading>
-          <TextArea isDisabled={!password} onChangeText={setEncryptedText} value={encryptedText} h={40} />
-          <HStack space="sm">
-            <IconButton
-              icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
-              isDisabled={!password}
-              onPress={async () => {
-                const copied = await Clipboard.getString();
-                if (copied) {
-                  setEncryptedText(copied);
-                  toast.show({ title: 'Pasted!', placement: 'bottom' });
-                } else {
-                  toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
-                }
-              }}
-            />
-            <IconButton
-              icon={<Icon name="copy-outline" size={24} color={colors.text} />}
-              isDisabled={!password || !encryptedText}
-              onPress={() => {
-                Clipboard.setString(encryptedText);
-                toast.show({ title: 'Copied!', placement: 'bottom' });
-              }}
-            />
-            <IconButton
-              icon={<Icon name="close-outline" size={24} color={colors.text} />}
-              isDisabled={!password || !encryptedText}
-              onPress={() => {
-                setEncryptedText('');
-              }}
-            />
-            <Button
-              isDisabled={!password || !encryptedText}
-              onPress={() => decryptText(encryptedText)}
-            >
-              Decrypt
-            </Button>
-          </HStack>
+          {renderDecryption()}
         </VStack>
       </ScrollView>
     </>

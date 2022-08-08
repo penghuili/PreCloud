@@ -156,8 +156,8 @@ function Passwords() {
                   textAlign: 'center',
                 }}
               >
-                Save your password in a password manager. You can't decrypt your texts or files, if
-                you lose your password.
+                Save your password in a password manager. If you lose your password, You can't
+                decrypt your texts or files.
               </Box>
             </VStack>
           </Alert>
