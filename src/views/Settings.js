@@ -30,10 +30,15 @@ function Settings({ currentRoute }) {
       <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="lg" alignItems="flex-start">
           <Heading>PreCloud: Encrypt before upload</Heading>
+          <Heading size="sm" color="primary.400">Open source, no tracking and free forever.</Heading>
 
           <HStack alignItems="center" space="sm">
             <Text>Cache: {cacheSize}MB</Text>
-            {cacheSize > 0 && <Button size="sm" onPress={handleClearCache}>Clear cache</Button>}
+            {cacheSize > 0 && (
+              <Button size="sm" onPress={handleClearCache}>
+                Clear cache
+              </Button>
+            )}
           </HStack>
 
           <Link href="https://github.com/penghuili/PreCloud#precloud---encrypt-before-upload">
