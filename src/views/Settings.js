@@ -10,7 +10,7 @@ function Settings() {
     <>
       <AppBar title="Settings" />
       <ScrollView px={4} py={4}>
-        <VStack space="sm" alignItems="center">
+        <VStack space="sm" alignItems="flex-start">
           <Avatar source={logo} size="xl" />
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
             Privacy policy

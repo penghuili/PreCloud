@@ -55,8 +55,9 @@ async function encryptText(text, password) {
       passwords: [password],
       format: 'armored',
     });
+    const unarmored = await openpgp.unarmor(encrypted);
 
-    return { data: Buffer.from(encrypted, 'utf8').toString('base64'), error: null };
+    return { data: unit8ToBase64(unarmored.data), error: null };
   } catch (e) {
     return { data: null, error: e };
   }
@@ -64,9 +65,11 @@ async function encryptText(text, password) {
 
 async function decryptText(encryptedText, password) {
   try {
-    const message = Buffer.from(encryptedText, 'base64').toString('utf8');
+    const encrypted = base64ToUnit8(encryptedText);
+    const armored = openpgp.armor(openpgp.enums.armor.message, encrypted);
+
     const encryptedMessage = await openpgp.readMessage({
-      armoredMessage: message,
+      armoredMessage: armored,
     });
     const { data } = await openpgp.decrypt({
       message: encryptedMessage,
