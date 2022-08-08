@@ -23,11 +23,13 @@ function Passwords() {
   const savedPassword = useStore(state => state.masterPassword);
   const setMasterPassword = useStore(state => state.setMasterPassword);
   const colors = useColors();
+
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const [showPasswordRepeat, setShowPasswordRepeat] = useState(false);
   const [error, setError] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     setPassword(savedPassword);
@@ -45,14 +47,101 @@ function Passwords() {
       await savePassword(password);
       setMasterPassword(password);
       toast.show({ title: 'Password is saved in secure storage.' });
+      setIsUpdating(false);
     } catch (e) {
       setError('Save password failed. Please choose another password.');
     }
   }
 
+  function renderSavedPassword() {
+    if (!savedPassword || isUpdating) {
+      return null;
+    }
+
+    return (
+      <>
+        <FormControl isInvalid={!!error}>
+          <FormControl.Label>Master password</FormControl.Label>
+          <Input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Enter password"
+            value={password}
+            onChangeText={setPassword}
+            InputRightElement={
+              <HStack pr={2}>
+                <Icon
+                  name={showPassword ? 'eye' : 'eye-off'}
+                  size={16}
+                  color={colors.text}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              </HStack>
+            }
+          />
+        </FormControl>
+        <Button onPress={() => setIsUpdating(true)}>Update</Button>
+      </>
+    );
+  }
+
+  function renderNewPassword() {
+    if (savedPassword && !isUpdating) {
+      return null;
+    }
+
+    return (
+      <>
+        <FormControl isInvalid={!!error}>
+          <FormControl.Label>Master password</FormControl.Label>
+          <Input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Enter password"
+            value={password}
+            onChangeText={setPassword}
+            InputRightElement={
+              <HStack pr={2}>
+                <Icon
+                  name={showPassword ? 'eye' : 'eye-off'}
+                  size={16}
+                  color={colors.text}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              </HStack>
+            }
+          />
+          <FormControl.HelperText>
+            Use a password manager to generate a strong password.
+          </FormControl.HelperText>
+
+          <FormControl.Label>Repeat password</FormControl.Label>
+          <Input
+            type={showPasswordRepeat ? 'text' : 'password'}
+            placeholder="Repeat password"
+            value={passwordRepeat}
+            onChangeText={setPasswordRepeat}
+            InputRightElement={
+              <HStack pr={2}>
+                <Icon
+                  name={showPasswordRepeat ? 'eye' : 'eye-off'}
+                  size={16}
+                  color={colors.text}
+                  onPress={() => setShowPasswordRepeat(!showPasswordRepeat)}
+                />
+              </HStack>
+            }
+          />
+          {!!error && <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>}
+        </FormControl>
+        <Button isDisabled={!password || !passwordRepeat} onPress={() => handleSavePassword()}>
+          Save
+        </Button>
+      </>
+    );
+  }
+
   return (
     <>
-      <AppBar title="Set up master password" />
+      <AppBar title="Master password" />
       <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="sm" alignItems="flex-end">
           <Alert w="100%" status="warning" mb={8}>
@@ -73,50 +162,8 @@ function Passwords() {
             </VStack>
           </Alert>
 
-          <FormControl isInvalid={!!error}>
-            <FormControl.Label>Master password</FormControl.Label>
-            <Input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Enter password"
-              value={password}
-              onChangeText={setPassword}
-              InputRightElement={
-                <HStack pr={2}>
-                  <Icon
-                    name={showPassword ? 'eye' : 'eye-off'}
-                    size={16}
-                    color={colors.text}
-                    onPress={() => setShowPassword(!showPassword)}
-                  />
-                </HStack>
-              }
-            />
-            <FormControl.HelperText>
-              Use a password manager to generate a strong password.
-            </FormControl.HelperText>
-
-            <FormControl.Label>Repeat password</FormControl.Label>
-            <Input
-              type={showPasswordRepeat ? 'text' : 'password'}
-              placeholder="Repeat password"
-              value={passwordRepeat}
-              onChangeText={setPasswordRepeat}
-              InputRightElement={
-                <HStack pr={2}>
-                  <Icon
-                    name={showPasswordRepeat ? 'eye' : 'eye-off'}
-                    size={16}
-                    color={colors.text}
-                    onPress={() => setShowPasswordRepeat(!showPasswordRepeat)}
-                  />
-                </HStack>
-              }
-            />
-            {!!error && <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>}
-          </FormControl>
-          <Button isDisabled={!password || !passwordRepeat} onPress={() => handleSavePassword()}>
-            Save
-          </Button>
+          {renderNewPassword()}
+          {renderSavedPassword()}
         </VStack>
       </ScrollView>
     </>
