@@ -2,10 +2,12 @@ import { Button, Heading, HStack, Link, ScrollView, Text, VStack } from 'native-
 import React, { useEffect, useState } from 'react';
 import DeviceInfoModule from 'react-native-device-info';
 import RNFS from 'react-native-fs';
+import { Linking } from 'react-native';
 
 import AppBar from '../components/AppBar';
 import { bytesToMB, emptyFolder, getFolderSize } from '../lib/files';
 import { routeNames } from '../router/Router';
+import { myEmail } from '../lib/constants';
 
 function Settings({ currentRoute }) {
   const [cacheSize, setCacheSize] = useState(0);
@@ -30,7 +32,9 @@ function Settings({ currentRoute }) {
       <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
         <VStack space="lg" alignItems="flex-start">
           <Heading>PreCloud: Encrypt before upload</Heading>
-          <Heading size="sm" color="primary.400">Open source, no tracking and free forever.</Heading>
+          <Heading size="sm" color="primary.400">
+            Open source, no tracking and free forever.
+          </Heading>
 
           <HStack alignItems="center" space="sm">
             <Text>Cache: {cacheSize}MB</Text>
@@ -50,7 +54,13 @@ function Settings({ currentRoute }) {
           </Link>
           <HStack>
             <Text>Contact: </Text>
-            <Text selectable>peng@duck.com</Text>
+            <Link
+              onPress={() => {
+                Linking.openURL(`mailto:${myEmail}`);
+              }}
+            >
+              {myEmail}
+            </Link>
           </HStack>
           <Text>
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
