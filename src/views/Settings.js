@@ -52,8 +52,8 @@ function Settings({ currentRoute }) {
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
             Privacy policy
           </Link>
-          <HStack>
-            <Text>Contact: </Text>
+          <VStack>
+            <Text>Write to me, I reply to all emails</Text>
             <Link
               onPress={() => {
                 Linking.openURL(`mailto:${myEmail}`);
@@ -61,7 +61,7 @@ function Settings({ currentRoute }) {
             >
               {myEmail}
             </Link>
-          </HStack>
+          </VStack>
           <Text>
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
           </Text>
