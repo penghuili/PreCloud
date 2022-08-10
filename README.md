@@ -13,6 +13,13 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 
 ---
 
+Get the App:
+<a href="https://apps.apple.com/us/app/precloud/id1638793841" target="_blank"><img src="app-store.svg" height="40"></a> 
+
+<a href="https://play.google.com/store/apps/details?id=com.precloud" target="_blank"><img src="play-store.svg" height="40"></a> 
+
+---
+
 ## What's coming next:
 - [ ] Release Android version;
 - [ ] Release iOS version;
