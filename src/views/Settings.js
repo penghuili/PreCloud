@@ -8,6 +8,7 @@ import AppBar from '../components/AppBar';
 import { bytesToMB, emptyFolder, getFolderSize } from '../lib/files';
 import { routeNames } from '../router/Router';
 import { myEmail } from '../lib/constants';
+import { getStoreLink } from '../lib/device';
 
 function Settings({ currentRoute }) {
   const [cacheSize, setCacheSize] = useState(0);
@@ -62,6 +63,11 @@ function Settings({ currentRoute }) {
               {myEmail}
             </Link>
           </VStack>
+
+          <Text>
+            Enjoying the app? <Link href={getStoreLink()}>Give it 5 star!</Link>
+          </Text>
+
           <Text>
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
           </Text>
