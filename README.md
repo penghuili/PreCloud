@@ -15,9 +15,9 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 
 ## Get the App:
 
-<a href="https://apps.apple.com/us/app/precloud/id1638793841" target="_blank"><img src="app-store.svg" height="40"></a> 
-
 <a href="https://play.google.com/store/apps/details?id=com.precloud" target="_blank"><img src="play-store.svg" height="40"></a> 
+
+<a href="https://apps.apple.com/us/app/precloud/id1638793841" target="_blank"><img src="app-store.svg" height="40"></a> 
 
 ---
 
@@ -25,7 +25,7 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 - [ ] Release Android version;
 - [x] Release iOS version;
 - [ ] Create web version. So you can also encrypt and decrypt on your laptop;
-- [ ] Encrypt large files. Currently you can only encrypt files that are smaller than 20MB;
+- [ ] Encrypt large files. Currently you can encrypt files that are smaller than 20MB;
 
 ---
 
