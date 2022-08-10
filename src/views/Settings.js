@@ -64,9 +64,10 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <Text>
-            Enjoying the app? <Link href={getStoreLink()}>Give it 5 star!</Link>
-          </Text>
+          <HStack>
+            <Text>Enjoying the app?</Text>
+            <Link href={getStoreLink()}>Give it 5 star!</Link>
+          </HStack>
 
           <Text>
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
