@@ -65,7 +65,7 @@ function Settings({ currentRoute }) {
           </VStack>
 
           <HStack>
-            <Text>Enjoying the app?</Text>
+            <Text>Enjoying the app? </Text>
             <Link href={getStoreLink()}>Give it 5 star!</Link>
           </HStack>
 
