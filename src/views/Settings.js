@@ -46,13 +46,6 @@ function Settings({ currentRoute }) {
             )}
           </HStack>
 
-          <Link href="https://github.com/penghuili/PreCloud#precloud---encrypt-before-upload">
-            Home
-          </Link>
-          <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
-          <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
-            Privacy policy
-          </Link>
           <VStack>
             <Text>Write to me, I reply to all emails</Text>
             <Link
@@ -64,10 +57,18 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <HStack>
-            <Text>Enjoying the app? </Text>
+          <HStack space="sm">
+            <Text>Enjoying the app?</Text>
             <Link href={getStoreLink()}>Give it 5 star!</Link>
           </HStack>
+
+          <Link href="https://github.com/penghuili/PreCloud#precloud---encrypt-before-upload">
+            Home
+          </Link>
+          <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
+          <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
+            Privacy policy
+          </Link>
 
           <Text>
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
