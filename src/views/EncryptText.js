@@ -1,9 +1,7 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import {
-  Alert,
   Box,
   Button,
-  Divider,
   Heading,
   HStack,
   IconButton,
@@ -105,7 +103,6 @@ function EncryptText({ jumpTo }) {
           </Popover>
         </HStack>
 
-        <TextArea isDisabled={!password} onChangeText={setText} value={text} h={40} />
         <HStack space="sm">
           <IconButton
             icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
@@ -139,6 +136,7 @@ function EncryptText({ jumpTo }) {
             Encrypt
           </Button>
         </HStack>
+        <TextArea isDisabled={!password} onChangeText={setText} value={text} h={40} />
       </>
     );
   }
@@ -167,12 +165,6 @@ function EncryptText({ jumpTo }) {
           </Popover>
         </HStack>
 
-        <TextArea
-          isDisabled={!password}
-          onChangeText={setEncryptedText}
-          value={encryptedText}
-          h={40}
-        />
         <HStack space="sm">
           <IconButton
             icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
@@ -209,6 +201,7 @@ function EncryptText({ jumpTo }) {
             Decrypt
           </Button>
         </HStack>
+        <TextArea isDisabled value={encryptedText} h={40} />
       </>
     );
   }
@@ -217,12 +210,12 @@ function EncryptText({ jumpTo }) {
     <>
       <AppBar title="Encrypt & decrypt text" />
       <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
-        <VStack space="sm" alignItems="center">
+        <VStack space="sm" alignItems="center" pb="15">
           <PasswordAlert navigate={jumpTo} />
 
           {rendrEncryption()}
 
-          <Divider my="8" />
+          <Box h="15" />
 
           {renderDecryption()}
         </VStack>
