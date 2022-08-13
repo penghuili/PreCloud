@@ -132,7 +132,11 @@ function EncryptText({ jumpTo }) {
               setText('');
             }}
           />
-          <Button isDisabled={!password || !text} onPress={() => encryptText(text)}>
+          <Button
+            isDisabled={!password || !text}
+            endIcon={<Icon name="chevron-down-sharp" size={24} color={colors.white} />}
+            onPress={() => encryptText(text)}
+          >
             Encrypt
           </Button>
         </HStack>
@@ -196,6 +200,7 @@ function EncryptText({ jumpTo }) {
           />
           <Button
             isDisabled={!password || !encryptedText}
+            endIcon={<Icon name="chevron-up-sharp" size={24} color={colors.white} />}
             onPress={() => decryptText(encryptedText)}
           >
             Decrypt
