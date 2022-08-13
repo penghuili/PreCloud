@@ -1,16 +1,34 @@
-import { Button, Heading, HStack, Link, ScrollView, Text, VStack } from 'native-base';
+import {
+  Button,
+  Heading,
+  HStack,
+  IconButton,
+  Link,
+  Popover,
+  ScrollView,
+  Text,
+  useToast,
+  VStack,
+} from 'native-base';
+import Clipboard from '@react-native-clipboard/clipboard';
 import React, { useEffect, useState } from 'react';
+import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
 import RNFS from 'react-native-fs';
-import { Linking } from 'react-native';
 
 import AppBar from '../components/AppBar';
+import Icon from '../components/Icon';
+import useColors from '../hooks/useColors';
+import { appStoreLink, myEmail } from '../lib/constants';
+import { getStoreLink } from '../lib/device';
 import { bytesToMB, emptyFolder, getFolderSize } from '../lib/files';
 import { routeNames } from '../router/Router';
-import { myEmail } from '../lib/constants';
-import { getStoreLink } from '../lib/device';
+
+const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.ios}\n\nAndroid: ${appStoreLink.android}`;
 
 function Settings({ currentRoute }) {
+  const colors = useColors();
+  const toast = useToast();
   const [cacheSize, setCacheSize] = useState(0);
 
   useEffect(() => {
@@ -46,8 +64,40 @@ function Settings({ currentRoute }) {
             )}
           </HStack>
 
+          <HStack space="xs">
+            <Text>Enjoying the app?</Text>
+            <Link href={getStoreLink()}>Give it 5 star!</Link>
+          </HStack>
+
+          <HStack space="xs" alignItems="center">
+            <Popover
+              trigger={triggerProps => {
+                return (
+                  <Text underline {...triggerProps}>
+                    And recommend it to friends
+                  </Text>
+                );
+              }}
+            >
+              <Popover.Content accessibilityLabel="Delete Customerd" w="56">
+                <Popover.Body>{recommendText}</Popover.Body>
+                <Popover.Footer justifyContent="flex-end">
+                  <Button
+                    icon={<Icon name="copy-outline" size={24} />}
+                    onPress={async () => {
+                      await Clipboard.setString(recommendText);
+                      toast.show({ title: 'Copied!' });
+                    }}
+                  >
+                    Copy
+                  </Button>
+                </Popover.Footer>
+              </Popover.Content>
+            </Popover>
+          </HStack>
+
           <VStack>
-            <Text>Write to me, I reply to all emails</Text>
+            <Text>Or write to me, I reply to all emails</Text>
             <Link
               onPress={() => {
                 Linking.openURL(`mailto:${myEmail}`);
@@ -56,11 +106,6 @@ function Settings({ currentRoute }) {
               {myEmail}
             </Link>
           </VStack>
-
-          <HStack space="xs">
-            <Text>Enjoying the app?</Text>
-            <Link href={getStoreLink()}>Give it 5 star!</Link>
-          </HStack>
 
           <Link href="https://github.com/penghuili/PreCloud#precloud---encrypt-before-upload">
             Home
