@@ -22,7 +22,7 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 ---
 
 ## What's coming next:
-- [ ] Release Android version;
+- [x] Release Android version;
 - [x] Release iOS version;
 - [ ] Create web version. So you can also encrypt and decrypt on your laptop;
 - [ ] Encrypt large files. Currently you can encrypt files that are smaller than 20MB;
