@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 
 import AppWrapper from './components/AppWrapper';
-import ShareMenu from './components/ShareMenu';
 import { getTheme } from './lib/style';
 import Router from './router/Router';
 import { useStore } from './store/store';
@@ -24,7 +23,6 @@ function App() {
     <NativeBaseProvider theme={theme}>
       <AppWrapper>
         <Router />
-        <ShareMenu />
       </AppWrapper>
     </NativeBaseProvider>
   );

@@ -24,8 +24,6 @@ const nodejs = require('nodejs-mobile-react-native');
 const MAX_FILE_SIZE_MEGA_BYTES = 20;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
 
-console.log(RNFS.DownloadDirectoryPath);
-
 function EncryptFile({ jumpTo }) {
   const toast = useToast();
   const password = useStore(state => state.masterPassword);
@@ -82,7 +80,6 @@ function EncryptFile({ jumpTo }) {
         copyTo: 'cachesDirectory',
       });
       const file = { ...result[0], path: extractPath(result[0].fileCopyUri) };
-      console.log(file);
       if (file.size > MAX_FILE_SIZE_BYTES) {
         toast.show({ title: `File size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.` });
         await RNFS.unlink(file.path);
