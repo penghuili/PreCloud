@@ -8,11 +8,14 @@ import { getTheme } from './lib/style';
 import Router from './router/Router';
 import { useStore } from './store/store';
 
+const nodejs = require('nodejs-mobile-react-native');
+
 function App() {
   const theme = getTheme();
   const getMasterPassword = useStore(state => state.getMasterPassword);
 
   useEffect(() => {
+    nodejs.start('main.js');
     SplashScreen.hide();
     getMasterPassword();
   }, []);

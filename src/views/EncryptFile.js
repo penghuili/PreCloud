@@ -16,12 +16,15 @@ import Share from 'react-native-share';
 
 import AppBar from '../components/AppBar';
 import PasswordAlert from '../components/PasswordAlert';
+import { isAndroid } from '../lib/device';
 import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
 const MAX_FILE_SIZE_MEGA_BYTES = 20;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
+
+console.log(RNFS.DownloadDirectoryPath);
 
 function EncryptFile({ jumpTo }) {
   const toast = useToast();
@@ -34,8 +37,6 @@ function EncryptFile({ jumpTo }) {
   const [decryptedFilePath, setDecryptedFilePath] = useState(null);
 
   useEffect(() => {
-    nodejs.start('main.js');
-
     const listener = async msg => {
       if (msg.type === 'encrypted-file') {
         setIsEncrypting(false);
@@ -81,6 +82,7 @@ function EncryptFile({ jumpTo }) {
         copyTo: 'cachesDirectory',
       });
       const file = { ...result[0], path: extractPath(result[0].fileCopyUri) };
+      console.log(file);
       if (file.size > MAX_FILE_SIZE_BYTES) {
         toast.show({ title: `File size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.` });
         await RNFS.unlink(file.path);
@@ -111,12 +113,17 @@ function EncryptFile({ jumpTo }) {
   const downloadEncryptedFile = async ({ path, name }) => {
     try {
       const filename = `${name}.preupload`;
-      await Share.open({
-        title: filename,
-        filename,
-        url: `file://${encryptedFilePath}`,
-        type: types.plainText,
-      });
+
+      if (isAndroid()) {
+        await RNFS.copyFile(encryptedFilePath, `${RNFS.DownloadDirectoryPath}/${filename}`);
+      } else {
+        await Share.open({
+          title: filename,
+          filename,
+          url: `file://${encryptedFilePath}`,
+          type: 'text/precloud',
+        });
+      }
 
       await RNFS.unlink(path);
       await RNFS.unlink(encryptedFilePath);
@@ -124,6 +131,7 @@ function EncryptFile({ jumpTo }) {
       setEncryptedFilePath(null);
       toast.show({ title: 'Downloaded.' });
     } catch (error) {
+      console.log(error);
       toast.show({ title: 'Download file failed.' });
     }
   };
@@ -152,10 +160,10 @@ function EncryptFile({ jumpTo }) {
     } catch (e) {
       setIsDecrypting(false);
       if (DocumentPicker.isCancel(e)) {
-        console.warn('pick document cancelled');
+        console.log('pick document cancelled');
         // User cancelled the picker, exit any dialogs or menus and move on
       } else if (isInProgress(e)) {
-        console.warn('multiple pickers were opened, only the last will be considered');
+        console.log('multiple pickers were opened, only the last will be considered');
       } else {
         toast.show({ title: 'Pick file failed, please only pick file ending with .precloud' });
       }
@@ -182,7 +190,14 @@ function EncryptFile({ jumpTo }) {
     }
   };
   function extractPath(path) {
-    return path.includes('file://') ? path.slice(7) : path;
+    if (path.startsWith('file:///')) {
+      return path.slice(7);
+    } else if (path.startsWith('file://')) {
+      return path.slice(6);
+    } else if (path.startsWith('file:/')) {
+      return path.slice(5);
+    }
+    return path;
   }
 
   function renderEncryptFile() {
