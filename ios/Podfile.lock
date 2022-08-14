@@ -371,6 +371,8 @@ PODS:
     - React-Core
   - RNShare (7.6.6):
     - React-Core
+  - RNShareMenu (6.0.0):
+    - React
   - RNSVG (12.4.3):
     - React-Core
   - RNVectorIcons (9.2.0):
@@ -445,6 +447,7 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNShareMenu (from `../node_modules/react-native-share-menu`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -548,6 +551,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNShareMenu:
+    :path: "../node_modules/react-native-share-menu"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -609,6 +614,7 @@ SPEC CHECKSUMS:
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNShare: d56424e3926cbc239db1cc1c168adcb051aad50b
+  RNShareMenu: cb9dac548c8bf147d06f0bf07296ad51ea9f5fc3
   RNSVG: f3b60aeeaa81960e2e0536c3a9eef50b667ef3a9
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
