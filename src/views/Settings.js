@@ -1,8 +1,8 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import {
   Button,
   Heading,
   HStack,
-  IconButton,
   Link,
   Popover,
   ScrollView,
@@ -10,7 +10,6 @@ import {
   useToast,
   VStack,
 } from 'native-base';
-import Clipboard from '@react-native-clipboard/clipboard';
 import React, { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
@@ -107,9 +106,7 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <Link href="https://github.com/penghuili/PreCloud#precloud---encrypt-before-upload">
-            Home
-          </Link>
+          <Link href="https://www.peng.kiwi/precloud">Home</Link>
           <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
             Privacy policy
