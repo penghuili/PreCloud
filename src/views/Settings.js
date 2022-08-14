@@ -84,8 +84,8 @@ function Settings({ currentRoute }) {
                 <Popover.Footer justifyContent="flex-end">
                   <Button
                     icon={<Icon name="copy-outline" size={24} />}
-                    onPress={async () => {
-                      await Clipboard.setString(recommendText);
+                    onPress={() => {
+                      Clipboard.setString(recommendText);
                       toast.show({ title: 'Copied!' });
                     }}
                   >

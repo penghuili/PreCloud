@@ -29,8 +29,6 @@ function EncryptText({ jumpTo }) {
   const [encryptedText, setEncryptedText] = useState('');
 
   useEffect(() => {
-    nodejs.start('main.js');
-
     const listner = async msg => {
       if (msg.type === 'encrypted-text') {
         if (msg.payload.data) {
