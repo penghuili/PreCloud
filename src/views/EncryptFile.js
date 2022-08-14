@@ -118,7 +118,7 @@ function EncryptFile({ jumpTo }) {
           title: filename,
           filename,
           url: `file://${encryptedFilePath}`,
-          type: 'text/precloud',
+          type: types.plainText,
         });
       }
 
