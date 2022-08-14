@@ -16,7 +16,6 @@ import Share from 'react-native-share';
 
 import AppBar from '../components/AppBar';
 import PasswordAlert from '../components/PasswordAlert';
-import { isAndroid } from '../lib/device';
 import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
@@ -111,16 +110,12 @@ function EncryptFile({ jumpTo }) {
     try {
       const filename = `${name}.preupload`;
 
-      if (isAndroid()) {
-        await RNFS.copyFile(encryptedFilePath, `${RNFS.DownloadDirectoryPath}/${filename}`);
-      } else {
-        await Share.open({
-          title: filename,
-          filename,
-          url: `file://${encryptedFilePath}`,
-          type: types.plainText,
-        });
-      }
+      await Share.open({
+        title: filename,
+        filename,
+        url: `file://${encryptedFilePath}`,
+        type: types.plainText,
+      });
 
       await RNFS.unlink(path);
       await RNFS.unlink(encryptedFilePath);
