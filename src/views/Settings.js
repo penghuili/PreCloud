@@ -1,6 +1,7 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import {
   Button,
+  Divider,
   Heading,
   HStack,
   Link,
@@ -65,7 +66,7 @@ function Settings({ currentRoute }) {
 
           <HStack space="xs">
             <Text>Enjoying the app?</Text>
-            <Link href={getStoreLink()}>Give it 5 star!</Link>
+            <Link href={getStoreLink()}>Give it 5 stars!</Link>
           </HStack>
 
           <HStack space="xs" alignItems="center">
@@ -106,7 +107,9 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <Link href="https://www.peng.kiwi/precloud">Home</Link>
+          <Divider />
+
+          <Link href="https://www.peng.kiwi/precloud">Website</Link>
           <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
             Privacy policy
