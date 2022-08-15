@@ -1,6 +1,6 @@
 {
   "name": "precloud",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "dependencies": {
     "@react-native-clipboard/clipboard": "1.10.0",
