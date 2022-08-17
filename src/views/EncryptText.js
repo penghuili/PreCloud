@@ -6,7 +6,6 @@ import {
   HStack,
   IconButton,
   Popover,
-  ScrollView,
   TextArea,
   useToast,
   VStack,
@@ -14,6 +13,7 @@ import {
 import React, { useEffect, useState } from 'react';
 
 import AppBar from '../components/AppBar';
+import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import useColors from '../hooks/useColors';
@@ -212,7 +212,7 @@ function EncryptText({ jumpTo }) {
   return (
     <>
       <AppBar title="Encrypt & decrypt text" />
-      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
+      <ContentWrapper>
         <VStack space="sm" alignItems="center" pb="15">
           <PasswordAlert navigate={jumpTo} />
 
@@ -222,7 +222,7 @@ function EncryptText({ jumpTo }) {
 
           {renderDecryption()}
         </VStack>
-      </ScrollView>
+      </ContentWrapper>
     </>
   );
 }

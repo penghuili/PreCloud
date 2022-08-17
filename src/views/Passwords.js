@@ -5,7 +5,6 @@ import {
   FormControl,
   HStack,
   Input,
-  ScrollView,
   Text,
   useToast,
   VStack,
@@ -13,6 +12,7 @@ import {
 import React, { useEffect, useState } from 'react';
 
 import AppBar from '../components/AppBar';
+import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
 import { savePassword } from '../lib/keychain';
@@ -142,7 +142,7 @@ function Passwords() {
   return (
     <>
       <AppBar title="Master password" />
-      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
+      <ContentWrapper>
         <VStack space="sm" alignItems="flex-end">
           <Alert w="100%" status="warning" mb={8}>
             <VStack space={1} flexShrink={1} w="100%" alignItems="center">
@@ -165,7 +165,7 @@ function Passwords() {
           {renderNewPassword()}
           {renderSavedPassword()}
         </VStack>
-      </ScrollView>
+      </ContentWrapper>
     </>
   );
 }

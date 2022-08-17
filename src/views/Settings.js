@@ -6,7 +6,6 @@ import {
   HStack,
   Link,
   Popover,
-  ScrollView,
   Text,
   useToast,
   VStack,
@@ -17,6 +16,7 @@ import DeviceInfoModule from 'react-native-device-info';
 import RNFS from 'react-native-fs';
 
 import AppBar from '../components/AppBar';
+import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail } from '../lib/constants';
@@ -48,7 +48,7 @@ function Settings({ currentRoute }) {
   return (
     <>
       <AppBar title="Settings" />
-      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
+      <ContentWrapper>
         <VStack space="lg" alignItems="flex-start">
           <Heading>PreCloud: Encrypt before upload</Heading>
           <Heading size="sm" color="primary.400">
@@ -119,7 +119,7 @@ function Settings({ currentRoute }) {
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
           </Text>
         </VStack>
-      </ScrollView>
+      </ContentWrapper>
     </>
   );
 }

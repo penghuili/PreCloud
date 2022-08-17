@@ -1,20 +1,11 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Divider,
-  Heading,
-  ScrollView,
-  Text,
-  useToast,
-  VStack,
-} from 'native-base';
+import { Alert, Box, Button, Divider, Heading, Text, useToast, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { isInProgress, types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
 import AppBar from '../components/AppBar';
+import ContentWrapper from '../components/ContentWrapper';
 import PasswordAlert from '../components/PasswordAlert';
 import { useStore } from '../store/store';
 
@@ -227,7 +218,7 @@ function EncryptFile({ jumpTo }) {
   return (
     <>
       <AppBar title="Encrypt & decrypt file" />
-      <ScrollView px={4} py={4} keyboardShouldPersistTaps="handled">
+      <ContentWrapper>
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
           <Heading>Encrypt file</Heading>
@@ -262,7 +253,7 @@ function EncryptFile({ jumpTo }) {
           </Button>
           {renderDecryptFile()}
         </VStack>
-      </ScrollView>
+      </ContentWrapper>
     </>
   );
 }
