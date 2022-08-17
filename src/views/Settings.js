@@ -64,17 +64,18 @@ function Settings({ currentRoute }) {
             )}
           </HStack>
 
-          <HStack space="xs">
+          <HStack space="1">
             <Text>Enjoying the app?</Text>
             <Link href={getStoreLink()}>Give it 5 stars!</Link>
           </HStack>
 
-          <HStack space="xs" alignItems="center">
+          <HStack space="1" alignItems="center">
+            <Text>And recommend it to</Text>
             <Popover
               trigger={triggerProps => {
                 return (
                   <Text underline {...triggerProps}>
-                    And recommend it to friends
+                    friends
                   </Text>
                 );
               }}
