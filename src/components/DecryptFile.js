@@ -15,6 +15,7 @@ function DecryptFile() {
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [encryptedFile, setEncryptedFile] = useState(null);
   const [decryptedFileName, setDecryptedFileName] = useState(null);
+  const [decryptedFileMimeType, setDecryptedFileMimeType] = useState(null);
   const [decryptedFilePath, setDecryptedFilePath] = useState(null);
 
   useEffect(() => {
@@ -28,8 +29,11 @@ function DecryptFile() {
           const newPath = `${paths.join('.')}.${fileExtension}`;
           await RNFS.writeFile(newPath, msg.payload.data, 'base64');
           setDecryptedFileName(extractFileNameFromPath(newPath));
+          console.log(msg.payload.mimeType, 'mimetype')
+          setDecryptedFileMimeType(msg.payload.mimeType);
           setDecryptedFilePath(newPath);
         } else {
+          console.log(msg.payload.error, 'Decrypt file failed.')
           toast.show({ title: 'Decrypt file failed.' });
         }
       }
@@ -57,6 +61,7 @@ function DecryptFile() {
 
       setIsDecrypting(true);
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
+      console.log(fileBase64.slice(0, 200))
 
       nodejs.channel.send({
         type: 'decrypt-file',
@@ -64,18 +69,18 @@ function DecryptFile() {
       });
     } catch (e) {
       setIsDecrypting(false);
-      console.log(e);
+      console.log(e, 'pick encrypted');
     }
   }
 
-  const downloadDecryptedFile = async ({ path, name }) => {
+  const downloadDecryptedFile = async ({ path }) => {
     try {
-      const filename = `${name}.preupload`;
+      const filename = decryptedFileName;
       await Share.open({
         title: filename,
         filename,
         url: `file://${decryptedFilePath}`,
-        type: types.plainText,
+        type: decryptedFileMimeType || types.plainText,
       });
 
       await RNFS.unlink(path);
@@ -84,6 +89,7 @@ function DecryptFile() {
       setDecryptedFilePath(null);
       toast.show({ title: 'Downloaded.' });
     } catch (error) {
+      console.log(error);
       toast.show({ title: 'Download file failed.' });
     }
   };
@@ -102,7 +108,7 @@ function DecryptFile() {
           <>
             <Text bold>Decrypted file:</Text>
             <Text>{decryptedFileName}</Text>
-            <Button onPress={() => downloadDecryptedFile({ path, name })}>Download</Button>
+            <Button variant="outline"  onPress={() => downloadDecryptedFile({ path })}>Download</Button>
           </>
         )}
       </VStack>

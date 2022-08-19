@@ -1,10 +1,10 @@
-import { Alert, Box, Button, Heading, HStack, Text, useToast, VStack } from 'native-base';
+import { Alert, Box, Button, Heading, Text, useToast, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import DocumentPicker, { isInProgress, types } from 'react-native-document-picker';
+import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
-import { platforms } from '../lib/constants';
 
+import { platforms } from '../lib/constants';
 import { extractFileNameFromPath, extractFilePath } from '../lib/files';
 import { useStore } from '../store/store';
 import PlatformWrapper from './PlatformWrapper';
@@ -71,7 +71,7 @@ function EncryptFile() {
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
       nodejs.channel.send({
         type: 'encrypt-file',
-        data: { fileBase64, password, path: file.path },
+        data: { fileBase64, password, path: file.path, mimeType: file.type || types.plainText },
       });
     } catch (e) {
       setIsEncrypting(false);
@@ -79,9 +79,9 @@ function EncryptFile() {
     }
   }
 
-  const downloadEncryptedFile = async ({ path, name }) => {
+  const downloadEncryptedFile = async ({ path }) => {
     try {
-      const filename = `${name}.preupload`;
+      const filename = encryptedFileName;
 
       await Share.open({
         title: filename,
@@ -116,7 +116,7 @@ function EncryptFile() {
           <>
             <Text bold>Encrypted file:</Text>
             <Text>{encryptedFileName}</Text>
-            <Button variant="outline" onPress={() => downloadEncryptedFile({ path, name })}>
+            <Button variant="outline" onPress={() => downloadEncryptedFile({ path })}>
               Download
             </Button>
           </>

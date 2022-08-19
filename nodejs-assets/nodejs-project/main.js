@@ -3,11 +3,11 @@ const { encryptFile, decryptFile, encryptText, decryptText } = require('./openpg
 
 rn_bridge.channel.on('message', async msg => {
   if (msg.type === 'encrypt-file') {
-    const { data: encrypted, error } = await encryptFile(msg.data.fileBase64, msg.data.password);
+    const { data: encrypted, error } = await encryptFile(msg.data.mimeType, msg.data.fileBase64, msg.data.password);
     if (encrypted) {
       rn_bridge.channel.send({
         type: 'encrypted-file',
-        payload: { data: encrypted, error: null, path: msg.data.path },
+        payload: { data: encrypted, error: null, path: msg.data.path, mimeType: msg.data.mimeType },
       });
     } else {
       rn_bridge.channel.send({
@@ -21,7 +21,7 @@ rn_bridge.channel.on('message', async msg => {
     if (decrypted) {
       rn_bridge.channel.send({
         type: 'decrypted-file',
-        payload: { data: decrypted, error: null, path: msg.data.path },
+        payload: { data: decrypted.file, error: null, path: msg.data.path, mimeType: decrypted.mimeType },
       });
     } else {
       rn_bridge.channel.send({
