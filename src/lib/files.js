@@ -47,3 +47,18 @@ export async function emptyFolder(folderPath) {
 export function bytesToMB(bytes) {
   return Math.round((bytes / 1024 / 1024) * 100) / 100;
 }
+
+export function extractFilePath(path) {
+  if (path.startsWith('file:///')) {
+    return path.slice(7);
+  } else if (path.startsWith('file://')) {
+    return path.slice(6);
+  } else if (path.startsWith('file:/')) {
+    return path.slice(5);
+  }
+  return path;
+}
+
+export function extractFileNameFromPath(path) {
+  return path.split('/').pop();
+}

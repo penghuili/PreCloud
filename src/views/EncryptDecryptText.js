@@ -21,7 +21,7 @@ import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function EncryptText({ jumpTo }) {
+function EncryptDecryptText({ jumpTo }) {
   const toast = useToast();
   const password = useStore(state => state.masterPassword);
   const colors = useColors();
@@ -227,4 +227,4 @@ function EncryptText({ jumpTo }) {
   );
 }
 
-export default EncryptText;
+export default EncryptDecryptText;

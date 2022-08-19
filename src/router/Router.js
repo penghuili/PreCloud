@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useWindowDimensions } from 'react-native';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+import { TabBar, TabView } from 'react-native-tab-view';
 
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
-import EncryptFile from '../views/EncryptFile';
-import EncryptText from '../views/EncryptText';
+import EncryptDecryptFile from '../views/EncryptDecryptFile';
+import EncryptDecryptText from '../views/EncryptDecryptText';
 import Passwords from '../views/Passwords';
 import Settings from '../views/Settings';
 
@@ -49,9 +49,9 @@ function Router() {
     const currentRoute = currentRouteObj ? currentRouteObj.key : null;
     switch (route.key) {
       case routeNames.encryptText:
-        return <EncryptText route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
+        return <EncryptDecryptText route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
       case routeNames.encryptFile:
-        return <EncryptFile route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
+        return <EncryptDecryptFile route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
       case routeNames.passwords:
         return <Passwords route={route} jumpTo={jumpTo} currentRoute={currentRoute} />;
       case routeNames.settings:
