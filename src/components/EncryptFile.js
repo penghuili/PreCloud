@@ -1,11 +1,13 @@
-import { Alert, Box, Button, Heading, Text, useToast, VStack } from 'native-base';
+import { Alert, Box, Button, Heading, HStack, Text, useToast, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { isInProgress, types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
+import { platforms } from '../lib/constants';
 
 import { extractFileNameFromPath, extractFilePath } from '../lib/files';
 import { useStore } from '../store/store';
+import PlatformWrapper from './PlatformWrapper';
 
 const nodejs = require('nodejs-mobile-react-native');
 
@@ -73,14 +75,7 @@ function EncryptFile() {
       });
     } catch (e) {
       setIsEncrypting(false);
-      if (DocumentPicker.isCancel(e)) {
-        console.warn('pick document cancelled');
-        // User cancelled the picker, exit any dialogs or menus and move on
-      } else if (isInProgress(e)) {
-        console.warn('multiple pickers were opened, only the last will be considered');
-      } else {
-        toast.show({ title: 'Pick file failed, please try again.' });
-      }
+      console.log(e);
     }
   }
 
@@ -142,6 +137,14 @@ function EncryptFile() {
           {`Pick any file to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
         </Box>
       </Alert>
+      <PlatformWrapper platform={platforms.ios}>
+        <Alert w="100%" status="warning">
+          <Text>
+            And currently you can only pick files in the <Text highlight>Files</Text> app. You can
+            firstly move file or image by sharing it -&gt; <Text bold>Save to Files</Text>
+          </Text>
+        </Alert>
+      </PlatformWrapper>
       <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickOrignalFile}>
         Pick a file to encrypt
       </Button>

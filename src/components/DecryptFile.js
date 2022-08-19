@@ -1,6 +1,6 @@
 import { Alert, Box, Button, Heading, Text, useToast, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import DocumentPicker, { isInProgress, types } from 'react-native-document-picker';
+import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
@@ -64,14 +64,7 @@ function DecryptFile() {
       });
     } catch (e) {
       setIsDecrypting(false);
-      if (DocumentPicker.isCancel(e)) {
-        console.log('pick document cancelled');
-        // User cancelled the picker, exit any dialogs or menus and move on
-      } else if (isInProgress(e)) {
-        console.log('multiple pickers were opened, only the last will be considered');
-      } else {
-        toast.show({ title: 'Pick file failed, please only pick file ending with .precloud' });
-      }
+      console.log(e);
     }
   }
 
