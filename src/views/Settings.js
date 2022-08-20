@@ -110,7 +110,7 @@ function Settings({ currentRoute }) {
 
           <Divider />
 
-          <Link href="https://www.peng.kiwi/precloud">Website</Link>
+          <Link href="https://www.peng.kiwi/precloud">What is it?</Link>
           <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
             Privacy policy
