@@ -60,26 +60,8 @@ function Passwords() {
 
     return (
       <>
-        <FormControl isInvalid={!!error}>
-          <FormControl.Label>Master password</FormControl.Label>
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Enter password"
-            value={password}
-            onChangeText={setPassword}
-            InputRightElement={
-              <HStack pr={2}>
-                <Icon
-                  name={showPassword ? 'eye' : 'eye-off'}
-                  size={16}
-                  color={colors.text}
-                  onPress={() => setShowPassword(!showPassword)}
-                />
-              </HStack>
-            }
-          />
-        </FormControl>
-        <Button onPress={() => setIsUpdating(true)}>Update</Button>
+        <Text bold>Your master password is saved in secure storage.</Text>
+        <Button variant="outline" onPress={() => setIsUpdating(true)}>Update</Button>
       </>
     );
   }
@@ -143,7 +125,7 @@ function Passwords() {
     <>
       <AppBar title="Master password" />
       <ContentWrapper>
-        <VStack space="sm" alignItems="flex-end">
+        <VStack space="sm" alignItems="flex-start">
           <Alert w="100%" status="warning" mb={8}>
             <VStack space={1} flexShrink={1} w="100%" alignItems="center">
               <Alert.Icon size="md" />
