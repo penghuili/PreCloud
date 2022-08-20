@@ -2,14 +2,21 @@ import { Alert, Box, Button, Heading, Text, useToast, VStack } from 'native-base
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
-import Share from 'react-native-share';
 
-import { extractFileNameFromPath, extractFilePath } from '../lib/files';
+import {
+  extractFileNameFromPath,
+  extractFilePath,
+  filePaths,
+  makeDecryptedFolder,
+  shareFile,
+} from '../lib/files';
+import { LocalStorage, mimeTypePrefix } from '../lib/localstorage';
+import { routeNames } from '../router/Router';
 import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function DecryptFile() {
+function DecryptFile({ currentRoute }) {
   const toast = useToast();
   const password = useStore(state => state.masterPassword);
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -26,14 +33,18 @@ function DecryptFile() {
           const paths = msg.payload.path.split('.');
           paths.pop();
           const fileExtension = paths.pop();
-          const newPath = `${paths.join('.')}.${fileExtension}`;
+          const tmpPath = `${paths.join('.')}.${fileExtension}`;
+          const fileName = extractFileNameFromPath(tmpPath);
+          const newPath = `${filePaths.decrypted}/${fileName}`;
+          await makeDecryptedFolder();
           await RNFS.writeFile(newPath, msg.payload.data, 'base64');
-          setDecryptedFileName(extractFileNameFromPath(newPath));
-          console.log(msg.payload.mimeType, 'mimetype')
+          setDecryptedFileName(fileName);
           setDecryptedFileMimeType(msg.payload.mimeType);
           setDecryptedFilePath(newPath);
+
+          await LocalStorage.set(`${mimeTypePrefix}${fileName}`, msg.payload.mimeType);
         } else {
-          console.log(msg.payload.error, 'Decrypt file failed.')
+          console.log(msg.payload.error, 'Decrypt file failed.');
           toast.show({ title: 'Decrypt file failed.' });
         }
       }
@@ -43,7 +54,18 @@ function DecryptFile() {
     return () => {
       nodejs.channel.removeListener('message', listener);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (currentRoute === routeNames.encryptFile) {
+      setIsDecrypting(false);
+      setEncryptedFile(null);
+      setDecryptedFileName(null);
+      setDecryptedFileMimeType(null);
+      setDecryptedFilePath(null);
+    }
+  }, [currentRoute]);
 
   async function pickEncryptedFile() {
     try {
@@ -61,7 +83,6 @@ function DecryptFile() {
 
       setIsDecrypting(true);
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
-      console.log(fileBase64.slice(0, 200))
 
       nodejs.channel.send({
         type: 'decrypt-file',
@@ -75,16 +96,13 @@ function DecryptFile() {
 
   const downloadDecryptedFile = async ({ path }) => {
     try {
-      const filename = decryptedFileName;
-      await Share.open({
-        title: filename,
-        filename,
-        url: `file://${decryptedFilePath}`,
-        type: decryptedFileMimeType || types.plainText,
-      });
+      await shareFile(
+        decryptedFileName,
+        decryptedFilePath,
+        decryptedFileMimeType || types.plainText
+      );
 
       await RNFS.unlink(path);
-      await RNFS.unlink(decryptedFilePath);
       setEncryptedFile(null);
       setDecryptedFilePath(null);
       toast.show({ title: 'Downloaded.' });
@@ -108,7 +126,9 @@ function DecryptFile() {
           <>
             <Text bold>Decrypted file:</Text>
             <Text>{decryptedFileName}</Text>
-            <Button variant="outline"  onPress={() => downloadDecryptedFile({ path })}>Download</Button>
+            <Button variant="outline" onPress={() => downloadDecryptedFile({ path })}>
+              Download
+            </Button>
           </>
         )}
       </VStack>

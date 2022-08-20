@@ -53,6 +53,7 @@ function EncryptDecryptText({ jumpTo }) {
     return () => {
       nodejs.channel.removeListener('message', listner);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const encryptText = async message => {

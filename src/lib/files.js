@@ -1,4 +1,24 @@
 import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
+
+export const filePaths = {
+  encrypted: `${RNFS.CachesDirectoryPath}/encrypted`,
+  decrypted: `${RNFS.CachesDirectoryPath}/decrypted`,
+};
+
+export async function makeEncryptedFolder() {
+  const exists = await RNFS.exists(filePaths.encrypted);
+  if (!exists) {
+    await RNFS.mkdir(filePaths.encrypted, { NSURLIsExcludedFromBackupKey: true });
+  }
+}
+
+export async function makeDecryptedFolder() {
+  const exists = await RNFS.exists(filePaths.decrypted);
+  if (!exists) {
+    await RNFS.mkdir(filePaths.decrypted, { NSURLIsExcludedFromBackupKey: true });
+  }
+}
 
 export async function getFolderSize(folderPath) {
   try {
@@ -61,4 +81,13 @@ export function extractFilePath(path) {
 
 export function extractFileNameFromPath(path) {
   return path.split('/').pop();
+}
+
+export async function shareFile(fileName, filePath, mimeType) {
+  await Share.open({
+    title: fileName,
+    filename: fileName,
+    url: `file://${filePath}`,
+    type: mimeType,
+  });
 }

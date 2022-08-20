@@ -9,7 +9,6 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:import/recommended',
-    '@react-native-community',
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -21,5 +20,7 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'import/no-named-as-default-member': 0,
+    'react/prop-types': 0,
+    'no-empty': 0,
   },
 };

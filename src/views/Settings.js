@@ -12,42 +12,24 @@ import {
   useToast,
   VStack,
 } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+// eslint-disable-next-line import/namespace
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
-import RNFS from 'react-native-fs';
 
 import paypal from '../assets/paypal.png';
 import AppBar from '../components/AppBar';
+import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import PlatformWrapper from '../components/PlatformWrapper';
-import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail, platforms } from '../lib/constants';
 import { getStoreLink } from '../lib/device';
-import { bytesToMB, emptyFolder, getFolderSize } from '../lib/files';
-import { routeNames } from '../router/Router';
 
 const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.ios}\n\nAndroid: ${appStoreLink.android}`;
 
 function Settings({ currentRoute }) {
-  const colors = useColors();
   const toast = useToast();
-  const [cacheSize, setCacheSize] = useState(0);
-
-  useEffect(() => {
-    if (currentRoute === routeNames.settings) {
-      getFolderSize(RNFS.CachesDirectoryPath).then(size => {
-        setCacheSize(bytesToMB(size));
-      });
-    }
-  }, [currentRoute]);
-
-  async function handleClearCache() {
-    await emptyFolder(RNFS.CachesDirectoryPath);
-    const newSize = await getFolderSize(RNFS.CachesDirectoryPath);
-    setCacheSize(bytesToMB(newSize));
-  }
 
   return (
     <>
@@ -59,14 +41,11 @@ function Settings({ currentRoute }) {
             Open source, no tracking and free forever.
           </Heading>
 
-          <HStack alignItems="center" space="sm">
-            <Text>Cache: {cacheSize}MB</Text>
-            {cacheSize > 0 && (
-              <Button size="sm" onPress={handleClearCache}>
-                Clear cache
-              </Button>
-            )}
-          </HStack>
+          <Divider />
+
+          <Caches currentRoute={currentRoute} />
+
+          <Divider />
 
           <HStack space="1">
             <Text>Enjoying the app?</Text>

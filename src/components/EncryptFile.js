@@ -2,10 +2,16 @@ import { Alert, Box, Button, Heading, Text, useToast, VStack } from 'native-base
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
-import Share from 'react-native-share';
 
 import { platforms } from '../lib/constants';
-import { extractFileNameFromPath, extractFilePath } from '../lib/files';
+import {
+  shareFile,
+  extractFileNameFromPath,
+  extractFilePath,
+  filePaths,
+  makeEncryptedFolder,
+} from '../lib/files';
+import { routeNames } from '../router/Router';
 import { useStore } from '../store/store';
 import PlatformWrapper from './PlatformWrapper';
 
@@ -14,7 +20,7 @@ const nodejs = require('nodejs-mobile-react-native');
 const MAX_FILE_SIZE_MEGA_BYTES = 20;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
 
-function EncryptFile() {
+function EncryptFile({ currentRoute }) {
   const toast = useToast();
   const password = useStore(state => state.masterPassword);
   const [isEncrypting, setIsEncrypting] = useState(false);
@@ -28,15 +34,17 @@ function EncryptFile() {
         setIsEncrypting(false);
         try {
           if (msg.payload.data) {
-            const newPath = `${msg.payload.path}.preupload`;
+            const fileName = `${extractFileNameFromPath(msg.payload.path)}.preupload`;
+            await makeEncryptedFolder();
+            const newPath = `${filePaths.encrypted}/${fileName}`;
             await RNFS.writeFile(newPath, msg.payload.data, 'base64');
-            setEncryptedFileName(extractFileNameFromPath(newPath));
+            setEncryptedFileName(fileName);
             setEncryptedFilePath(newPath);
           } else {
             toast.show({ title: 'Encrypt file failed.' });
           }
         } catch (e) {
-          console.log('error', e);
+          console.log('save encrypted file error', e);
         }
       }
     };
@@ -45,7 +53,17 @@ function EncryptFile() {
     return () => {
       nodejs.channel.removeListener('message', listener);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (currentRoute === routeNames.encryptFile) {
+      setIsEncrypting(false);
+      setOriginalFile(null);
+      setEncryptedFileName(null);
+      setEncryptedFilePath(null);
+    }
+  }, [currentRoute]);
 
   async function pickOrignalFile() {
     try {
@@ -81,17 +99,9 @@ function EncryptFile() {
 
   const downloadEncryptedFile = async ({ path }) => {
     try {
-      const filename = encryptedFileName;
-
-      await Share.open({
-        title: filename,
-        filename,
-        url: `file://${encryptedFilePath}`,
-        type: types.plainText,
-      });
+      await shareFile(encryptedFileName, encryptedFilePath, types.plainText);
 
       await RNFS.unlink(path);
-      await RNFS.unlink(encryptedFilePath);
       setOriginalFile(null);
       setEncryptedFilePath(null);
       toast.show({ title: 'Downloaded.' });

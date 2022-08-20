@@ -7,7 +7,7 @@ import DecryptFile from '../components/DecryptFile';
 import EncryptFile from '../components/EncryptFile';
 import PasswordAlert from '../components/PasswordAlert';
 
-function EncryptDecryptFile({ jumpTo }) {
+function EncryptDecryptFile({ currentRoute, jumpTo }) {
   return (
     <>
       <AppBar title="Encrypt & decrypt file" />
@@ -15,11 +15,11 @@ function EncryptDecryptFile({ jumpTo }) {
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
 
-          <EncryptFile />
+          <EncryptFile currentRoute={currentRoute} />
 
           <Divider my={8} />
 
-          <DecryptFile />
+          <DecryptFile currentRoute={currentRoute} />
         </VStack>
       </ContentWrapper>
     </>
