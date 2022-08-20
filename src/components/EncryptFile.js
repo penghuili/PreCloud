@@ -137,7 +137,7 @@ function EncryptFile() {
           {`Pick any file to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
         </Box>
       </Alert>
-      <PlatformWrapper platform={platforms.ios}>
+      <PlatformWrapper for={platforms.ios}>
         <Alert w="100%" status="warning">
           <Text>
             And currently you can only pick files in the <Text highlight>Files</Text> app. You can

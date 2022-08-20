@@ -1,9 +1,11 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import {
+  Box,
   Button,
   Divider,
   Heading,
   HStack,
+  Image,
   Link,
   Popover,
   Text,
@@ -15,11 +17,13 @@ import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
 import RNFS from 'react-native-fs';
 
+import paypal from '../assets/paypal.png';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
+import PlatformWrapper from '../components/PlatformWrapper';
 import useColors from '../hooks/useColors';
-import { appStoreLink, myEmail } from '../lib/constants';
+import { appStoreLink, myEmail, platforms } from '../lib/constants';
 import { getStoreLink } from '../lib/device';
 import { bytesToMB, emptyFolder, getFolderSize } from '../lib/files';
 import { routeNames } from '../router/Router';
@@ -119,6 +123,18 @@ function Settings({ currentRoute }) {
           <Text>
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
           </Text>
+
+          <PlatformWrapper for={platforms.android}>
+            <Divider />
+
+            <VStack space="sm" mt="4">
+              <Text>Support me</Text>
+              <Link href="https://paypal.me/penghuili/">
+                <Image source={paypal} alt="Support with Paypal" />
+              </Link>
+              <Box h="8" />
+            </VStack>
+          </PlatformWrapper>
         </VStack>
       </ContentWrapper>
     </>
