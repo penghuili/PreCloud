@@ -1,6 +1,7 @@
 import { Button, HStack, IconButton, PresenceTransition, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import RNFS from 'react-native-fs';
+import useColors from '../hooks/useColors';
 
 import {
   bytesToMB,
@@ -24,6 +25,7 @@ async function readCachedFiles(path) {
 }
 
 function Caches({ currentRoute }) {
+  const colors = useColors();
   const encryptedFile = useStore(state => state.encryptedFile);
   const setEncryptedFile = useStore(state => state.setEncryptedFile);
   const decryptedFile = useStore(state => state.decryptedFile);
@@ -71,7 +73,12 @@ function Caches({ currentRoute }) {
         )}
         {hasCachedFile && (
           <IconButton
-            icon={<Icon name={showCaches ? 'chevron-up-sharp' : 'chevron-down-sharp'} />}
+            icon={
+              <Icon
+                name={showCaches ? 'chevron-up-sharp' : 'chevron-down-sharp'}
+                color={colors.text}
+              />
+            }
             onPress={() => {
               setShowCaches(!showCaches);
             }}

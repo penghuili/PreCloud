@@ -13,7 +13,6 @@ import {
   VStack,
 } from 'native-base';
 import React from 'react';
-// eslint-disable-next-line import/namespace
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
 
@@ -23,12 +22,14 @@ import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import PlatformToggle from '../components/PlatformToggle';
+import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail, platforms } from '../lib/constants';
 import { getStoreLink } from '../lib/device';
 
 const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.ios}\n\nAndroid: ${appStoreLink.android}`;
 
 function Settings({ currentRoute }) {
+  const colors = useColors();
   const toast = useToast();
 
   return (
@@ -67,7 +68,7 @@ function Settings({ currentRoute }) {
                 <Popover.Body>{recommendText}</Popover.Body>
                 <Popover.Footer justifyContent="flex-end">
                   <Button
-                    icon={<Icon name="copy-outline" />}
+                    icon={<Icon name="copy-outline" color={colors.text} />}
                     onPress={() => {
                       Clipboard.setString(recommendText);
                       toast.show({ title: 'Copied!' });

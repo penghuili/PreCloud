@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
+import useColors from '../hooks/useColors';
 import { platforms } from '../lib/constants';
 import { androidDownloadFilePaths, makeAndroidDownloadFolders, shareFile } from '../lib/files';
 import { LocalStorage, mimeTypePrefix } from '../lib/localstorage';
@@ -10,6 +11,7 @@ import Icon from './Icon';
 import PlatformToggle from './PlatformToggle';
 
 function FileItem({ file, forEncrypt, onDelete }) {
+  const colors = useColors();
   const toast = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -73,7 +75,7 @@ function FileItem({ file, forEncrypt, onDelete }) {
       <HStack alignItems="center">
         <PlatformToggle for={platforms.android}>
           <IconButton
-            icon={<Icon name="download-outline" size={20} />}
+            icon={<Icon name="download-outline" size={20} color={colors.text} />}
             size="sm"
             variant="subtle"
             mr="2"
@@ -82,14 +84,14 @@ function FileItem({ file, forEncrypt, onDelete }) {
           />
         </PlatformToggle>
         <IconButton
-          icon={<Icon name="share-outline" size={20} />}
+          icon={<Icon name="share-outline" size={20} color={colors.text} />}
           size="sm"
           variant="subtle"
           mr="2"
           onPress={() => handleShareFile()}
         />
         <IconButton
-          icon={<Icon name="trash-outline" size={20} />}
+          icon={<Icon name="trash-outline" size={20} color={colors.text} />}
           size="sm"
           variant="subtle"
           onPress={() => handleDeleteFile()}

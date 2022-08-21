@@ -87,7 +87,10 @@ function EncryptDecryptText({ jumpTo }) {
           <Popover
             trigger={triggerProps => {
               return (
-                <IconButton {...triggerProps} icon={<Icon name="information-circle-outline" />} />
+                <IconButton
+                  {...triggerProps}
+                  icon={<Icon name="information-circle-outline" color={colors.text} />}
+                />
               );
             }}
           >
@@ -101,7 +104,7 @@ function EncryptDecryptText({ jumpTo }) {
 
         <HStack space="sm">
           <IconButton
-            icon={<Icon name="clipboard-outline" />}
+            icon={<Icon name="clipboard-outline" color={colors.text} />}
             isDisabled={!password}
             onPress={async () => {
               const copied = await Clipboard.getString();
@@ -114,7 +117,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="copy-outline" />}
+            icon={<Icon name="copy-outline" color={colors.text} />}
             isDisabled={!password || !text}
             onPress={() => {
               Clipboard.setString(text);
@@ -122,7 +125,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="close-outline" />}
+            icon={<Icon name="close-outline" color={colors.text} />}
             isDisabled={!password || !text}
             onPress={() => {
               setText('');
@@ -150,7 +153,10 @@ function EncryptDecryptText({ jumpTo }) {
           <Popover
             trigger={triggerProps => {
               return (
-                <IconButton {...triggerProps} icon={<Icon name="information-circle-outline" />} />
+                <IconButton
+                  {...triggerProps}
+                  icon={<Icon name="information-circle-outline" color={colors.text} />}
+                />
               );
             }}
           >
@@ -164,7 +170,7 @@ function EncryptDecryptText({ jumpTo }) {
 
         <HStack space="sm">
           <IconButton
-            icon={<Icon name="clipboard-outline" />}
+            icon={<Icon name="clipboard-outline" color={colors.text} />}
             isDisabled={!password}
             onPress={async () => {
               const copied = await Clipboard.getString();
@@ -177,7 +183,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="copy-outline" />}
+            icon={<Icon name="copy-outline" color={colors.text} />}
             isDisabled={!password || !encryptedText}
             onPress={() => {
               Clipboard.setString(encryptedText);
@@ -185,7 +191,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="close-outline" />}
+            icon={<Icon name="close-outline" color={colors.text} />}
             isDisabled={!password || !encryptedText}
             onPress={() => {
               setEncryptedText('');
