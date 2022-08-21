@@ -33,16 +33,19 @@ export async function makeAndroidDownloadFolders() {
   const precloudFolderExists = await RNFS.exists(precloudFolder);
   if (!precloudFolderExists) {
     await RNFS.mkdir(precloudFolder);
+    console.log('precloud folder', precloudFolder)
   }
 
   const encryptedExists = await RNFS.exists(androidDownloadFilePaths.encrypted);
   if (!encryptedExists) {
     await RNFS.mkdir(androidDownloadFilePaths.encrypted);
+    console.log('encrypted folder', androidDownloadFilePaths.encrypted)
   }
 
   const decryptedExists = await RNFS.exists(androidDownloadFilePaths.decrypted);
   if (!decryptedExists) {
     await RNFS.mkdir(androidDownloadFilePaths.decrypted);
+    console.log('decrypted folder', androidDownloadFilePaths.decrypted)
   }
 }
 
