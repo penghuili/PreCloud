@@ -60,7 +60,7 @@ function Passwords() {
 
     return (
       <>
-        <Text bold>Your master password is saved in secure storage.</Text>
+        <Text bold>Your master password is saved in secure storage on your phone.</Text>
         <Button variant="outline" onPress={() => setIsUpdating(true)}>
           Update
         </Button>
