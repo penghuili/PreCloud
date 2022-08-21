@@ -24,8 +24,8 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 ## What's coming next:
 - [x] Release Android version;
 - [x] Release iOS version;
+- [ ] Buy the precloud.me domain, if there are 1000 app downloads;
 - [ ] Create web version. So you can also encrypt and decrypt on your laptop;
-- [ ] Buy the precloud.me domain;
 - [ ] Encrypt large files. Currently you can encrypt files that are smaller than 20MB;
 
 ---
