@@ -1,22 +1,48 @@
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
+import { isAndroid } from './device';
 
-export const filePaths = {
+export const internalFilePaths = {
   encrypted: `${RNFS.CachesDirectoryPath}/encrypted`,
   decrypted: `${RNFS.CachesDirectoryPath}/decrypted`,
 };
 
-export async function makeEncryptedFolder() {
-  const exists = await RNFS.exists(filePaths.encrypted);
-  if (!exists) {
-    await RNFS.mkdir(filePaths.encrypted, { NSURLIsExcludedFromBackupKey: true });
+const precloudFolder = `${RNFS.DownloadDirectoryPath}/PreCloud`;
+export const androidDownloadFilePaths = {
+  encrypted: `${precloudFolder}/encrypted`,
+  decrypted: `${precloudFolder}/decrypted`,
+};
+
+export async function makeInternalFolders() {
+  const encryptedExists = await RNFS.exists(internalFilePaths.encrypted);
+  if (!encryptedExists) {
+    await RNFS.mkdir(internalFilePaths.encrypted, { NSURLIsExcludedFromBackupKey: true });
+  }
+
+  const decryptedExists = await RNFS.exists(internalFilePaths.decrypted);
+  if (!decryptedExists) {
+    await RNFS.mkdir(internalFilePaths.decrypted, { NSURLIsExcludedFromBackupKey: true });
   }
 }
 
-export async function makeDecryptedFolder() {
-  const exists = await RNFS.exists(filePaths.decrypted);
-  if (!exists) {
-    await RNFS.mkdir(filePaths.decrypted, { NSURLIsExcludedFromBackupKey: true });
+export async function makeAndroidDownloadFolders() {
+  if (!isAndroid()) {
+    return;
+  }
+
+  const precloudFolderExists = await RNFS.exists(precloudFolder);
+  if (!precloudFolderExists) {
+    await RNFS.mkdir(precloudFolder);
+  }
+
+  const encryptedExists = await RNFS.exists(androidDownloadFilePaths.encrypted);
+  if (!encryptedExists) {
+    await RNFS.mkdir(androidDownloadFilePaths.encrypted);
+  }
+
+  const decryptedExists = await RNFS.exists(androidDownloadFilePaths.decrypted);
+  if (!decryptedExists) {
+    await RNFS.mkdir(androidDownloadFilePaths.decrypted);
   }
 }
 
@@ -90,4 +116,12 @@ export async function shareFile(fileName, filePath, mimeType) {
     url: `file://${filePath}`,
     type: mimeType,
   });
+}
+
+export async function deleteFile(path) {
+  try {
+    await RNFS.unlink(path);
+  } catch (e) {
+    console.log(`delete ${path} failed`, e);
+  }
 }

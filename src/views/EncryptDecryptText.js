@@ -53,7 +53,7 @@ function EncryptDecryptText({ jumpTo }) {
     return () => {
       nodejs.channel.removeListener('message', listner);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const encryptText = async message => {
@@ -87,10 +87,7 @@ function EncryptDecryptText({ jumpTo }) {
           <Popover
             trigger={triggerProps => {
               return (
-                <IconButton
-                  {...triggerProps}
-                  icon={<Icon name="information-circle-outline" size={24} color={colors.text} />}
-                />
+                <IconButton {...triggerProps} icon={<Icon name="information-circle-outline" />} />
               );
             }}
           >
@@ -104,7 +101,7 @@ function EncryptDecryptText({ jumpTo }) {
 
         <HStack space="sm">
           <IconButton
-            icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
+            icon={<Icon name="clipboard-outline" />}
             isDisabled={!password}
             onPress={async () => {
               const copied = await Clipboard.getString();
@@ -117,7 +114,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="copy-outline" size={24} color={colors.text} />}
+            icon={<Icon name="copy-outline" />}
             isDisabled={!password || !text}
             onPress={() => {
               Clipboard.setString(text);
@@ -125,7 +122,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="close-outline" size={24} color={colors.text} />}
+            icon={<Icon name="close-outline" />}
             isDisabled={!password || !text}
             onPress={() => {
               setText('');
@@ -133,7 +130,7 @@ function EncryptDecryptText({ jumpTo }) {
           />
           <Button
             isDisabled={!password || !text}
-            endIcon={<Icon name="chevron-down-sharp" size={24} color={colors.white} />}
+            endIcon={<Icon name="chevron-down-sharp" color={colors.white} />}
             onPress={() => encryptText(text)}
           >
             Encrypt
@@ -153,10 +150,7 @@ function EncryptDecryptText({ jumpTo }) {
           <Popover
             trigger={triggerProps => {
               return (
-                <IconButton
-                  {...triggerProps}
-                  icon={<Icon name="information-circle-outline" size={24} color={colors.text} />}
-                />
+                <IconButton {...triggerProps} icon={<Icon name="information-circle-outline" />} />
               );
             }}
           >
@@ -170,7 +164,7 @@ function EncryptDecryptText({ jumpTo }) {
 
         <HStack space="sm">
           <IconButton
-            icon={<Icon name="clipboard-outline" size={24} color={colors.text} />}
+            icon={<Icon name="clipboard-outline" />}
             isDisabled={!password}
             onPress={async () => {
               const copied = await Clipboard.getString();
@@ -183,7 +177,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="copy-outline" size={24} color={colors.text} />}
+            icon={<Icon name="copy-outline" />}
             isDisabled={!password || !encryptedText}
             onPress={() => {
               Clipboard.setString(encryptedText);
@@ -191,7 +185,7 @@ function EncryptDecryptText({ jumpTo }) {
             }}
           />
           <IconButton
-            icon={<Icon name="close-outline" size={24} color={colors.text} />}
+            icon={<Icon name="close-outline" />}
             isDisabled={!password || !encryptedText}
             onPress={() => {
               setEncryptedText('');
@@ -199,7 +193,7 @@ function EncryptDecryptText({ jumpTo }) {
           />
           <Button
             isDisabled={!password || !encryptedText}
-            endIcon={<Icon name="chevron-up-sharp" size={24} color={colors.white} />}
+            endIcon={<Icon name="chevron-up-sharp" color={colors.white} />}
             onPress={() => decryptText(encryptedText)}
           >
             Decrypt

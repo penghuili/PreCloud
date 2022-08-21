@@ -22,7 +22,7 @@ import AppBar from '../components/AppBar';
 import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
-import PlatformWrapper from '../components/PlatformWrapper';
+import PlatformToggle from '../components/PlatformToggle';
 import { appStoreLink, myEmail, platforms } from '../lib/constants';
 import { getStoreLink } from '../lib/device';
 
@@ -67,7 +67,7 @@ function Settings({ currentRoute }) {
                 <Popover.Body>{recommendText}</Popover.Body>
                 <Popover.Footer justifyContent="flex-end">
                   <Button
-                    icon={<Icon name="copy-outline" size={24} />}
+                    icon={<Icon name="copy-outline" />}
                     onPress={() => {
                       Clipboard.setString(recommendText);
                       toast.show({ title: 'Copied!' });
@@ -103,7 +103,7 @@ function Settings({ currentRoute }) {
             {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
           </Text>
 
-          <PlatformWrapper for={platforms.android}>
+          <PlatformToggle for={platforms.android}>
             <Divider />
 
             <VStack space="sm" mt="4">
@@ -113,7 +113,7 @@ function Settings({ currentRoute }) {
               </Link>
               <Box h="8" />
             </VStack>
-          </PlatformWrapper>
+          </PlatformToggle>
         </VStack>
       </ContentWrapper>
     </>

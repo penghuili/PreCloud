@@ -17,6 +17,7 @@ function App() {
     nodejs.start('main.js');
     SplashScreen.hide();
     getMasterPassword();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

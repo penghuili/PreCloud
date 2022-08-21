@@ -5,49 +5,62 @@ import RNFS from 'react-native-fs';
 
 import { platforms } from '../lib/constants';
 import {
-  shareFile,
+  deleteFile,
   extractFileNameFromPath,
   extractFilePath,
-  filePaths,
-  makeEncryptedFolder,
+  internalFilePaths,
+  makeInternalFolders,
 } from '../lib/files';
-import { routeNames } from '../router/Router';
 import { useStore } from '../store/store';
-import PlatformWrapper from './PlatformWrapper';
+import FileItem from './FileItem';
+import PlatformToggle from './PlatformToggle';
 
 const nodejs = require('nodejs-mobile-react-native');
 
 const MAX_FILE_SIZE_MEGA_BYTES = 20;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
+let pickedFile = null;
 
-function EncryptFile({ currentRoute }) {
+async function resetPickedFile() {
+  if (pickedFile) {
+    await deleteFile(pickedFile.path);
+    pickedFile = null;
+  }
+}
+
+function EncryptFile() {
   const toast = useToast();
   const password = useStore(state => state.masterPassword);
+  const encryptedFile = useStore(state => state.encryptedFile);
+  const setEncryptedFile = useStore(state => state.setEncryptedFile);
+
   const [isEncrypting, setIsEncrypting] = useState(false);
-  const [originalFile, setOriginalFile] = useState(null);
-  const [encryptedFileName, setEncryptedFileName] = useState(null);
-  const [encryptedFilePath, setEncryptedFilePath] = useState(null);
 
   useEffect(() => {
     const listener = async msg => {
       if (msg.type === 'encrypted-file') {
-        setIsEncrypting(false);
         try {
           if (msg.payload.data) {
+            await makeInternalFolders();
+
             const fileName = `${extractFileNameFromPath(msg.payload.path)}.preupload`;
-            await makeEncryptedFolder();
-            const newPath = `${filePaths.encrypted}/${fileName}`;
+            const newPath = `${internalFilePaths.encrypted}/${fileName}`;
             await RNFS.writeFile(newPath, msg.payload.data, 'base64');
-            setEncryptedFileName(fileName);
-            setEncryptedFilePath(newPath);
+
+            setEncryptedFile({ fileName, path: newPath });
           } else {
             toast.show({ title: 'Encrypt file failed.' });
+            console.log('Encrypt file failed.', msg.payload.error);
           }
         } catch (e) {
           console.log('save encrypted file error', e);
         }
+
+        await resetPickedFile();
+        setIsEncrypting(false);
       }
     };
+
     nodejs.channel.addListener('message', listener);
 
     return () => {
@@ -56,19 +69,10 @@ function EncryptFile({ currentRoute }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (currentRoute === routeNames.encryptFile) {
-      setIsEncrypting(false);
-      setOriginalFile(null);
-      setEncryptedFileName(null);
-      setEncryptedFilePath(null);
-    }
-  }, [currentRoute]);
-
   async function pickOrignalFile() {
     try {
-      setOriginalFile(null);
-      setEncryptedFilePath(null);
+      pickedFile = null;
+      setEncryptedFile(null);
 
       const result = await DocumentPicker.pick({
         allowMultiSelection: false,
@@ -83,7 +87,7 @@ function EncryptFile({ currentRoute }) {
         return;
       }
 
-      setOriginalFile(file);
+      pickedFile = file;
 
       setIsEncrypting(true);
       const fileBase64 = await RNFS.readFile(file.path, 'base64');
@@ -92,47 +96,15 @@ function EncryptFile({ currentRoute }) {
         data: { fileBase64, password, path: file.path, mimeType: file.type || types.plainText },
       });
     } catch (e) {
+      await resetPickedFile();
       setIsEncrypting(false);
-      console.log(e);
+      console.log('Pick file failed', e);
     }
   }
 
-  const downloadEncryptedFile = async ({ path }) => {
-    try {
-      await shareFile(encryptedFileName, encryptedFilePath, types.plainText);
-
-      await RNFS.unlink(path);
-      setOriginalFile(null);
-      setEncryptedFilePath(null);
-      toast.show({ title: 'Downloaded.' });
-    } catch (error) {
-      console.log(error);
-      toast.show({ title: 'Download file failed.' });
-    }
-  };
-
-  function renderFiles() {
-    if (!originalFile) {
-      return null;
-    }
-
-    const { path, name } = originalFile;
-    return (
-      <VStack space="sm" alignItems="center" px={4} py={4}>
-        <Text bold>Selected file:</Text>
-        <Text>{name}</Text>
-
-        {encryptedFilePath && (
-          <>
-            <Text bold>Encrypted file:</Text>
-            <Text>{encryptedFileName}</Text>
-            <Button variant="outline" onPress={() => downloadEncryptedFile({ path })}>
-              Download
-            </Button>
-          </>
-        )}
-      </VStack>
-    );
+  async function handleDeleteFile() {
+    setEncryptedFile(null);
+    await resetPickedFile();
   }
 
   return (
@@ -147,18 +119,25 @@ function EncryptFile({ currentRoute }) {
           {`Pick any file to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
         </Box>
       </Alert>
-      <PlatformWrapper for={platforms.ios}>
+      <PlatformToggle for={platforms.ios}>
         <Alert w="100%" status="warning">
           <Text>
             And currently you can only pick files in the <Text highlight>Files</Text> app. You can
-            firstly move file or image by sharing it -&gt; <Text bold>Save to Files</Text>
+            move a file or an image by <Text bold>Sharing it</Text> -&gt;{' '}
+            <Text bold>Save to Files</Text>.
           </Text>
         </Alert>
-      </PlatformWrapper>
+      </PlatformToggle>
       <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickOrignalFile}>
         Pick a file to encrypt
       </Button>
-      {renderFiles()}
+
+      {!!encryptedFile && (
+        <VStack space="sm" alignItems="center" px={4} py={4}>
+          <Text bold>Encrypted file:</Text>
+          <FileItem file={encryptedFile} forEncrypt onDelete={handleDeleteFile} />
+        </VStack>
+      )}
     </VStack>
   );
 }

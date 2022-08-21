@@ -1,4 +1,4 @@
-import { Divider, VStack } from 'native-base';
+import { Box, Divider, VStack } from 'native-base';
 import React from 'react';
 
 import AppBar from '../components/AppBar';
@@ -20,6 +20,8 @@ function EncryptDecryptFile({ currentRoute, jumpTo }) {
           <Divider my={8} />
 
           <DecryptFile currentRoute={currentRoute} />
+
+          <Box h="8" />
         </VStack>
       </ContentWrapper>
     </>

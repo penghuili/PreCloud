@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import { platforms } from '../lib/constants';
 
-function PlatformWrapper({ children, for: forPlatform }) {
+function PlatformToggle({ children, for: forPlatform }) {
   if (
     (Platform.OS === platforms.android && forPlatform === platforms.android) ||
     (Platform.OS === platforms.ios && forPlatform === platforms.ios)
@@ -12,4 +12,4 @@ function PlatformWrapper({ children, for: forPlatform }) {
   return null;
 }
 
-export default PlatformWrapper;
+export default PlatformToggle;

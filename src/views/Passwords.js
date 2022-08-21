@@ -61,7 +61,9 @@ function Passwords() {
     return (
       <>
         <Text bold>Your master password is saved in secure storage.</Text>
-        <Button variant="outline" onPress={() => setIsUpdating(true)}>Update</Button>
+        <Button variant="outline" onPress={() => setIsUpdating(true)}>
+          Update
+        </Button>
       </>
     );
   }
@@ -138,7 +140,7 @@ function Passwords() {
                   textAlign: 'center',
                 }}
               >
-                Save your password in a password manager. If you lose your password, You can't
+                Save your password in a password manager. If you lose your password, You can not
                 decrypt your texts or files.
               </Box>
             </VStack>

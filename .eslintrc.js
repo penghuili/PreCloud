@@ -22,5 +22,6 @@ module.exports = {
     'import/no-named-as-default-member': 0,
     'react/prop-types': 0,
     'no-empty': 0,
+    'import/namespace': 0,
   },
 };

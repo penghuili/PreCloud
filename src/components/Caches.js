@@ -1,26 +1,17 @@
-import {
-  Button,
-  HStack,
-  IconButton,
-  PresenceTransition,
-  Text,
-  useToast,
-  VStack,
-} from 'native-base';
+import { Button, HStack, IconButton, PresenceTransition, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
 import {
   bytesToMB,
   emptyFolder,
   extractFileNameFromPath,
-  filePaths,
   getFolderSize,
-  shareFile,
+  internalFilePaths,
 } from '../lib/files';
-import { LocalStorage, mimeTypePrefix } from '../lib/localstorage';
 import { routeNames } from '../router/Router';
+import { useStore } from '../store/store';
+import FileItem from './FileItem';
 import Icon from './Icon';
 
 async function readCachedFiles(path) {
@@ -33,7 +24,11 @@ async function readCachedFiles(path) {
 }
 
 function Caches({ currentRoute }) {
-  const toast = useToast();
+  const encryptedFile = useStore(state => state.encryptedFile);
+  const setEncryptedFile = useStore(state => state.setEncryptedFile);
+  const decryptedFile = useStore(state => state.decryptedFile);
+  const setDecryptedFile = useStore(state => state.setDecryptedFile);
+
   const [cacheSize, setCacheSize] = useState(0);
   const [encryptedFiles, setEncryptedFiles] = useState([]);
   const [decryptedFiles, setDecryptedFiles] = useState([]);
@@ -50,14 +45,16 @@ function Caches({ currentRoute }) {
       setCacheSize(bytesToMB(size));
     });
 
-    readCachedFiles(filePaths.encrypted).then(setEncryptedFiles);
-    readCachedFiles(filePaths.decrypted).then(setDecryptedFiles);
+    readCachedFiles(internalFilePaths.encrypted).then(setEncryptedFiles);
+    readCachedFiles(internalFilePaths.decrypted).then(setDecryptedFiles);
   }
 
   async function handleClearCache() {
     await emptyFolder(RNFS.CachesDirectoryPath);
     await readFilesInCache();
     setShowCaches(false);
+    setEncryptedFile(null);
+    setDecryptedFile(null);
   }
 
   const hasCachedFile = encryptedFiles.length > 0 || decryptedFiles.length > 0;
@@ -74,7 +71,7 @@ function Caches({ currentRoute }) {
         )}
         {hasCachedFile && (
           <IconButton
-            icon={<Icon name={showCaches ? 'chevron-up-sharp' : 'chevron-down-sharp'} size={24} />}
+            icon={<Icon name={showCaches ? 'chevron-up-sharp' : 'chevron-down-sharp'} />}
             onPress={() => {
               setShowCaches(!showCaches);
             }}
@@ -102,26 +99,17 @@ function Caches({ currentRoute }) {
                   Encrypted files
                 </Text>
                 {encryptedFiles.map(file => (
-                  <VStack key={file.fileName}>
-                    <Text w="xs">{file.fileName}</Text>
-                    <HStack alignItems="center">
-                      <IconButton
-                        icon={<Icon name="download-outline" size={24} />}
-                        onPress={async () => {
-                          await shareFile(file.fileName, file.path, types.plainText);
-                          toast.show({ title: 'Downloaded.' });
-                        }}
-                        mr="4"
-                      />
-                      <IconButton
-                        icon={<Icon name="trash-outline" size={24} />}
-                        onPress={async () => {
-                          await RNFS.unlink(file.path);
-                          await readFilesInCache();
-                        }}
-                      />
-                    </HStack>
-                  </VStack>
+                  <FileItem
+                    key={file.fileName}
+                    file={file}
+                    forEncrypt
+                    onDelete={async () => {
+                      if (encryptedFile && encryptedFile.fileName === file.fileName) {
+                        setEncryptedFile(null);
+                      }
+                      await readFilesInCache();
+                    }}
+                  />
                 ))}
               </>
             )}
@@ -132,34 +120,17 @@ function Caches({ currentRoute }) {
                   Decrypted files
                 </Text>
                 {decryptedFiles.map(file => (
-                  <VStack key={file.fileName}>
-                    <Text w="xs">{file.fileName}</Text>
-                    <HStack alignItems="center">
-                      <IconButton
-                        icon={<Icon name="download-outline" size={24} />}
-                        onPress={async () => {
-                          const mimeType = await LocalStorage.get(
-                            `${mimeTypePrefix}${file.fileName}`
-                          );
-                          if (!mimeType) {
-                            toast.show({ title: 'Download failed.' });
-                          } else {
-                            await shareFile(file.fileName, file.path, mimeType);
-                            toast.show({ title: 'Downloaded.' });
-                          }
-                        }}
-                        mr="4"
-                      />
-                      <IconButton
-                        icon={<Icon name="trash-outline" size={24} />}
-                        onPress={async () => {
-                          await RNFS.unlink(file.path);
-                          await LocalStorage.remove(`${mimeTypePrefix}${file.fileName}`);
-                          await readFilesInCache();
-                        }}
-                      />
-                    </HStack>
-                  </VStack>
+                  <FileItem
+                    key={file.fileName}
+                    file={file}
+                    forEncrypt
+                    onDelete={async () => {
+                      if (decryptedFile && decryptedFile.fileName === file.fileName) {
+                        setDecryptedFile(null);
+                      }
+                      await readFilesInCache();
+                    }}
+                  />
                 ))}
               </>
             )}

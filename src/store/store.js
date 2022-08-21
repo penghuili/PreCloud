@@ -8,4 +8,10 @@ export const useStore = create(set => ({
     const p = await getPassword();
     set({ masterPassword: p || '' });
   },
+
+  encryptedFile: null,
+  setEncryptedFile: file => set({ encryptedFile: file }),
+
+  decryptedFile: null,
+  setDecryptedFile: file => set({ decryptedFile: file }),
 }));
