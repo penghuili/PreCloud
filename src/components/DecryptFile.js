@@ -82,6 +82,12 @@ function DecryptFile() {
         copyTo: 'cachesDirectory',
       });
       const file = { ...result[0], path: extractFilePath(result[0].fileCopyUri) };
+      if (!file.name.endsWith('.precloud')) {
+        toast.show({ title: 'Please only pick file ending with .precloud' });
+        await RNFS.unlink(file.path);
+        return;
+      }
+
       pickedFile = file;
 
       setIsDecrypting(true);
@@ -118,7 +124,7 @@ function DecryptFile() {
       <Button isDisabled={!password} isLoading={isDecrypting} onPress={pickEncryptedFile}>
         Pick a file to decrypt
       </Button>
-   
+
       {!!decryptedFile && (
         <VStack space="sm" alignItems="center" px={4} py={4}>
           <Text bold>Decrypted file:</Text>
