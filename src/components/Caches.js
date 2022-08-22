@@ -15,7 +15,7 @@ import { useStore } from '../store/store';
 import FileItem from './FileItem';
 import Icon from './Icon';
 
-async function readFilesInPath(path) {
+async function readFilesInFolder(path) {
   try {
     const files = await RNFS.readDir(path);
     return (files || []).map(file => ({ ...file, fileName: extractFileNameFromPath(file.path) }));
@@ -47,8 +47,14 @@ function Caches({ currentRoute }) {
       setCacheSize(bytesToMB(size));
     });
 
-    readFilesInPath(internalFilePaths.encrypted).then(setEncryptedFiles);
-    readFilesInPath(internalFilePaths.decrypted).then(setDecryptedFiles);
+    readFilesInFolder(internalFilePaths.encrypted).then(files => {
+      console.log('encrypted', files)
+      setEncryptedFiles(files);
+    });
+    readFilesInFolder(internalFilePaths.decrypted).then(files => {
+      console.log('decrypted', files)
+      setDecryptedFiles(files);
+    });
   }
 
   async function handleClearCache() {

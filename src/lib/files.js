@@ -16,12 +16,12 @@ export const androidDownloadFilePaths = {
 export async function makeInternalFolders() {
   const encryptedExists = await RNFS.exists(internalFilePaths.encrypted);
   if (!encryptedExists) {
-    await RNFS.mkdir(internalFilePaths.encrypted, { NSURLIsExcludedFromBackupKey: true });
+    await RNFS.mkdir(internalFilePaths.encrypted);
   }
 
   const decryptedExists = await RNFS.exists(internalFilePaths.decrypted);
   if (!decryptedExists) {
-    await RNFS.mkdir(internalFilePaths.decrypted, { NSURLIsExcludedFromBackupKey: true });
+    await RNFS.mkdir(internalFilePaths.decrypted);
   }
 }
 
