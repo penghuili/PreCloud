@@ -2,6 +2,7 @@ import { HStack, IconButton, Text, useToast, VStack } from 'native-base';
 import React, { useState } from 'react';
 import { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
+import FileViewer from 'react-native-file-viewer';
 
 import useColors from '../hooks/useColors';
 import { platforms } from '../lib/constants';
@@ -14,6 +15,15 @@ function FileItem({ file, forEncrypt, onDelete }) {
   const colors = useColors();
   const toast = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
+
+  async function handleOpenFile() {
+    try {
+      const result = await FileViewer.open(file.path, { showOpenWithDialog: true });
+      console.log(result);
+    } catch (e) {
+      console.log('open file failed', e);
+    }
+  }
 
   const handleDownloadFileForAndroid = async () => {
     try {
@@ -70,9 +80,19 @@ function FileItem({ file, forEncrypt, onDelete }) {
   }
 
   return (
-    <VStack space="sm" alignItems="center">
+    <VStack space="sm" alignItems="flex-start">
       <Text w="xs">{file.fileName}</Text>
       <HStack alignItems="center">
+        {!forEncrypt && (
+          <IconButton
+            icon={<Icon name="book-outline" size={20} color={colors.text} />}
+            size="sm"
+            variant="subtle"
+            mr="2"
+            onPress={() => handleOpenFile()}
+          />
+        )}
+
         <PlatformToggle for={platforms.android}>
           <IconButton
             icon={<Icon name="download-outline" size={20} color={colors.text} />}

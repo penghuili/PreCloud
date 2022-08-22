@@ -82,7 +82,7 @@ function DecryptFile() {
         copyTo: 'cachesDirectory',
       });
       const file = { ...result[0], path: extractFilePath(result[0].fileCopyUri) };
-      if (!file.name.endsWith('.precloud')) {
+      if (!file.name.endsWith('precloud') && !file.name.endsWith('preupload')) {
         toast.show({ title: 'Please only pick file ending with .precloud' });
         await RNFS.unlink(file.path);
         return;

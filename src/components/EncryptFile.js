@@ -43,7 +43,7 @@ function EncryptFile() {
           if (msg.payload.data) {
             await makeInternalFolders();
 
-            const fileName = `${extractFileNameFromPath(msg.payload.path)}.preupload`;
+            const fileName = `${extractFileNameFromPath(msg.payload.path)}.precloud`;
             const newPath = `${internalFilePaths.encrypted}/${fileName}`;
             await RNFS.writeFile(newPath, msg.payload.data, 'base64');
 
