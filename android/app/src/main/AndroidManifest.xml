@@ -35,4 +35,46 @@
         </intent-filter>
       </activity>
     </application>
+    <queries>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="text/css" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="text/csv" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="image/gif" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="text/html" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="image/jpeg" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="application/json" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="image/png" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="application/pdf" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="text/plain" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="image/webp" />
+      </intent>
+    </queries>
 </manifest>

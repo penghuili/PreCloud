@@ -2,6 +2,20 @@ import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 import { isAndroid } from './device';
 
+export const viewableFileTypes = [
+  'css',
+  'csv',
+  'gif',
+  'html',
+  'jpeg',
+  'jpg',
+  'json',
+  'png',
+  'pdf',
+  'txt',
+  'webp',
+];
+
 export const internalFilePaths = {
   encrypted: `${RNFS.CachesDirectoryPath}/encrypted`,
   decrypted: `${RNFS.CachesDirectoryPath}/decrypted`,
@@ -33,19 +47,16 @@ export async function makeAndroidDownloadFolders() {
   const precloudFolderExists = await RNFS.exists(precloudFolder);
   if (!precloudFolderExists) {
     await RNFS.mkdir(precloudFolder);
-    console.log('precloud folder', precloudFolder)
   }
 
   const encryptedExists = await RNFS.exists(androidDownloadFilePaths.encrypted);
   if (!encryptedExists) {
     await RNFS.mkdir(androidDownloadFilePaths.encrypted);
-    console.log('encrypted folder', androidDownloadFilePaths.encrypted)
   }
 
   const decryptedExists = await RNFS.exists(androidDownloadFilePaths.decrypted);
   if (!decryptedExists) {
     await RNFS.mkdir(androidDownloadFilePaths.decrypted);
-    console.log('decrypted folder', androidDownloadFilePaths.decrypted)
   }
 }
 
@@ -110,6 +121,10 @@ export function extractFilePath(path) {
 
 export function extractFileNameFromPath(path) {
   return path.split('/').pop();
+}
+
+export function extractFileExtensionFromPath(path) {
+  return path.split('.').pop().toLowerCase();
 }
 
 export async function shareFile(fileName, filePath, mimeType) {

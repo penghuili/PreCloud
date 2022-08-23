@@ -46,6 +46,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
+    "clean-android": "cd android && ./gradlew clean && cd ..",
     "build-android-apk": "npm run bump-android-build-number && cd android && ./gradlew clean && ./gradlew assembleRelease && cd ..",
     "build-android-aab": "npm run bump-android-build-number && cd android && ./gradlew clean && ./gradlew bundleRelease && cd ..",
     "bump-android-build-number": "node ./scripts/bump-android-build-number.js",

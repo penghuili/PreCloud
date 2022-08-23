@@ -47,14 +47,8 @@ function Caches({ currentRoute }) {
       setCacheSize(bytesToMB(size));
     });
 
-    readFilesInFolder(internalFilePaths.encrypted).then(files => {
-      console.log('encrypted', files)
-      setEncryptedFiles(files);
-    });
-    readFilesInFolder(internalFilePaths.decrypted).then(files => {
-      console.log('decrypted', files)
-      setDecryptedFiles(files);
-    });
+    readFilesInFolder(internalFilePaths.encrypted).then(setEncryptedFiles);
+    readFilesInFolder(internalFilePaths.decrypted).then(setDecryptedFiles);
   }
 
   async function handleClearCache() {

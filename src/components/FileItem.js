@@ -1,12 +1,18 @@
 import { HStack, IconButton, Text, useToast, VStack } from 'native-base';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import FileViewer from 'react-native-file-viewer';
 
 import useColors from '../hooks/useColors';
 import { platforms } from '../lib/constants';
-import { androidDownloadFilePaths, makeAndroidDownloadFolders, shareFile } from '../lib/files';
+import {
+  androidDownloadFilePaths,
+  extractFileExtensionFromPath,
+  makeAndroidDownloadFolders,
+  shareFile,
+  viewableFileTypes,
+} from '../lib/files';
 import { LocalStorage, mimeTypePrefix } from '../lib/localstorage';
 import Icon from './Icon';
 import PlatformToggle from './PlatformToggle';
@@ -15,11 +21,18 @@ function FileItem({ file, forEncrypt, onDelete }) {
   const colors = useColors();
   const toast = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
+  const canBeOpened = useMemo(() => {
+    if (!file) {
+      return false;
+    }
+
+    const extension = extractFileExtensionFromPath(file.fileName);
+    return viewableFileTypes.includes(extension);
+  }, [file]);
 
   async function handleOpenFile() {
     try {
-      const result = await FileViewer.open(file.path, { showOpenWithDialog: true });
-      console.log(result);
+      await FileViewer.open(file.path, { showOpenWithDialog: true });
     } catch (e) {
       console.log('open file failed', e);
     }
@@ -30,12 +43,6 @@ function FileItem({ file, forEncrypt, onDelete }) {
       setIsDownloading(true);
 
       await makeAndroidDownloadFolders();
-      console.log(
-        file,
-        `${forEncrypt ? androidDownloadFilePaths.encrypted : androidDownloadFilePaths.decrypted}/${
-          file.fileName
-        }`
-      );
       await RNFS.copyFile(
         file.path,
         `${forEncrypt ? androidDownloadFilePaths.encrypted : androidDownloadFilePaths.decrypted}/${
@@ -83,7 +90,7 @@ function FileItem({ file, forEncrypt, onDelete }) {
     <VStack space="sm" alignItems="flex-start">
       <Text w="xs">{file.fileName}</Text>
       <HStack alignItems="center">
-        {!forEncrypt && (
+        {canBeOpened && (
           <IconButton
             icon={<Icon name="book-outline" size={20} color={colors.text} />}
             size="sm"
