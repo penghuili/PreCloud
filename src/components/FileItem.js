@@ -32,7 +32,7 @@ function FileItem({ file, forEncrypt, onDelete }) {
 
   async function handleOpenFile() {
     try {
-      await FileViewer.open(file.path, { showOpenWithDialog: true });
+      await FileViewer.open(file.path);
     } catch (e) {
       console.log('open file failed', e);
     }
@@ -73,7 +73,7 @@ function FileItem({ file, forEncrypt, onDelete }) {
       if (!forEncrypt) {
         await LocalStorage.remove(`${mimeTypePrefix}${file.fileName}`);
       }
-      toast.show({ title: 'Deleted.' });
+      toast.show({ title: 'Deleted from cache.' });
       if (onDelete) {
         onDelete();
       }
