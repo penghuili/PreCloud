@@ -18,7 +18,9 @@ import Icon from './Icon';
 async function readFilesInFolder(path) {
   try {
     const files = await RNFS.readDir(path);
-    return (files || []).map(file => ({ ...file, fileName: extractFileNameFromPath(file.path) }));
+    return (files || [])
+      .map(file => ({ ...file, fileName: extractFileNameFromPath(file.path) }))
+      .filter(file => !file.name.includes('A Document Being Saved By PreCloud'));
   } catch (e) {
     return [];
   }

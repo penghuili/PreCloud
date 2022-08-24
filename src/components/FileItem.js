@@ -7,9 +7,8 @@ import FileViewer from 'react-native-file-viewer';
 import useColors from '../hooks/useColors';
 import { platforms } from '../lib/constants';
 import {
-  androidDownloadFilePaths,
+  androidDownloadFolder,
   extractFileExtensionFromPath,
-  makeAndroidDownloadFolders,
   shareFile,
   viewableFileTypes,
 } from '../lib/files';
@@ -42,14 +41,9 @@ function FileItem({ file, forEncrypt, onDelete }) {
     try {
       setIsDownloading(true);
 
-      await makeAndroidDownloadFolders();
-      await RNFS.copyFile(
-        file.path,
-        `${forEncrypt ? androidDownloadFilePaths.encrypted : androidDownloadFilePaths.decrypted}/${
-          file.fileName
-        }`
-      );
-      toast.show({ title: 'File is downloaded to the "Download" folder.' });
+      const downloadPath = `${androidDownloadFolder}/${file.fileName}`
+      await RNFS.copyFile(file.path, downloadPath);
+      toast.show({ title: `File is downloaded to ${downloadPath}` });
     } catch (error) {
       console.log('Download file failed:', error);
       toast.show({ title: 'Download file failed.' });

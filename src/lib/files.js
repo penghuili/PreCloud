@@ -1,6 +1,5 @@
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
-import { isAndroid } from './device';
 
 export const viewableFileTypes = [
   'css',
@@ -21,11 +20,7 @@ export const internalFilePaths = {
   decrypted: `${RNFS.CachesDirectoryPath}/decrypted`,
 };
 
-const precloudFolder = `${RNFS.DownloadDirectoryPath}/PreCloud`;
-export const androidDownloadFilePaths = {
-  encrypted: `${precloudFolder}/encrypted`,
-  decrypted: `${precloudFolder}/decrypted`,
-};
+export const androidDownloadFolder = RNFS.DownloadDirectoryPath
 
 export async function makeInternalFolders() {
   const encryptedExists = await RNFS.exists(internalFilePaths.encrypted);
@@ -36,27 +31,6 @@ export async function makeInternalFolders() {
   const decryptedExists = await RNFS.exists(internalFilePaths.decrypted);
   if (!decryptedExists) {
     await RNFS.mkdir(internalFilePaths.decrypted);
-  }
-}
-
-export async function makeAndroidDownloadFolders() {
-  if (!isAndroid()) {
-    return;
-  }
-
-  const precloudFolderExists = await RNFS.exists(precloudFolder);
-  if (!precloudFolderExists) {
-    await RNFS.mkdir(precloudFolder);
-  }
-
-  const encryptedExists = await RNFS.exists(androidDownloadFilePaths.encrypted);
-  if (!encryptedExists) {
-    await RNFS.mkdir(androidDownloadFilePaths.encrypted);
-  }
-
-  const decryptedExists = await RNFS.exists(androidDownloadFilePaths.decrypted);
-  if (!decryptedExists) {
-    await RNFS.mkdir(androidDownloadFilePaths.decrypted);
   }
 }
 
