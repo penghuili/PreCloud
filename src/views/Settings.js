@@ -92,6 +92,11 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
+          <HStack space="1">
+            <Text>Or join the</Text>
+            <Link href="https://t.me/precloudapp">Telegram channel</Link>
+          </HStack>
+
           <Divider />
 
           <Link href="https://www.peng.kiwi/precloud">What is it?</Link>
