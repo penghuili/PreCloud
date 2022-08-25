@@ -5,6 +5,7 @@ export const viewableFileTypes = [
   'css',
   'csv',
   'gif',
+  'heic',
   'html',
   'jpeg',
   'jpg',

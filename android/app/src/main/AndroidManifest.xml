@@ -50,6 +50,10 @@
       </intent>
       <intent>
         <action android:name="android.intent.action.VIEW" />
+        <data android:mimeType="image/heic" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
         <data android:mimeType="text/html" />
       </intent>
       <intent>
