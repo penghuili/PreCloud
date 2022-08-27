@@ -1,11 +1,11 @@
 import { HStack, IconButton, Text, useToast, VStack } from 'native-base';
 import React, { useMemo, useState } from 'react';
 import { types } from 'react-native-document-picker';
-import RNFS from 'react-native-fs';
 import FileViewer from 'react-native-file-viewer';
+import RNFS from 'react-native-fs';
 
 import useColors from '../hooks/useColors';
-import { platforms } from '../lib/constants';
+import { isAndroid } from '../lib/device';
 import {
   androidDownloadFolder,
   extractFileExtensionFromPath,
@@ -14,7 +14,6 @@ import {
 } from '../lib/files';
 import { LocalStorage, mimeTypePrefix } from '../lib/localstorage';
 import Icon from './Icon';
-import PlatformToggle from './PlatformToggle';
 
 function FileItem({ file, forEncrypt, onDelete }) {
   const colors = useColors();
@@ -37,13 +36,27 @@ function FileItem({ file, forEncrypt, onDelete }) {
     }
   }
 
-  const handleDownloadFileForAndroid = async () => {
+  const handleDownloadFile = async () => {
     try {
       setIsDownloading(true);
 
-      const downloadPath = `${androidDownloadFolder}/${file.fileName}`
-      await RNFS.copyFile(file.path, downloadPath);
-      toast.show({ title: `File is downloaded to ${downloadPath}` });
+      if (isAndroid()) {
+        const downloadPath = `${androidDownloadFolder}/${file.fileName}`;
+        const exists = await RNFS.exists(downloadPath);
+        if (exists) {
+          await RNFS.unlink(downloadPath);
+        }
+        await RNFS.copyFile(file.path, downloadPath);
+        toast.show({ title: `File is downloaded to ${downloadPath}` });
+      } else {
+        await shareFile({
+          fileName: file.fileName,
+          filePath: file.path,
+          mimeType: file.mimeType || types.plainText,
+          saveToFiles: true,
+        });
+        toast.show({ title: `File is downloaded.` });
+      }
     } catch (error) {
       console.log('Download file failed:', error);
       toast.show({ title: 'Download file failed.' });
@@ -54,7 +67,12 @@ function FileItem({ file, forEncrypt, onDelete }) {
 
   const handleShareFile = async () => {
     try {
-      await shareFile(file.fileName, file.path, file.mimeType || types.plainText);
+      await shareFile({
+        fileName: file.fileName,
+        filePath: file.path,
+        mimeType: file.mimeType || types.plainText,
+        saveToFiles: false,
+      });
       toast.show({ title: 'Shared.' });
     } catch (error) {
       console.log('Share file failed:', error);
@@ -94,16 +112,14 @@ function FileItem({ file, forEncrypt, onDelete }) {
           />
         )}
 
-        <PlatformToggle for={platforms.android}>
-          <IconButton
-            icon={<Icon name="download-outline" size={20} color={colors.text} />}
-            size="sm"
-            variant="subtle"
-            mr="2"
-            isDisabled={isDownloading}
-            onPress={() => handleDownloadFileForAndroid()}
-          />
-        </PlatformToggle>
+        <IconButton
+          icon={<Icon name="download-outline" size={20} color={colors.text} />}
+          size="sm"
+          variant="subtle"
+          mr="2"
+          isDisabled={isDownloading}
+          onPress={() => handleDownloadFile()}
+        />
         <IconButton
           icon={<Icon name="share-outline" size={20} color={colors.text} />}
           size="sm"

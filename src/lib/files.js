@@ -21,7 +21,7 @@ export const internalFilePaths = {
   decrypted: `${RNFS.CachesDirectoryPath}/decrypted`,
 };
 
-export const androidDownloadFolder = RNFS.DownloadDirectoryPath
+export const androidDownloadFolder = RNFS.DownloadDirectoryPath;
 
 export async function makeInternalFolders() {
   const encryptedExists = await RNFS.exists(internalFilePaths.encrypted);
@@ -102,12 +102,13 @@ export function extractFileExtensionFromPath(path) {
   return path.split('.').pop().toLowerCase();
 }
 
-export async function shareFile(fileName, filePath, mimeType) {
+export async function shareFile({ fileName, filePath, mimeType, saveToFiles }) {
   await Share.open({
     title: fileName,
     filename: fileName,
     url: `file://${filePath}`,
     type: mimeType,
+    saveToFiles,
   });
 }
 
