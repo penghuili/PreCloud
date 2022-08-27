@@ -1,15 +1,18 @@
-import { Alert, Box, Button, Heading, Text, useToast, VStack } from 'native-base';
+import { Alert, Box, Button, Heading, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
+import { asyncForEach } from '../lib/array';
 import { platforms } from '../lib/constants';
 import {
   deleteFile,
-  extractFileNameFromPath,
+  encryptionStatus,
   extractFilePath,
   internalFilePaths,
   makeInternalFolders,
+  MAX_FILE_SIZE_BYTES,
+  MAX_FILE_SIZE_MEGA_BYTES,
 } from '../lib/files';
 import { useStore } from '../store/store';
 import FileItem from './FileItem';
@@ -17,47 +20,107 @@ import PlatformToggle from './PlatformToggle';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-const MAX_FILE_SIZE_MEGA_BYTES = 20;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
-let pickedFile = null;
+let pickedFiles = [];
+let currentIndex = 0;
+let processedFiles = [];
+
+async function deleteFiles(paths) {
+  await asyncForEach(paths, async path => {
+    await deleteFile(path);
+  });
+}
 
 async function resetPickedFile() {
-  if (pickedFile) {
-    await deleteFile(pickedFile.path);
-    pickedFile = null;
+  if (pickedFiles?.length) {
+    await deleteFiles(pickedFiles.map(f => f.path));
+    pickedFiles = [];
   }
 }
 
 function EncryptFile() {
-  const toast = useToast();
   const password = useStore(state => state.masterPassword);
-  const encryptedFile = useStore(state => state.encryptedFile);
-  const setEncryptedFile = useStore(state => state.setEncryptedFile);
+
+  const encryptedFiles = useStore(state => state.encryptedFiles);
+  const setEncryptedFiles = useStore(state => state.setEncryptedFiles);
 
   const [isEncrypting, setIsEncrypting] = useState(false);
+
+  async function handleTrigger({ name, size, path, mimeType }) {
+    if (size > MAX_FILE_SIZE_BYTES) {
+      await deleteFile(path);
+      processedFiles = [
+        ...processedFiles,
+        { fileName: name, path, mimeType, status: encryptionStatus.tooLarge },
+      ];
+      setEncryptedFiles(processedFiles);
+    }
+
+    const fileBase64 = await RNFS.readFile(path, 'base64');
+    nodejs.channel.send({
+      type: 'encrypt-file',
+      data: { fileBase64, name, path, mimeType: mimeType || types.plainText, password },
+    });
+  }
+
+  async function handleEncrypted(payload) {
+    await makeInternalFolders();
+
+    let processedFile;
+    try {
+      if (payload.data) {
+        const fileName = `${payload.name}.precloud`;
+        const newPath = `${internalFilePaths.encrypted}/${fileName}`;
+        await RNFS.writeFile(newPath, payload.data, 'base64');
+
+        processedFile = {
+          fileName,
+          path: newPath,
+          mimeType: payload.mimeType,
+          originalPath: payload.path,
+          status: encryptionStatus.encrypted,
+        };
+      } else {
+        console.log(`Encrypt file failed for ${payload.name}`, payload.error);
+        processedFile = {
+          fileName: payload.name,
+          path: payload.path,
+          mimeType: payload.mimeType,
+          status: encryptionStatus.error,
+        };
+      }
+    } catch (e) {
+      console.log(`Save encrypted file failed for ${payload.name}`, e);
+      processedFile = {
+        fileName: payload.name,
+        path: payload.path,
+        mimeType: payload.mimeType,
+        status: encryptionStatus.error,
+      };
+    }
+
+    processedFiles = [...processedFiles, processedFile];
+    setEncryptedFiles(processedFiles);
+  }
 
   useEffect(() => {
     const listener = async msg => {
       if (msg.type === 'encrypted-file') {
-        try {
-          if (msg.payload.data) {
-            await makeInternalFolders();
+        await handleEncrypted(msg.payload);
 
-            const fileName = `${extractFileNameFromPath(msg.payload.path)}.precloud`;
-            const newPath = `${internalFilePaths.encrypted}/${fileName}`;
-            await RNFS.writeFile(newPath, msg.payload.data, 'base64');
+        if (currentIndex + 1 < pickedFiles.length) {
+          currentIndex = currentIndex + 1;
+          const nextFile = pickedFiles[currentIndex];
 
-            setEncryptedFile({ fileName, path: newPath });
-          } else {
-            toast.show({ title: 'Encrypt file failed.' });
-            console.log('Encrypt file failed.', msg.payload.error);
-          }
-        } catch (e) {
-          console.log('save encrypted file error', e);
+          await handleTrigger({
+            name: nextFile.name,
+            size: nextFile.size,
+            path: nextFile.path,
+            mimeType: nextFile.type,
+          });
+        } else {
+          setIsEncrypting(false);
+          await resetPickedFile();
         }
-
-        await resetPickedFile();
-        setIsEncrypting(false);
       }
     };
 
@@ -71,29 +134,30 @@ function EncryptFile() {
 
   async function pickOrignalFile() {
     try {
-      pickedFile = null;
-      setEncryptedFile(null);
+      pickedFiles = [];
+      processedFiles = [];
+      currentIndex = 0;
 
       const result = await DocumentPicker.pick({
-        allowMultiSelection: false,
+        allowMultiSelection: true,
         type: types.allFiles,
         presentationStyle: 'fullScreen',
         copyTo: 'cachesDirectory',
       });
-      const file = { ...result[0], path: extractFilePath(result[0].fileCopyUri) };
-      if (file.size > MAX_FILE_SIZE_BYTES) {
-        toast.show({ title: `File size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.` });
-        await RNFS.unlink(file.path);
+      const files = result.map(f => ({ ...f, path: extractFilePath(f.fileCopyUri) }));
+
+      if (!files.length) {
         return;
       }
-
-      pickedFile = file;
+      pickedFiles = files;
 
       setIsEncrypting(true);
-      const fileBase64 = await RNFS.readFile(file.path, 'base64');
-      nodejs.channel.send({
-        type: 'encrypt-file',
-        data: { fileBase64, password, path: file.path, mimeType: file.type || types.plainText },
+      const firstFile = files[0];
+      await handleTrigger({
+        name: firstFile.name,
+        size: firstFile.size,
+        path: firstFile.path,
+        mimeType: firstFile.type,
       });
     } catch (e) {
       await resetPickedFile();
@@ -102,9 +166,8 @@ function EncryptFile() {
     }
   }
 
-  async function handleDeleteFile() {
-    setEncryptedFile(null);
-    await resetPickedFile();
+  async function handleDeleteFile(file) {
+    setEncryptedFiles(encryptedFiles.filter(f => f.fileName !== file.fileName));
   }
 
   return (
@@ -132,10 +195,12 @@ function EncryptFile() {
         Pick a file to encrypt
       </Button>
 
-      {!!encryptedFile && (
+      {!!encryptedFiles.length && (
         <VStack space="sm" alignItems="center" px={4} py={4}>
-          <Text bold>Encrypted file:</Text>
-          <FileItem file={encryptedFile} forEncrypt onDelete={handleDeleteFile} />
+          <Text bold>Encrypted {encryptedFiles.length > 1 ? 'files' : 'file'}:</Text>
+          {encryptedFiles.map(file => (
+            <FileItem key={file.fileName} file={file} forEncrypt onDelete={handleDeleteFile} />
+          ))}
         </VStack>
       )}
     </VStack>

@@ -1,6 +1,9 @@
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
+export const MAX_FILE_SIZE_MEGA_BYTES = 20;
+export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
+
 export const viewableFileTypes = [
   'css',
   'csv',
@@ -22,6 +25,12 @@ export const internalFilePaths = {
 };
 
 export const androidDownloadFolder = RNFS.DownloadDirectoryPath;
+
+export const encryptionStatus = {
+  tooLarge: 'tooLarge',
+  encrypted: 'encrypted',
+  error: 'error',
+};
 
 export async function makeInternalFolders() {
   const encryptedExists = await RNFS.exists(internalFilePaths.encrypted);
@@ -114,7 +123,10 @@ export async function shareFile({ fileName, filePath, mimeType, saveToFiles }) {
 
 export async function deleteFile(path) {
   try {
-    await RNFS.unlink(path);
+    const exists = await RNFS.exists(path);
+    if (exists) {
+      await RNFS.unlink(path);
+    }
   } catch (e) {
     console.log(`delete ${path} failed`, e);
   }

@@ -8,7 +8,9 @@ import useColors from '../hooks/useColors';
 import { isAndroid } from '../lib/device';
 import {
   androidDownloadFolder,
+  encryptionStatus,
   extractFileExtensionFromPath,
+  MAX_FILE_SIZE_MEGA_BYTES,
   shareFile,
   viewableFileTypes,
 } from '../lib/files';
@@ -59,7 +61,9 @@ function FileItem({ file, forEncrypt, onDelete }) {
       }
     } catch (error) {
       console.log('Download file failed:', error);
-      toast.show({ title: 'Download file failed.' });
+      if (isAndroid()) {
+        toast.show({ title: 'Download file failed.' });
+      }
     }
 
     setIsDownloading(false);
@@ -87,20 +91,23 @@ function FileItem({ file, forEncrypt, onDelete }) {
       }
       toast.show({ title: 'Deleted from cache.' });
       if (onDelete) {
-        onDelete();
+        onDelete(file);
       }
     } catch (error) {
       console.log('Delete file failed:', error);
     }
   };
 
-  if (!file) {
-    return null;
-  }
+  function renderActions() {
+    if (file.status === encryptionStatus.tooLarge) {
+      return <Text>File size can not be bigger than {MAX_FILE_SIZE_MEGA_BYTES}MB.</Text>;
+    }
 
-  return (
-    <VStack space="sm" alignItems="flex-start">
-      <Text w="xs">{file.fileName}</Text>
+    if (file.status === encryptionStatus.error) {
+      return <Text>Encryption of this file failed.</Text>;
+    }
+
+    return (
       <HStack alignItems="center">
         {canBeOpened && (
           <IconButton
@@ -134,6 +141,18 @@ function FileItem({ file, forEncrypt, onDelete }) {
           onPress={() => handleDeleteFile()}
         />
       </HStack>
+    );
+  }
+
+  if (!file) {
+    return null;
+  }
+
+  return (
+    <VStack space="sm" alignItems="flex-start">
+      <Text w="xs">{file.fileName}</Text>
+
+      {renderActions()}
     </VStack>
   );
 }

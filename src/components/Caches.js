@@ -28,8 +28,8 @@ async function readFilesInFolder(path) {
 
 function Caches({ currentRoute }) {
   const colors = useColors();
-  const encryptedFile = useStore(state => state.encryptedFile);
-  const setEncryptedFile = useStore(state => state.setEncryptedFile);
+  const encryptedFilesInStore = useStore(state => state.encryptedFiles);
+  const setEncryptedFilesInStore = useStore(state => state.setEncryptedFiles);
   const decryptedFile = useStore(state => state.decryptedFile);
   const setDecryptedFile = useStore(state => state.setDecryptedFile);
 
@@ -57,7 +57,7 @@ function Caches({ currentRoute }) {
     await emptyFolder(RNFS.CachesDirectoryPath);
     await readFilesInCache();
     setShowCaches(false);
-    setEncryptedFile(null);
+    setEncryptedFilesInStore([]);
     setDecryptedFile(null);
   }
 
@@ -113,9 +113,7 @@ function Caches({ currentRoute }) {
                     file={file}
                     forEncrypt
                     onDelete={async () => {
-                      if (encryptedFile && encryptedFile.fileName === file.fileName) {
-                        setEncryptedFile(null);
-                      }
+                      setEncryptedFilesInStore(encryptedFilesInStore.filter(f => f.fileName !== file.fileName));
                       await readFilesInCache();
                     }}
                   />
