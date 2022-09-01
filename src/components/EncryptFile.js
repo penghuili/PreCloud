@@ -179,7 +179,7 @@ function EncryptFile() {
             textAlign: 'center',
           }}
         >
-          {`Pick any file to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
+          {`Pick one or multiple files to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
         </Box>
       </Alert>
       <PlatformToggle for={platforms.ios}>
