@@ -94,7 +94,7 @@ function Settings({ currentRoute }) {
 
           <HStack space="1">
             <Text>Or join the</Text>
-            <Link href="https://www.peng.kiwi/precloud#newsletter">newsletter</Link>
+            <Link href="https://www.getrevue.co/profile/precloud">newsletter</Link>
           </HStack>
 
           <HStack space="1">
