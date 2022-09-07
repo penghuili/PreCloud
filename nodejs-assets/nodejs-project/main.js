@@ -22,7 +22,13 @@ rn_bridge.channel.on('message', async msg => {
     } else {
       rn_bridge.channel.send({
         type: 'encrypted-file',
-        payload: { data: null, error, path: msg.data.path },
+        payload: {
+          data: null,
+          error,
+          name: msg.data.name,
+          path: msg.data.path,
+          mimeType: msg.data.mimeType,
+        },
       });
     }
   } else if (msg.type === 'decrypt-file') {
@@ -41,7 +47,7 @@ rn_bridge.channel.on('message', async msg => {
     } else {
       rn_bridge.channel.send({
         type: 'decrypted-file',
-        payload: { data: null, error, path: msg.data.path },
+        payload: { data: null, error, path: msg.data.path, mimeType: decrypted.mimeType },
       });
     }
   } else if (msg.type === 'encrypt-text') {
@@ -50,12 +56,12 @@ rn_bridge.channel.on('message', async msg => {
     if (encrypted) {
       rn_bridge.channel.send({
         type: 'encrypted-text',
-        payload: { data: encrypted, error: null, path: msg.data.path },
+        payload: { data: encrypted, error: null },
       });
     } else {
       rn_bridge.channel.send({
         type: 'encrypted-text',
-        payload: { data: null, error, path: msg.data.path },
+        payload: { data: null, error },
       });
     }
   } else if (msg.type === 'decrypt-text') {
@@ -64,12 +70,12 @@ rn_bridge.channel.on('message', async msg => {
     if (decrypted) {
       rn_bridge.channel.send({
         type: 'decrypted-text',
-        payload: { data: decrypted, error: null, path: msg.data.path },
+        payload: { data: decrypted, error: null },
       });
     } else {
       rn_bridge.channel.send({
         type: 'decrypted-text',
-        payload: { data: null, error, path: msg.data.path },
+        payload: { data: null, error },
       });
     }
   }

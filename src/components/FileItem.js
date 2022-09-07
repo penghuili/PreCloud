@@ -22,7 +22,7 @@ function FileItem({ file, forEncrypt, onDelete }) {
   const toast = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
   const canBeOpened = useMemo(() => {
-    if (!file) {
+    if (!file?.fileName) {
       return false;
     }
 
