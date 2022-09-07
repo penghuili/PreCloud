@@ -111,12 +111,11 @@ export function extractFileExtensionFromPath(path) {
   return path.split('.').pop().toLowerCase();
 }
 
-export async function shareFile({ fileName, filePath, mimeType, saveToFiles }) {
+export async function shareFile({ fileName, filePath, saveToFiles }) {
   await Share.open({
     title: fileName,
     filename: fileName,
     url: `file://${filePath}`,
-    type: mimeType,
     saveToFiles,
   });
 }

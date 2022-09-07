@@ -10,7 +10,6 @@ import {
   internalFilePaths,
   makeInternalFolders,
 } from '../lib/files';
-import { LocalStorage, mimeTypePrefix } from '../lib/localstorage';
 import { useStore } from '../store/store';
 import FileItem from './FileItem';
 
@@ -48,8 +47,7 @@ function DecryptFile() {
             const newPath = `${internalFilePaths.decrypted}/${fileName}`;
             await RNFS.writeFile(newPath, msg.payload.data, 'base64');
 
-            setDecryptedFile({ fileName, path: newPath, mimeType: msg.payload.mimeType });
-            await LocalStorage.set(`${mimeTypePrefix}${fileName}`, msg.payload.mimeType);
+            setDecryptedFile({ fileName, path: newPath });
           } else {
             toast.show({ title: 'Decrypt file failed.' });
             console.log('Decrypt file failed.', msg.payload.error);

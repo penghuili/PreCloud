@@ -1,7 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const mimeTypePrefix = 'precloudmimetype_';
-
 export const LocalStorage = {
   async set(key, value) {
     try {
@@ -33,11 +31,3 @@ export const LocalStorage = {
     } catch (e) {}
   },
 };
-
-export async function removeAllMimeTypes() {
-  const keys = await LocalStorage.getKeys();
-  const mimeTypeKeys = keys.filter(key => key.startsWith(mimeTypePrefix));
-  if (mimeTypeKeys.length) {
-    await LocalStorage.batchRemove(mimeTypeKeys);
-  }
-}

@@ -1,9 +1,5 @@
 var openpgp = require('openpgp');
 
-function stringToBase64(str) {
-  return Buffer.from(str).toString('base64');
-}
-
 function base64ToString(b64) {
   return Buffer.from(b64, 'base64').toString('utf8');
 }
@@ -70,7 +66,7 @@ async function decryptText(input, password) {
 
 const MIME_TYPE_ARRAY_LENGTH = 60;
 
-async function encryptFile(mimeType, fileBase64, password) {
+async function encryptFile(fileBase64, password) {
   try {
     const message = await openpgp.createMessage({
       binary: base64ToUint8(fileBase64),
@@ -82,13 +78,8 @@ async function encryptFile(mimeType, fileBase64, password) {
       format: 'binary',
     });
 
-    const mimeTypeB64 = stringToBase64(mimeType);
-    const mimeUnit8 = base64ToUint8(mimeTypeB64);
     const fileUnit8 = base64ToUint8(encrypted);
-    const uint8 = new Uint8Array(MIME_TYPE_ARRAY_LENGTH + fileUnit8.length);
-    uint8.set(mimeUnit8);
-    uint8.set(fileUnit8, MIME_TYPE_ARRAY_LENGTH);
-    const encryptedString = unit8ToBase64(uint8);
+    const encryptedString = unit8ToBase64(fileUnit8);
 
     return { data: encryptedString, error: null };
   } catch (e) {
@@ -120,7 +111,7 @@ async function decryptFile(encryptedBase64, password) {
       format: 'binary',
     });
 
-    return { data: { file: unit8ToBase64(data), mimeType }, error: null };
+    return { data: { file: unit8ToBase64(data) }, error: null };
   } catch (e) {
     return { data: null, error: e };
   }

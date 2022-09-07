@@ -1,6 +1,5 @@
 import { HStack, IconButton, Text, useToast, VStack } from 'native-base';
 import React, { useMemo, useState } from 'react';
-import { types } from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs';
 
@@ -14,10 +13,9 @@ import {
   shareFile,
   viewableFileTypes,
 } from '../lib/files';
-import { LocalStorage, mimeTypePrefix } from '../lib/localstorage';
 import Icon from './Icon';
 
-function FileItem({ file, forEncrypt, onDelete }) {
+function FileItem({ file, onDelete }) {
   const colors = useColors();
   const toast = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
@@ -54,7 +52,6 @@ function FileItem({ file, forEncrypt, onDelete }) {
         await shareFile({
           fileName: file.fileName,
           filePath: file.path,
-          mimeType: file.mimeType || types.plainText,
           saveToFiles: true,
         });
         toast.show({ title: `File is downloaded.` });
@@ -74,7 +71,6 @@ function FileItem({ file, forEncrypt, onDelete }) {
       await shareFile({
         fileName: file.fileName,
         filePath: file.path,
-        mimeType: file.mimeType || types.plainText,
         saveToFiles: false,
       });
       toast.show({ title: 'Shared.' });
@@ -86,9 +82,6 @@ function FileItem({ file, forEncrypt, onDelete }) {
   const handleDeleteFile = async () => {
     try {
       await RNFS.unlink(file.path);
-      if (!forEncrypt) {
-        await LocalStorage.remove(`${mimeTypePrefix}${file.fileName}`);
-      }
       toast.show({ title: 'Deleted from cache.' });
       if (onDelete) {
         onDelete(file);

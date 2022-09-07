@@ -45,12 +45,12 @@ function EncryptFile() {
 
   const [isEncrypting, setIsEncrypting] = useState(false);
 
-  async function handleTrigger({ name, size, path, mimeType }) {
+  async function handleTrigger({ name, size, path }) {
     if (size > MAX_FILE_SIZE_BYTES) {
       await deleteFile(path);
       processedFiles = [
         ...processedFiles,
-        { fileName: name, path, mimeType, status: encryptionStatus.tooLarge },
+        { fileName: name, path, status: encryptionStatus.tooLarge },
       ];
       setEncryptedFiles(processedFiles);
     }
@@ -58,7 +58,7 @@ function EncryptFile() {
     const fileBase64 = await RNFS.readFile(path, 'base64');
     nodejs.channel.send({
       type: 'encrypt-file',
-      data: { fileBase64, name, path, mimeType: mimeType || types.plainText, password },
+      data: { fileBase64, name, path, password },
     });
   }
 
@@ -75,7 +75,6 @@ function EncryptFile() {
         processedFile = {
           fileName,
           path: newPath,
-          mimeType: payload.mimeType,
           originalPath: payload.path,
           status: encryptionStatus.encrypted,
         };
@@ -84,7 +83,6 @@ function EncryptFile() {
         processedFile = {
           fileName: payload.name,
           path: payload.path,
-          mimeType: payload.mimeType,
           status: encryptionStatus.error,
         };
       }
@@ -93,7 +91,6 @@ function EncryptFile() {
       processedFile = {
         fileName: payload.name,
         path: payload.path,
-        mimeType: payload.mimeType,
         status: encryptionStatus.error,
       };
     }
@@ -115,7 +112,6 @@ function EncryptFile() {
             name: nextFile.name,
             size: nextFile.size,
             path: nextFile.path,
-            mimeType: nextFile.type,
           });
         } else {
           setIsEncrypting(false);
@@ -157,7 +153,6 @@ function EncryptFile() {
         name: firstFile.name,
         size: firstFile.size,
         path: firstFile.path,
-        mimeType: firstFile.type,
       });
     } catch (e) {
       await resetPickedFile();
