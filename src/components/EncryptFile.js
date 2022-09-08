@@ -2,7 +2,7 @@ import { Alert, Box, Button, Heading, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import { asyncForEach } from '../lib/array';
 import { platforms } from '../lib/constants';
@@ -162,6 +162,24 @@ function EncryptFile() {
     }
   }
 
+  async function takePhoto() {
+    try {
+      const { assets } = await launchCamera({
+        mediaType: 'photo',
+        selectionLimit: 0,
+      });
+      const files = assets.map(f => ({
+        name: f.fileName,
+        size: f.fileSize,
+        path: extractFilePath(f.uri),
+      }));
+
+      await handlePicked(files);
+    } catch (e) {
+      console.log('Take photo failed', e);
+    }
+  }
+
   async function pickFiles() {
     try {
       pickedFiles = [];
@@ -215,6 +233,10 @@ function EncryptFile() {
           Pick files
         </Button>
       </HStack>
+
+      <Button isDisabled={!password} isLoading={isEncrypting} onPress={takePhoto}>
+        Take photo and encrypt
+      </Button>
 
       {!!encryptedFiles.length && (
         <VStack space="sm" alignItems="center" px={4} py={4}>

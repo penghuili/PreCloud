@@ -56,6 +56,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>PreCloud needs access to the photo library to encrypt files.</string>
+	<string>PreCloud needs access to the photo library, so you can encrypt your photos.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>PreCloud needs access to take photos, so you can take photo and encrypt it right away.</string>
 </dict>
 </plist>
