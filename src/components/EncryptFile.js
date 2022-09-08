@@ -1,7 +1,8 @@
-import { Alert, Box, Button, Heading, Text, VStack } from 'native-base';
+import { Alert, Box, Button, Heading, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 import { asyncForEach } from '../lib/array';
 import { platforms } from '../lib/constants';
@@ -128,7 +129,40 @@ function EncryptFile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function pickOrignalFile() {
+  async function handlePicked(files) {
+    if (!files.length) {
+      return;
+    }
+    pickedFiles = files;
+
+    setIsEncrypting(true);
+    const firstFile = files[0];
+    await handleTrigger({
+      name: firstFile.name,
+      size: firstFile.size,
+      path: firstFile.path,
+    });
+  }
+
+  async function pickImages() {
+    try {
+      const { assets } = await launchImageLibrary({
+        mediaType: 'photo',
+        selectionLimit: 0,
+      });
+      const files = assets.map(f => ({
+        name: f.fileName,
+        size: f.fileSize,
+        path: extractFilePath(f.uri),
+      }));
+
+      await handlePicked(files);
+    } catch (e) {
+      console.log('Pick images failed', e);
+    }
+  }
+
+  async function pickFiles() {
     try {
       pickedFiles = [];
       processedFiles = [];
@@ -140,20 +174,13 @@ function EncryptFile() {
         presentationStyle: 'fullScreen',
         copyTo: 'cachesDirectory',
       });
-      const files = result.map(f => ({ ...f, path: extractFilePath(f.fileCopyUri) }));
+      const files = result.map(f => ({
+        name: f.name,
+        size: f.size,
+        path: extractFilePath(f.fileCopyUri),
+      }));
 
-      if (!files.length) {
-        return;
-      }
-      pickedFiles = files;
-
-      setIsEncrypting(true);
-      const firstFile = files[0];
-      await handleTrigger({
-        name: firstFile.name,
-        size: firstFile.size,
-        path: firstFile.path,
-      });
+      await handlePicked(files);
     } catch (e) {
       await resetPickedFile();
       setIsEncrypting(false);
@@ -177,18 +204,17 @@ function EncryptFile() {
           {`Pick one or multiple files to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
         </Box>
       </Alert>
-      <PlatformToggle for={platforms.ios}>
-        <Alert w="100%" status="warning">
-          <Text>
-            And currently you can only pick files in the <Text highlight>Files</Text> app. You can
-            move a file or an image by <Text bold>Sharing it</Text> -&gt;{' '}
-            <Text bold>Save to Files</Text>.
-          </Text>
-        </Alert>
-      </PlatformToggle>
-      <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickOrignalFile}>
-        Pick a file to encrypt
-      </Button>
+      <HStack space="2">
+        <PlatformToggle for={platforms.ios}>
+          <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickImages}>
+            Pick images
+          </Button>
+        </PlatformToggle>
+
+        <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickFiles}>
+          Pick files
+        </Button>
+      </HStack>
 
       {!!encryptedFiles.length && (
         <VStack space="sm" alignItems="center" px={4} py={4}>

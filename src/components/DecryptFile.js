@@ -120,7 +120,7 @@ function DecryptFile() {
         </Box>
       </Alert>
       <Button isDisabled={!password} isLoading={isDecrypting} onPress={pickEncryptedFile}>
-        Pick a file to decrypt
+        Pick an encrypted file
       </Button>
 
       {!!decryptedFile && (
