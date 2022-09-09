@@ -39,7 +39,7 @@ function Settings({ currentRoute }) {
         <VStack space="lg" alignItems="flex-start">
           <Heading>PreCloud: Encrypt before upload</Heading>
           <Heading size="sm" color="primary.400">
-            Open source, no tracking and free forever.
+            Open source, no tracking, no server and free forever.
           </Heading>
 
           <Divider />

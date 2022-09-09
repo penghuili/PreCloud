@@ -129,7 +129,13 @@ function EncryptFile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handlePicked(files) {
+  function handleBeforePick() {
+    pickedFiles = [];
+    processedFiles = [];
+    currentIndex = 0;
+  }
+
+  async function handleAfterPick(files) {
     if (!files.length) {
       return;
     }
@@ -146,6 +152,8 @@ function EncryptFile() {
 
   async function pickImages() {
     try {
+      handleBeforePick();
+
       const { assets } = await launchImageLibrary({
         mediaType: 'photo',
         selectionLimit: 0,
@@ -156,7 +164,7 @@ function EncryptFile() {
         path: extractFilePath(f.uri),
       }));
 
-      await handlePicked(files);
+      await handleAfterPick(files);
     } catch (e) {
       console.log('Pick images failed', e);
     }
@@ -164,6 +172,8 @@ function EncryptFile() {
 
   async function takePhoto() {
     try {
+      handleBeforePick();
+
       const { assets } = await launchCamera({
         mediaType: 'photo',
         selectionLimit: 0,
@@ -174,7 +184,7 @@ function EncryptFile() {
         path: extractFilePath(f.uri),
       }));
 
-      await handlePicked(files);
+      await handleAfterPick(files);
     } catch (e) {
       console.log('Take photo failed', e);
     }
@@ -182,9 +192,7 @@ function EncryptFile() {
 
   async function pickFiles() {
     try {
-      pickedFiles = [];
-      processedFiles = [];
-      currentIndex = 0;
+      handleBeforePick();
 
       const result = await DocumentPicker.pick({
         allowMultiSelection: true,
@@ -198,7 +206,7 @@ function EncryptFile() {
         path: extractFilePath(f.fileCopyUri),
       }));
 
-      await handlePicked(files);
+      await handleAfterPick(files);
     } catch (e) {
       await resetPickedFile();
       setIsEncrypting(false);
