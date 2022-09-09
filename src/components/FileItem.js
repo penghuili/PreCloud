@@ -7,18 +7,29 @@ import useColors from '../hooks/useColors';
 import { isAndroid } from '../lib/device';
 import {
   androidDownloadFolder,
+  copyFile,
+  deleteFile,
   encryptionStatus,
   extractFileExtensionFromPath,
+  extractFileNameAndExtension,
   MAX_FILE_SIZE_MEGA_BYTES,
   shareFile,
   viewableFileTypes,
 } from '../lib/files';
+import { useStore } from '../store/store';
 import Icon from './Icon';
+import RenameFileModal from './RenameFileModal';
 
-function FileItem({ file, onDelete }) {
+function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   const colors = useColors();
   const toast = useToast();
+  const renameEncryptedFile = useStore(state => state.renameEncryptedFile);
+  const deleteEncryptedFile = useStore(state => state.deleteEncryptedFile);
+  const setDecryptedFile = useStore(state => state.setDecryptedFile);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const { extension } = extractFileNameAndExtension(file?.fileName || '');
+
   const canBeOpened = useMemo(() => {
     if (!file?.fileName) {
       return false;
@@ -42,11 +53,7 @@ function FileItem({ file, onDelete }) {
 
       if (isAndroid()) {
         const downloadPath = `${androidDownloadFolder}/${file.fileName}`;
-        const exists = await RNFS.exists(downloadPath);
-        if (exists) {
-          await RNFS.unlink(downloadPath);
-        }
-        await RNFS.copyFile(file.path, downloadPath);
+        await copyFile(file.path, downloadPath);
         toast.show({ title: `File is downloaded to ${downloadPath}` });
       } else {
         await shareFile({
@@ -83,8 +90,14 @@ function FileItem({ file, onDelete }) {
     try {
       await RNFS.unlink(file.path);
       toast.show({ title: 'Deleted from cache.' });
+      if (forEncrypt) {
+        deleteEncryptedFile(file);
+      } else {
+        setDecryptedFile(null);
+      }
+
       if (onDelete) {
-        onDelete(file);
+        onDelete();
       }
     } catch (error) {
       console.log('Delete file failed:', error);
@@ -102,6 +115,17 @@ function FileItem({ file, onDelete }) {
 
     return (
       <HStack alignItems="center">
+        {canRename && (
+          <IconButton
+            icon={<Icon name="create-outline" size={20} color={colors.text} />}
+            size="sm"
+            variant="subtle"
+            mr="2"
+            isDisabled={isDownloading}
+            onPress={() => setShowRenameModal(true)}
+          />
+        )}
+
         {canBeOpened && (
           <IconButton
             icon={<Icon name="book-outline" size={20} color={colors.text} />}
@@ -146,6 +170,32 @@ function FileItem({ file, onDelete }) {
       <Text w="xs">{file.fileName}</Text>
 
       {renderActions()}
+
+      <RenameFileModal
+        fileName={file.fileName}
+        extension={extension}
+        isOpen={showRenameModal}
+        onClose={() => setShowRenameModal(false)}
+        onSave={async newName => {
+          const newFullName = `${newName}${extension}`;
+          const parts = file.path.split('/');
+          parts.pop();
+          const newPath = `${parts.join('/')}/${newFullName}`;
+          await copyFile(file.path, newPath);
+          await deleteFile(file.path);
+
+          const newFile = {
+            fileName: newFullName,
+            path: newPath,
+            size: file.size,
+          };
+          if (forEncrypt) {
+            renameEncryptedFile(file.fileName, newFile);
+          } else {
+            setDecryptedFile(newFile);
+          }
+        }}
+      />
     </VStack>
   );
 }

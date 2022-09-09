@@ -107,6 +107,27 @@ export function extractFileNameFromPath(path) {
   return path.split('/').pop();
 }
 
+export function extractFileNameAndExtension(fileName) {
+  const parts = fileName.split('.');
+  const last = parts[parts.length - 1];
+  let extension = '';
+  if (last.toLowerCase() === 'precloud') {
+    extension = '.precloud';
+    parts.pop();
+  }
+
+  if (parts.length === 1) {
+    return fileName.startsWith('.')
+      ? { fileName: '', extension: `.${parts[0]}${extension}` }
+      : { fileName: parts[0], extension: `${extension}` };
+  }
+
+  return {
+    fileName: parts.slice(0, parts.length - 1).join('.'),
+    extension: `.${parts[parts.length - 1]}${extension}`,
+  };
+}
+
 export function extractFileExtensionFromPath(path) {
   return path.split('.').pop().toLowerCase();
 }
@@ -129,4 +150,12 @@ export async function deleteFile(path) {
   } catch (e) {
     console.log(`delete ${path} failed`, e);
   }
+}
+
+export async function copyFile(src, dest) {
+  const exists = await RNFS.exists(dest);
+  if (exists) {
+    await RNFS.unlink(dest);
+  }
+  await RNFS.copyFile(src, dest);
 }

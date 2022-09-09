@@ -136,7 +136,7 @@ function EncryptFile() {
   }
 
   async function handleAfterPick(files) {
-    if (!files.length) {
+    if (!files?.length) {
       return;
     }
     pickedFiles = files;
@@ -154,11 +154,11 @@ function EncryptFile() {
     try {
       handleBeforePick();
 
-      const { assets } = await launchImageLibrary({
+      const result = await launchImageLibrary({
         mediaType: 'photo',
         selectionLimit: 0,
       });
-      const files = assets.map(f => ({
+      const files = result?.assets?.map(f => ({
         name: f.fileName,
         size: f.fileSize,
         path: extractFilePath(f.uri),
@@ -174,11 +174,11 @@ function EncryptFile() {
     try {
       handleBeforePick();
 
-      const { assets } = await launchCamera({
+      const result = await launchCamera({
         mediaType: 'photo',
         selectionLimit: 0,
       });
-      const files = assets.map(f => ({
+      const files = result?.assets?.map(f => ({
         name: f.fileName,
         size: f.fileSize,
         path: extractFilePath(f.uri),
@@ -214,10 +214,6 @@ function EncryptFile() {
     }
   }
 
-  async function handleDeleteFile(file) {
-    setEncryptedFiles(encryptedFiles.filter(f => f.fileName !== file.fileName));
-  }
-
   return (
     <VStack space="sm" alignItems="center">
       <Heading>Encrypt file</Heading>
@@ -250,7 +246,7 @@ function EncryptFile() {
         <VStack space="sm" alignItems="center" px={4} py={4}>
           <Text bold>Encrypted {encryptedFiles.length > 1 ? 'files' : 'file'}:</Text>
           {encryptedFiles.map(file => (
-            <FileItem key={file.fileName} file={file} forEncrypt onDelete={handleDeleteFile} />
+            <FileItem key={file.fileName} file={file} forEncrypt />
           ))}
         </VStack>
       )}

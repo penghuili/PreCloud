@@ -103,7 +103,6 @@ function DecryptFile() {
   }
 
   async function handleDeleteFile() {
-    setDecryptedFile(null);
     await resetPickedFile();
   }
 

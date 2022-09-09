@@ -11,6 +11,14 @@ export const useStore = create(set => ({
 
   encryptedFiles: [],
   setEncryptedFiles: files => set({ encryptedFiles: files }),
+  renameEncryptedFile: (originalFileName, file) =>
+    set(state => ({
+      encryptedFiles: state.encryptedFiles.map(f => (f.fileName === originalFileName ? file : f)),
+    })),
+  deleteEncryptedFile: file =>
+    set(state => ({
+      encryptedFiles: state.encryptedFiles.filter(f => f.fileName !== file.fileName),
+    })),
 
   decryptedFile: null,
   setDecryptedFile: file => set({ decryptedFile: file }),

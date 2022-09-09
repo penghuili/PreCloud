@@ -28,10 +28,8 @@ async function readFilesInFolder(path) {
 
 function Caches({ currentRoute }) {
   const colors = useColors();
-  const encryptedFilesInStore = useStore(state => state.encryptedFiles);
   const setEncryptedFilesInStore = useStore(state => state.setEncryptedFiles);
-  const decryptedFile = useStore(state => state.decryptedFile);
-  const setDecryptedFile = useStore(state => state.setDecryptedFile);
+  const setDecryptedFileInStore = useStore(state => state.setDecryptedFile);
 
   const [cacheSize, setCacheSize] = useState(0);
   const [encryptedFiles, setEncryptedFiles] = useState([]);
@@ -58,7 +56,7 @@ function Caches({ currentRoute }) {
     await readFilesInCache();
     setShowCaches(false);
     setEncryptedFilesInStore([]);
-    setDecryptedFile(null);
+    setDecryptedFileInStore(null);
   }
 
   const hasCachedFile = encryptedFiles.length > 0 || decryptedFiles.length > 0;
@@ -112,8 +110,8 @@ function Caches({ currentRoute }) {
                     key={file.fileName}
                     file={file}
                     forEncrypt
+                    canRename={false}
                     onDelete={async () => {
-                      setEncryptedFilesInStore(encryptedFilesInStore.filter(f => f.fileName !== file.fileName));
                       await readFilesInCache();
                     }}
                   />
@@ -131,10 +129,8 @@ function Caches({ currentRoute }) {
                     key={file.fileName}
                     file={file}
                     forEncrypt={false}
+                    canRename={false}
                     onDelete={async () => {
-                      if (decryptedFile && decryptedFile.fileName === file.fileName) {
-                        setDecryptedFile(null);
-                      }
                       await readFilesInCache();
                     }}
                   />
