@@ -128,7 +128,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
 
         {canBeOpened && (
           <IconButton
-            icon={<Icon name="book-outline" size={20} color={colors.text} />}
+            icon={<Icon name="eye-outline" size={20} color={colors.text} />}
             size="sm"
             variant="subtle"
             mr="2"
