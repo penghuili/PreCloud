@@ -11,6 +11,7 @@ import {
   VStack,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
+import { Keyboard } from 'react-native';
 
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
@@ -33,6 +34,7 @@ function EncryptDecryptText({ jumpTo }) {
       if (msg.type === 'encrypted-text') {
         if (msg.payload.data) {
           setEncryptedText(msg.payload.data);
+          Keyboard.dismiss();
           toast.show({ title: 'Encrypted.' });
         } else {
           toast.show({ title: 'Encrypt text failed.' });
