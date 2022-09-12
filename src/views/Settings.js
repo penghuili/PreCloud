@@ -92,10 +92,10 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <HStack space="1">
-            <Text>Or join the</Text>
-            <Link href="https://www.getrevue.co/profile/precloud">newsletter</Link>
-          </HStack>
+          <Text>
+            Or check the <Link href="https://www.getrevue.co/profile/precloud">blog</Link> to get
+            updates
+          </Text>
 
           <Divider />
 
