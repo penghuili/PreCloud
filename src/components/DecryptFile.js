@@ -1,15 +1,9 @@
-import { Alert, Box, Button, Heading, Text, useToast, VStack } from 'native-base';
+import { Alert, Button, Heading, Text, useToast, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
-import {
-  deleteFile,
-  extractFileNameFromPath,
-  extractFilePath,
-  internalFilePaths,
-  makeInternalFolders,
-} from '../lib/files';
+import { deleteFile, extractFileNameFromPath, extractFilePath, internalFilePaths, makeInternalFolders } from '../lib/files';
 import { useStore } from '../store/store';
 import FileItem from './FileItem';
 
@@ -26,7 +20,7 @@ async function resetPickedFile() {
 
 function DecryptFile() {
   const toast = useToast();
-  const password = useStore(state => state.masterPassword);
+  const password = useStore(state => state.activePassword);
   const decryptedFile = useStore(state => state.decryptedFile);
   const setDecryptedFile = useStore(state => state.setDecryptedFile);
 
@@ -110,13 +104,7 @@ function DecryptFile() {
     <VStack space="sm" alignItems="center">
       <Heading>Decrypt file</Heading>
       <Alert w="100%" status="info">
-        <Box
-          _text={{
-            textAlign: 'center',
-          }}
-        >
-          Only pick file ending with .precloud
-        </Box>
+        <Text>Only pick file ending with .precloud</Text>
       </Alert>
       <Button isDisabled={!password} isLoading={isDecrypting} onPress={pickEncryptedFile}>
         Pick an encrypted file

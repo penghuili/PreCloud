@@ -1,12 +1,41 @@
 import create from 'zustand';
-import { getPassword } from '../lib/keychain';
 
-export const useStore = create(set => ({
-  masterPassword: '',
-  setMasterPassword: p => set({ masterPassword: p }),
-  getMasterPassword: async () => {
-    const p = await getPassword();
-    set({ masterPassword: p || '' });
+import { getPasswords, savePasswords } from '../lib/keychain';
+import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
+
+export const useStore = create((set, get) => ({
+  passwords: [],
+  getPasswords: async () => {
+    const passwords = await getPasswords();
+    set({ passwords });
+
+    const activePasswordId = await LocalStorage.get(LocalStorageKeys.activePassword);
+    if (activePasswordId) {
+      const active = passwords.find(p => p.id === activePasswordId);
+      if (active) {
+        set({ activePassword: active.password, activePasswordId: active.id });
+        return;
+      }
+    }
+    const active = passwords[0];
+    set({ activePassword: active?.password || '', activePasswordId: active?.id || '' });
+  },
+  savePassword: async password => {
+    const passwords = password.id
+      ? get().passwords.map(p => (p.id === password.id ? password : p))
+      : [
+          ...get().passwords,
+          { id: Date.now().toString(), label: password.label, password: password.password },
+        ];
+    await savePasswords(passwords);
+    set({ passwords });
+  },
+  activePassword: '',
+  activePasswordId: '',
+  setActivePassword: async passwordId => {
+    const active = get().passwords.find(p => p.id === passwordId);
+    set({ activePassword: active?.password, activePasswordId: active?.id });
+    await LocalStorage.set(LocalStorageKeys.activePassword, passwordId);
   },
 
   encryptedFiles: [],

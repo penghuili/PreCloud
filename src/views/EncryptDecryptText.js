@@ -24,7 +24,7 @@ const nodejs = require('nodejs-mobile-react-native');
 
 function EncryptDecryptText({ jumpTo }) {
   const toast = useToast();
-  const password = useStore(state => state.masterPassword);
+  const password = useStore(state => state.activePassword);
   const colors = useColors();
   const [text, setText] = useState('');
   const [encryptedText, setEncryptedText] = useState('');

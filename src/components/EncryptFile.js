@@ -39,7 +39,7 @@ async function resetPickedFile() {
 }
 
 function EncryptFile() {
-  const password = useStore(state => state.masterPassword);
+  const password = useStore(state => state.activePassword);
 
   const encryptedFiles = useStore(state => state.encryptedFiles);
   const setEncryptedFiles = useStore(state => state.setEncryptedFiles);

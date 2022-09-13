@@ -5,7 +5,7 @@ import { routeNames } from '../router/Router';
 import { useStore } from '../store/store';
 
 function PasswordAlert({ navigate }) {
-  const password = useStore(state => state.masterPassword);
+  const password = useStore(state => state.activePassword);
 
   if (!password) {
     return (

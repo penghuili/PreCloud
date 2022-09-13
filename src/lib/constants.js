@@ -9,3 +9,9 @@ export const platforms = {
   ios: 'ios',
   android: 'android',
 };
+
+export const precloudPassword = {
+  id: '1663015882571',
+  label: 'PreCloud',
+  password: 'r@hMd^wm@jMHt7reZfDRJa',
+};

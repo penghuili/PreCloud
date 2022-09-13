@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export const LocalStorageKeys = {
+  activePassword: 'activePassword',
+};
+
 export const LocalStorage = {
   async set(key, value) {
     try {

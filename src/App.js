@@ -11,12 +11,12 @@ const nodejs = require('nodejs-mobile-react-native');
 
 function App() {
   const theme = getTheme();
-  const getMasterPassword = useStore(state => state.getMasterPassword);
+  const getPasswords = useStore(state => state.getPasswords);
 
   useEffect(() => {
     nodejs.start('main.js');
     SplashScreen.hide();
-    getMasterPassword();
+    getPasswords();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
