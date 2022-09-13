@@ -12,6 +12,6 @@ export const platforms = {
 
 export const precloudPassword = {
   id: '1663015882571',
-  label: 'PreCloud',
+  label: 'PreCloud Blog',
   password: 'r@hMd^wm@jMHt7reZfDRJa',
 };

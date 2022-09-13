@@ -6,6 +6,11 @@ import { useStore } from '../store/store';
 
 function PasswordAlert({ navigate }) {
   const password = useStore(state => state.activePassword);
+  const isLoadingPasswords = useStore(state => state.isLoadingPasswords);
+
+  if (isLoadingPasswords) {
+    return null;
+  }
 
   if (!password) {
     return (

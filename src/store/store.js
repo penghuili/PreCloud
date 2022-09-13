@@ -5,10 +5,12 @@ import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
 export const useStore = create((set, get) => ({
   passwords: [],
+  isLoadingPasswords: true,
   activePassword: '',
   activePasswordId: '',
   activePasswordLabel: '',
   getPasswords: async () => {
+    set({ isLoadingPasswords: true });
     const passwords = await getPasswords();
     set({ passwords });
 
@@ -20,6 +22,7 @@ export const useStore = create((set, get) => ({
           activePassword: active.password,
           activePasswordId: active.id,
           activePasswordLabel: active.label,
+          isLoadingPasswords: false,
         });
         return;
       }
@@ -29,6 +32,7 @@ export const useStore = create((set, get) => ({
       activePassword: active?.password || '',
       activePasswordId: active?.id || '',
       activePasswordLabel: active?.label || '',
+      isLoadingPasswords: false,
     });
   },
   savePassword: async password => {
