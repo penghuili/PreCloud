@@ -27,8 +27,30 @@ export const useStore = create((set, get) => ({
           ...get().passwords,
           { id: Date.now().toString(), label: password.label, password: password.password },
         ];
-    await savePasswords(passwords);
     set({ passwords });
+    await savePasswords(passwords);
+  },
+  movePasswordToTop: async password => {
+    const passwords = get().passwords;
+    if (passwords.length < 2) {
+      return;
+    }
+
+    const otherPasswords = passwords.filter(p => p.id !== password.id);
+    const orderedPasswords = [password, ...otherPasswords];
+    set({ passwords: orderedPasswords });
+    await savePasswords(orderedPasswords);
+  },
+  movePasswordToBottom: async password => {
+    const passwords = get().passwords;
+    if (passwords.length < 2) {
+      return;
+    }
+
+    const otherPasswords = passwords.filter(p => p.id !== password.id);
+    const orderedPasswords = [...otherPasswords, password];
+    set({ passwords: orderedPasswords });
+    await savePasswords(orderedPasswords);
   },
   activePassword: '',
   activePasswordId: '',

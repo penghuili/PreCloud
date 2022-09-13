@@ -13,6 +13,8 @@ function Passwords() {
   const passwords = useStore(state => state.passwords);
   const activePasswordId = useStore(state => state.activePasswordId);
   const setActivePassword = useStore(state => state.setActivePassword);
+  const movePasswordToTop = useStore(state => state.movePasswordToTop);
+  const movePasswordToBottom = useStore(state => state.movePasswordToBottom);
 
   const [selectedPassword, setSelectedPassword] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -42,7 +44,7 @@ function Passwords() {
               value={activePasswordId}
               onChange={setActivePassword}
             >
-              {passwords.map(password => (
+              {passwords.map((password, index) => (
                 <HStack key={password.id} justifyContent="space-between" width="full">
                   <Radio value={password.id} my={2}>
                     <Text>{password.label}</Text>
@@ -69,6 +71,24 @@ function Passwords() {
                     >
                       Edit
                     </Menu.Item>
+                    {index !== 0 && passwords.length > 1 && (
+                      <Menu.Item
+                        onPress={() => {
+                          movePasswordToTop(password);
+                        }}
+                      >
+                        Move to top
+                      </Menu.Item>
+                    )}
+                    {index !== passwords.length - 1 && passwords.length > 1 && (
+                      <Menu.Item
+                        onPress={() => {
+                          movePasswordToBottom(password);
+                        }}
+                      >
+                        Move to bottom
+                      </Menu.Item>
+                    )}
                   </Menu>
                 </HStack>
               ))}
