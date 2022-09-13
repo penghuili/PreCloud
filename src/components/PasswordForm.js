@@ -58,9 +58,10 @@ function PasswordForm({ selectedPassword, isOpen, onClose }) {
             <FormControl.Label>Password</FormControl.Label>
             <Input
               type={showPassword ? 'text' : 'password'}
-              isDisabled
+              isDisabled={!!selectedPassword}
               placeholder="Enter password"
               value={password}
+              onChangeText={setPassword}
               InputRightElement={
                 <HStack pr={2}>
                   <Icon

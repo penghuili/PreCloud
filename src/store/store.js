@@ -5,6 +5,9 @@ import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
 export const useStore = create((set, get) => ({
   passwords: [],
+  activePassword: '',
+  activePasswordId: '',
+  activePasswordLabel: '',
   getPasswords: async () => {
     const passwords = await getPasswords();
     set({ passwords });
@@ -13,12 +16,20 @@ export const useStore = create((set, get) => ({
     if (activePasswordId) {
       const active = passwords.find(p => p.id === activePasswordId);
       if (active) {
-        set({ activePassword: active.password, activePasswordId: active.id });
+        set({
+          activePassword: active.password,
+          activePasswordId: active.id,
+          activePasswordLabel: active.label,
+        });
         return;
       }
     }
     const active = passwords[0];
-    set({ activePassword: active?.password || '', activePasswordId: active?.id || '' });
+    set({
+      activePassword: active?.password || '',
+      activePasswordId: active?.id || '',
+      activePasswordLabel: active?.label || '',
+    });
   },
   savePassword: async password => {
     const passwords = password.id
@@ -52,11 +63,30 @@ export const useStore = create((set, get) => ({
     set({ passwords: orderedPasswords });
     await savePasswords(orderedPasswords);
   },
-  activePassword: '',
-  activePasswordId: '',
+  deletePassword: async password => {
+    const { passwords, activePasswordId } = get();
+    const filtered = passwords.filter(p => p.id !== password.id);
+
+    set({ passwords: filtered });
+    await savePasswords(filtered);
+
+    if (password.id === activePasswordId) {
+      const newActive = filtered[0];
+      set({
+        activePassword: newActive.password,
+        activePasswordId: newActive.id,
+        activePasswordLabel: newActive.label,
+      });
+      await LocalStorage.set(LocalStorageKeys.activePassword, newActive.id);
+    }
+  },
   setActivePassword: async passwordId => {
     const active = get().passwords.find(p => p.id === passwordId);
-    set({ activePassword: active?.password, activePasswordId: active?.id });
+    set({
+      activePassword: active?.password || '',
+      activePasswordId: active?.id || '',
+      activePasswordLabel: active?.label || '',
+    });
     await LocalStorage.set(LocalStorageKeys.activePassword, passwordId);
   },
 

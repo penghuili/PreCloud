@@ -1,4 +1,14 @@
-import { Alert, Button, HStack, IconButton, Menu, Radio, Text, VStack } from 'native-base';
+import {
+  Alert,
+  AlertDialog,
+  Button,
+  HStack,
+  IconButton,
+  Menu,
+  Radio,
+  Text,
+  VStack,
+} from 'native-base';
 import React, { useState } from 'react';
 
 import AppBar from '../components/AppBar';
@@ -15,9 +25,11 @@ function Passwords() {
   const setActivePassword = useStore(state => state.setActivePassword);
   const movePasswordToTop = useStore(state => state.movePasswordToTop);
   const movePasswordToBottom = useStore(state => state.movePasswordToBottom);
+  const deletePassword = useStore(state => state.deletePassword);
 
   const [selectedPassword, setSelectedPassword] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   return (
     <>
@@ -28,11 +40,11 @@ function Passwords() {
             <VStack space={1} flexShrink={1} w="100%" alignItems="center">
               <Alert.Icon size="md" />
               <Text fontSize="md" fontWeight="medium">
-                Save your password in a safe place!
+                Save your passwords in a safe place!
               </Text>
               <Text>
-                Save your password in a password manager. If you lose your password, You can not
-                decrypt your texts or files.
+                Save all your passwords in a password manager. If you lose your passwords, You can
+                not decrypt your texts or files.
               </Text>
             </VStack>
           </Alert>
@@ -89,6 +101,16 @@ function Passwords() {
                         Move to bottom
                       </Menu.Item>
                     )}
+                    {passwords.length > 1 && (
+                      <Menu.Item
+                        onPress={() => {
+                          setShowDeleteAlert(true);
+                          setSelectedPassword(password);
+                        }}
+                      >
+                        Delete
+                      </Menu.Item>
+                    )}
                   </Menu>
                 </HStack>
               ))}
@@ -101,7 +123,7 @@ function Passwords() {
               setShowForm(true);
             }}
           >
-            Add your first password
+            {passwords?.length ? 'Add new password' : 'Add your first password'}
           </Button>
 
           <PasswordForm
@@ -112,6 +134,39 @@ function Passwords() {
               setSelectedPassword(null);
             }}
           />
+
+          <AlertDialog isOpen={showDeleteAlert}>
+            <AlertDialog.Content>
+              <AlertDialog.Header>Delete password</AlertDialog.Header>
+              <AlertDialog.Body>
+                After the password is deleted, you can&lsquo;t decrypt the texts and files that are
+                encrypted with this password. Do you still want to delete this password?
+              </AlertDialog.Body>
+              <AlertDialog.Footer>
+                <Button.Group space={2}>
+                  <Button
+                    variant="ghost"
+                    onPress={() => {
+                      setShowDeleteAlert(false);
+                      setSelectedPassword(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    colorScheme="danger"
+                    onPress={async () => {
+                      await deletePassword(selectedPassword);
+                      setSelectedPassword(null);
+                      setShowDeleteAlert(false);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Button.Group>
+              </AlertDialog.Footer>
+            </AlertDialog.Content>
+          </AlertDialog>
         </VStack>
       </ContentWrapper>
     </>

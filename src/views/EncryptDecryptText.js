@@ -1,18 +1,9 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import {
-  Box,
-  Button,
-  Heading,
-  HStack,
-  IconButton,
-  Popover,
-  TextArea,
-  useToast,
-  VStack,
-} from 'native-base';
+import { Box, Button, Heading, HStack, IconButton, Popover, TextArea, useToast, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 
+import ActivePasswordAlert from '../components/ActivePasswordAlert';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
@@ -218,6 +209,7 @@ function EncryptDecryptText({ jumpTo }) {
       <ContentWrapper>
         <VStack space="sm" alignItems="center" pb="15">
           <PasswordAlert navigate={jumpTo} />
+          <ActivePasswordAlert navigate={jumpTo} />
 
           {rendrEncryption()}
 

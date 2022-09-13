@@ -1,6 +1,7 @@
 import { Box, Divider, VStack } from 'native-base';
 import React from 'react';
 
+import ActivePasswordAlert from '../components/ActivePasswordAlert';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import DecryptFile from '../components/DecryptFile';
@@ -14,6 +15,7 @@ function EncryptDecryptFile({ currentRoute, jumpTo }) {
       <ContentWrapper>
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
+          <ActivePasswordAlert navigate={jumpTo} />
 
           <EncryptFile currentRoute={currentRoute} />
 

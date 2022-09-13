@@ -13,7 +13,7 @@ function PasswordAlert({ navigate }) {
         <VStack space={2} flexShrink={1} w="100%" alignItems="center">
           <Alert.Icon size="md" />
           <Text fontSize="md" fontWeight="medium">
-            Setup your master password first
+            Setup your password first
           </Text>
           <Button onPress={() => navigate(routeNames.passwords)}>Add now</Button>
         </VStack>
