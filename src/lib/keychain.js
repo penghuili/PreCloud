@@ -21,7 +21,7 @@ export async function getPasswords() {
       const arr = p.split(labelPasswordSeparator);
       return arr.length === 3
         ? { id: arr[0], label: arr[1], password: arr[2] }
-        : { id: defaultId, label: 'Default', password: arr[0] };
+        : { id: defaultId, label: 'Primary password', password: arr[0] };
     });
   } catch (e) {
     console.log(e);

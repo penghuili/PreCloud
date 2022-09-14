@@ -9,12 +9,12 @@ function ActivePasswordAlert({ navigate }) {
 
   if (activePasswordLabel) {
     return (
-      <Alert w="100%" status="info" mb={8}>
+      <Alert w="100%" status="warning" mb={8}>
         <VStack space={2} flexShrink={1} w="100%" alignItems="center">
           <Text>
             You are using the <Text highlight>{activePasswordLabel}</Text> password to encrypt and decrypt.
           </Text>
-          <Button size="sm" onPress={() => navigate(routeNames.passwords)}>Change</Button>
+          <Button variant="ghost" size="sm" onPress={() => navigate(routeNames.passwords)}>Change</Button>
         </VStack>
       </Alert>
     );

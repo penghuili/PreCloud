@@ -74,7 +74,7 @@ function PasswordForm({ selectedPassword, isOpen, onClose }) {
               }
             />
             <FormControl.HelperText>
-              Use a password manager to generate a strong password.
+              Recommend: use a password manager to generate a strong password.
             </FormControl.HelperText>
             {!!error && <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>}
           </FormControl>
