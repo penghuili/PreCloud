@@ -92,13 +92,7 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <Text>
-            Or check the{' '}
-            <Link href="https://www.getrevue.co/profile/precloud" color={colors.text}>
-              blog
-            </Link>{' '}
-            to get updates
-          </Text>
+          <Link href="https://www.getrevue.co/profile/precloud">Check the blog</Link>
 
           <Divider />
 
