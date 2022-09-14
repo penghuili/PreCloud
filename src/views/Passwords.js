@@ -1,4 +1,15 @@
-import { Alert, AlertDialog, Button, HStack, IconButton, Menu, Radio, Text, useToast, VStack } from 'native-base';
+import {
+  Alert,
+  AlertDialog,
+  Button,
+  HStack,
+  IconButton,
+  Menu,
+  Radio,
+  Text,
+  useToast,
+  VStack,
+} from 'native-base';
 import React, { useState } from 'react';
 
 import AppBar from '../components/AppBar';
@@ -51,6 +62,7 @@ function Passwords() {
                 if (password) {
                   toast.show({
                     title: `From now on you will use the "${password.label}" password to encrypt and decrypt.`,
+                    placement: 'top',
                   });
                 }
               }}
@@ -100,16 +112,14 @@ function Passwords() {
                         Move to bottom
                       </Menu.Item>
                     )}
-                    {passwords.length > 1 && (
-                      <Menu.Item
-                        onPress={() => {
-                          setShowDeleteAlert(true);
-                          setSelectedPassword(password);
-                        }}
-                      >
-                        Delete
-                      </Menu.Item>
-                    )}
+                    <Menu.Item
+                      onPress={() => {
+                        setShowDeleteAlert(true);
+                        setSelectedPassword(password);
+                      }}
+                    >
+                      Delete
+                    </Menu.Item>
                   </Menu>
                 </HStack>
               ))}

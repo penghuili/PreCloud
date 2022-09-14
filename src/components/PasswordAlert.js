@@ -16,7 +16,6 @@ function PasswordAlert({ navigate }) {
     return (
       <Alert w="100%" status="info" mb={8}>
         <VStack space={2} flexShrink={1} w="100%" alignItems="center">
-          <Alert.Icon size="md" />
           <Text fontSize="md" fontWeight="medium">
             Setup your password first
           </Text>

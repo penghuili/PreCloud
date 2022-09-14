@@ -1,5 +1,15 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Box, Button, Heading, HStack, IconButton, Popover, TextArea, useToast, VStack } from 'native-base';
+import {
+  Box,
+  Button,
+  Heading,
+  HStack,
+  IconButton,
+  Popover,
+  TextArea,
+  useToast,
+  VStack,
+} from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 
@@ -26,17 +36,18 @@ function EncryptDecryptText({ jumpTo }) {
         if (msg.payload.data) {
           setEncryptedText(msg.payload.data);
           Keyboard.dismiss();
-          toast.show({ title: 'Encrypted.' });
+          toast.show({ title: 'Encrypted.', placement: 'top' });
         } else {
-          toast.show({ title: 'Encrypt text failed.' });
+          toast.show({ title: 'Encrypt text failed.', placement: 'top' });
         }
       } else if (msg.type === 'decrypted-text') {
         if (msg.payload.data) {
           setText(msg.payload.data);
-          toast.show({ title: 'Decrypted.' });
+          toast.show({ title: 'Decrypted.', placement: 'top' });
         } else {
           toast.show({
             title: 'Decrypt text failed. Please only decrypt texts that are encrypted by this app.',
+            placement: 'top',
           });
         }
       }
@@ -103,9 +114,9 @@ function EncryptDecryptText({ jumpTo }) {
               const copied = await Clipboard.getString();
               if (copied) {
                 setText(copied);
-                toast.show({ title: 'Pasted!', placement: 'bottom' });
+                toast.show({ title: 'Pasted!', placement: 'top' });
               } else {
-                toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
+                toast.show({ title: 'Nothing in clipboard.', placement: 'top' });
               }
             }}
           />
@@ -114,7 +125,7 @@ function EncryptDecryptText({ jumpTo }) {
             isDisabled={!password || !text}
             onPress={() => {
               Clipboard.setString(text);
-              toast.show({ title: 'Copied!', placement: 'bottom' });
+              toast.show({ title: 'Copied!', placement: 'top' });
             }}
           />
           <IconButton
@@ -169,9 +180,9 @@ function EncryptDecryptText({ jumpTo }) {
               const copied = await Clipboard.getString();
               if (copied) {
                 setEncryptedText(copied);
-                toast.show({ title: 'Pasted!', placement: 'bottom' });
+                toast.show({ title: 'Pasted!', placement: 'top' });
               } else {
-                toast.show({ title: 'Nothing in clipboard.', placement: 'bottom' });
+                toast.show({ title: 'Nothing in clipboard.', placement: 'top' });
               }
             }}
           />
@@ -180,7 +191,7 @@ function EncryptDecryptText({ jumpTo }) {
             isDisabled={!password || !encryptedText}
             onPress={() => {
               Clipboard.setString(encryptedText);
-              toast.show({ title: 'Copied!', placement: 'bottom' });
+              toast.show({ title: 'Copied!', placement: 'top' });
             }}
           />
           <IconButton

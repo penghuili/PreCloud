@@ -71,7 +71,7 @@ function Settings({ currentRoute }) {
                     icon={<Icon name="copy-outline" color={colors.text} />}
                     onPress={() => {
                       Clipboard.setString(recommendText);
-                      toast.show({ title: 'Copied!' });
+                      toast.show({ title: 'Copied!', placement: 'top' });
                     }}
                   >
                     Copy

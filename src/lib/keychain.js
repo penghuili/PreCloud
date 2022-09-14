@@ -16,7 +16,7 @@ export async function savePasswords(passwords) {
 export async function getPasswords() {
   try {
     const result = await Keychain.getGenericPassword();
-    if (!result?.length) {
+    if (!result?.password) {
       return []
     }
     const password = result.password;

@@ -3,6 +3,16 @@ import create from 'zustand';
 import { getPasswords, savePasswords } from '../lib/keychain';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
+async function setActivePassword(get, set, passwordId) {
+  const active = get().passwords.find(p => p.id === passwordId);
+  set({
+    activePassword: active?.password || '',
+    activePasswordId: active?.id || '',
+    activePasswordLabel: active?.label || '',
+  });
+  await LocalStorage.set(LocalStorageKeys.activePassword, passwordId || '');
+}
+
 export const useStore = create((set, get) => ({
   passwords: [],
   isLoadingPasswords: true,
@@ -15,19 +25,7 @@ export const useStore = create((set, get) => ({
     set({ passwords });
 
     const activePasswordId = await LocalStorage.get(LocalStorageKeys.activePassword);
-    if (activePasswordId) {
-      const active = passwords.find(p => p.id === activePasswordId);
-      if (active) {
-        set({
-          activePassword: active.password,
-          activePasswordId: active.id,
-          activePasswordLabel: active.label,
-          isLoadingPasswords: false,
-        });
-        return;
-      }
-    }
-    const active = passwords[0];
+    const active = passwords.find(p => p.id === activePasswordId) || passwords[0];
     set({
       activePassword: active?.password || '',
       activePasswordId: active?.id || '',
@@ -44,6 +42,10 @@ export const useStore = create((set, get) => ({
         ];
     set({ passwords });
     await savePasswords(passwords);
+
+    if (!get().activePasswordId) {
+      await setActivePassword(get, set, passwords[0]?.id);
+    }
   },
   movePasswordToTop: async password => {
     const passwords = get().passwords;
@@ -76,22 +78,11 @@ export const useStore = create((set, get) => ({
 
     if (password.id === activePasswordId) {
       const newActive = filtered[0];
-      set({
-        activePassword: newActive.password,
-        activePasswordId: newActive.id,
-        activePasswordLabel: newActive.label,
-      });
-      await LocalStorage.set(LocalStorageKeys.activePassword, newActive.id);
+      await setActivePassword(get, set, newActive?.id);
     }
   },
   setActivePassword: async passwordId => {
-    const active = get().passwords.find(p => p.id === passwordId);
-    set({
-      activePassword: active?.password || '',
-      activePasswordId: active?.id || '',
-      activePasswordLabel: active?.label || '',
-    });
-    await LocalStorage.set(LocalStorageKeys.activePassword, passwordId);
+    await setActivePassword(get, set, passwordId);
   },
 
   encryptedFiles: [],

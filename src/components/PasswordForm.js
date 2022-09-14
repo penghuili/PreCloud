@@ -40,7 +40,7 @@ function PasswordForm({ selectedPassword, isOpen, onClose }) {
     try {
       await savePassword({ id: selectedPassword?.id, label: label.trim(), password });
       handleClose();
-      toast.show({ title: 'Password is saved in secure storage.' });
+      toast.show({ title: 'Password is saved in secure storage.', placement: 'top' });
     } catch (e) {
       setError('Save password failed. Please choose another one.');
     }

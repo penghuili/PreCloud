@@ -3,7 +3,13 @@ import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
-import { deleteFile, extractFileNameFromPath, extractFilePath, internalFilePaths, makeInternalFolders } from '../lib/files';
+import {
+  deleteFile,
+  extractFileNameFromPath,
+  extractFilePath,
+  internalFilePaths,
+  makeInternalFolders,
+} from '../lib/files';
 import { useStore } from '../store/store';
 import FileItem from './FileItem';
 
@@ -43,7 +49,7 @@ function DecryptFile() {
 
             setDecryptedFile({ fileName, path: newPath });
           } else {
-            toast.show({ title: 'Decrypt file failed.' });
+            toast.show({ title: 'Decrypt file failed.', placement: 'top' });
             console.log('Decrypt file failed.', msg.payload.error);
           }
         } catch (e) {
@@ -75,7 +81,7 @@ function DecryptFile() {
       });
       const file = { ...result[0], path: extractFilePath(result[0].fileCopyUri) };
       if (!file.name.endsWith('precloud') && !file.name.endsWith('preupload')) {
-        toast.show({ title: 'Please only pick file ending with .precloud' });
+        toast.show({ title: 'Please only pick file ending with .precloud', placement: 'top' });
         await RNFS.unlink(file.path);
         return;
       }

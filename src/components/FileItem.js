@@ -54,19 +54,19 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
       if (isAndroid()) {
         const downloadPath = `${androidDownloadFolder}/${file.fileName}`;
         await copyFile(file.path, downloadPath);
-        toast.show({ title: `File is downloaded to ${downloadPath}` });
+        toast.show({ title: `File is downloaded to ${downloadPath}`, placement: 'top' });
       } else {
         await shareFile({
           fileName: file.fileName,
           filePath: file.path,
           saveToFiles: true,
         });
-        toast.show({ title: `File is downloaded.` });
+        toast.show({ title: `File is downloaded.`, placement: 'top' });
       }
     } catch (error) {
       console.log('Download file failed:', error);
       if (isAndroid()) {
-        toast.show({ title: 'Download file failed.' });
+        toast.show({ title: 'Download file failed.', placement: 'top' });
       }
     }
 
@@ -80,7 +80,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
         filePath: file.path,
         saveToFiles: false,
       });
-      toast.show({ title: 'Shared.' });
+      toast.show({ title: 'Shared.', placement: 'top' });
     } catch (error) {
       console.log('Share file failed:', error);
     }
@@ -89,7 +89,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   const handleDeleteFile = async () => {
     try {
       await RNFS.unlink(file.path);
-      toast.show({ title: 'Deleted from cache.' });
+      toast.show({ title: 'Deleted from cache.', placement: 'top' });
       if (forEncrypt) {
         deleteEncryptedFile(file);
       } else {
