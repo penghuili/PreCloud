@@ -92,7 +92,7 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <Link href="https://www.getrevue.co/profile/precloud">Check the blog</Link>
+          <Link href="https://www.getrevue.co/profile/precloud">PreCloud Blog</Link>
 
           <Divider />
 

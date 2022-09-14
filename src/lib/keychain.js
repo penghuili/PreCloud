@@ -16,7 +16,10 @@ export async function savePasswords(passwords) {
 export async function getPasswords() {
   try {
     const result = await Keychain.getGenericPassword();
-    const password = result?.password || '';
+    if (!result?.length) {
+      return []
+    }
+    const password = result.password;
     return password.split(passwordSeparator).map(p => {
       const arr = p.split(labelPasswordSeparator);
       return arr.length === 3
