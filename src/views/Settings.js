@@ -12,7 +12,7 @@ import {
   useToast,
   VStack,
 } from 'native-base';
-import React from 'react';
+import React, { useState } from 'react';
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
 
@@ -21,6 +21,7 @@ import AppBar from '../components/AppBar';
 import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
+import PasswordGeneratorModal from '../components/PasswordGeneratorModal';
 import PlatformToggle from '../components/PlatformToggle';
 import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail, platforms } from '../lib/constants';
@@ -31,6 +32,8 @@ const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.io
 function Settings({ currentRoute }) {
   const colors = useColors();
   const toast = useToast();
+
+  const [showPasswordGenerator, setShowPasswordGenerator] = useState(false);
 
   return (
     <>
@@ -45,6 +48,10 @@ function Settings({ currentRoute }) {
           <Divider />
 
           <Caches currentRoute={currentRoute} />
+
+          <Divider />
+
+          <Link onPress={() => setShowPasswordGenerator(true)}>Generate password</Link>
 
           <Divider />
 
@@ -120,6 +127,11 @@ function Settings({ currentRoute }) {
               <Box h="8" />
             </VStack>
           </PlatformToggle>
+
+          <PasswordGeneratorModal
+            isOpen={showPasswordGenerator}
+            onClose={() => setShowPasswordGenerator(false)}
+          />
         </VStack>
       </ContentWrapper>
     </>
