@@ -43,8 +43,10 @@ export const useStore = create((set, get) => ({
     set({ passwords });
     await savePasswords(passwords);
 
-    if (!get().activePasswordId) {
+    if (!get().activePasswordId ) {
       await setActivePassword(get, set, passwords[0]?.id);
+    } else if (get().activePasswordId === password.id) {
+      await setActivePassword(get, set, passwords.id);
     }
   },
   movePasswordToTop: async password => {
