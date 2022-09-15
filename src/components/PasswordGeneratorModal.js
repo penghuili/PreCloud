@@ -25,7 +25,10 @@ function PasswordGeneratorModal({ isOpen, onClose }) {
             accessibilityLabel="Password length"
             step={1}
             value={passwordLength}
-            onChange={setPasswordLength}
+            onChange={length => {
+              setPasswordLength(length);
+              setPassword(generatePassword(length, hasSpecialCharacters));
+            }}
             my={2}
           >
             <Slider.Track>
@@ -33,7 +36,13 @@ function PasswordGeneratorModal({ isOpen, onClose }) {
             </Slider.Track>
             <Slider.Thumb />
           </Slider>
-          <Checkbox isChecked={hasSpecialCharacters} onChange={setHasSpecialCharacters}>
+          <Checkbox
+            isChecked={hasSpecialCharacters}
+            onChange={checked => {
+              setHasSpecialCharacters(checked);
+              setPassword(generatePassword(passwordLength, checked));
+            }}
+          >
             Has special characters
           </Checkbox>
           <Button
