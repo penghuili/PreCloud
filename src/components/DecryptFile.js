@@ -1,9 +1,11 @@
-import { Alert, Button, Heading, Text, useToast, VStack } from 'native-base';
+import { Alert, Button, Heading, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
+import { asyncForEach } from '../lib/array';
 import {
+  decryptionStatus,
   deleteFile,
   extractFileNameFromPath,
   extractFilePath,
@@ -15,49 +17,111 @@ import FileItem from './FileItem';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-let pickedFile = null;
+let pickedFiles = [];
+let currentIndex = 0;
+let processedFiles = [];
 
-async function resetPickedFile() {
-  if (pickedFile) {
-    await deleteFile(pickedFile.path);
-    pickedFile = null;
+async function deleteFiles(paths) {
+  await asyncForEach(paths, async path => {
+    await deleteFile(path);
+  });
+}
+
+async function resetPickedFiles() {
+  if (pickedFiles?.length) {
+    await deleteFiles(pickedFiles.map(f => f.path));
+    pickedFiles = [];
   }
 }
 
 function DecryptFile() {
-  const toast = useToast();
   const password = useStore(state => state.activePassword);
-  const decryptedFile = useStore(state => state.decryptedFile);
-  const setDecryptedFile = useStore(state => state.setDecryptedFile);
+  const decryptedFiles = useStore(state => state.decryptedFiles);
+  const setDecryptedFiles = useStore(state => state.setDecryptedFiles);
 
   const [isDecrypting, setIsDecrypting] = useState(false);
+
+  async function triggerNext() {
+    if (currentIndex + 1 < pickedFiles.length) {
+      currentIndex = currentIndex + 1;
+      const nextFile = pickedFiles[currentIndex];
+
+      await handleTrigger({
+        name: nextFile.name,
+        path: nextFile.path,
+      });
+    } else {
+      setIsDecrypting(false);
+      await resetPickedFiles();
+    }
+  }
+
+  async function handleTrigger({ name, path }) {
+    if (!name.endsWith('precloud')) {
+      await deleteFile(path);
+      processedFiles = [
+        ...processedFiles,
+        { fileName: name, path, status: decryptionStatus.wrongExtension },
+      ];
+      setDecryptedFiles(processedFiles);
+
+      await triggerNext();
+      return;
+    }
+
+    const fileBase64 = await RNFS.readFile(path, 'base64');
+    nodejs.channel.send({
+      type: 'decrypt-file',
+      data: { fileBase64, password, name, path },
+    });
+  }
+
+  async function handleDecrypted(payload) {
+    await makeInternalFolders();
+
+    let processedFile;
+    try {
+      if (payload.data) {
+        const paths = payload.path.split('.');
+        paths.pop();
+        const fileExtension = paths.pop();
+        const tmpPath = `${paths.join('.')}.${fileExtension}`;
+        const fileName = extractFileNameFromPath(tmpPath);
+        const newPath = `${internalFilePaths.decrypted}/${fileName}`;
+        await RNFS.writeFile(newPath, payload.data, 'base64');
+
+        processedFile = {
+          fileName,
+          path: newPath,
+          originalPath: payload.path,
+          status: decryptionStatus.decrypted,
+        };
+      } else {
+        console.log('Decrypt file failed.', payload.error);
+        processedFile = {
+          fileName: payload.name,
+          path: payload.path,
+          status: decryptionStatus.error,
+        };
+      }
+    } catch (e) {
+      console.log('save decrypted file error', e);
+      processedFile = {
+        fileName: payload.name,
+        path: payload.path,
+        status: decryptionStatus.error,
+      };
+    }
+
+    processedFiles = [...processedFiles, processedFile];
+    setDecryptedFiles(processedFiles);
+  }
 
   useEffect(() => {
     const listener = async msg => {
       if (msg.type === 'decrypted-file') {
-        try {
-          if (msg.payload.data) {
-            await makeInternalFolders();
-
-            const paths = msg.payload.path.split('.');
-            paths.pop();
-            const fileExtension = paths.pop();
-            const tmpPath = `${paths.join('.')}.${fileExtension}`;
-            const fileName = extractFileNameFromPath(tmpPath);
-            const newPath = `${internalFilePaths.decrypted}/${fileName}`;
-            await RNFS.writeFile(newPath, msg.payload.data, 'base64');
-
-            setDecryptedFile({ fileName, path: newPath });
-          } else {
-            toast.show({ title: 'Decrypt file failed.', placement: 'top' });
-            console.log('Decrypt file failed.', msg.payload.error);
-          }
-        } catch (e) {
-          console.log('save decrypted file error', e);
-        }
-
-        await resetPickedFile();
-        setIsDecrypting(false);
+        await handleDecrypted(msg.payload);
+        await triggerNext();
       }
     };
     nodejs.channel.addListener('message', listener);
@@ -68,58 +132,56 @@ function DecryptFile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function pickEncryptedFile() {
+  async function pickFiles() {
     try {
-      pickedFile = null;
-      setDecryptedFile(null);
+      pickedFiles = [];
+      processedFiles = [];
+      currentIndex = 0;
 
       const result = await DocumentPicker.pick({
-        allowMultiSelection: false,
+        allowMultiSelection: true,
         type: types.allFiles,
         presentationStyle: 'fullScreen',
         copyTo: 'cachesDirectory',
       });
-      const file = { ...result[0], path: extractFilePath(result[0].fileCopyUri) };
-      if (!file.name.endsWith('precloud') && !file.name.endsWith('preupload')) {
-        toast.show({ title: 'Please only pick file ending with .precloud', placement: 'top' });
-        await RNFS.unlink(file.path);
+      const files = result.map(f => ({
+        name: f.name,
+        path: extractFilePath(f.fileCopyUri),
+      }));
+
+      if (!files?.length) {
         return;
       }
-
-      pickedFile = file;
-
+      pickedFiles = files;
       setIsDecrypting(true);
-      const fileBase64 = await RNFS.readFile(file.path, 'base64');
-
-      nodejs.channel.send({
-        type: 'decrypt-file',
-        data: { fileBase64, password, path: file.path },
+      const firstFile = files[0];
+      await handleTrigger({
+        name: firstFile.name,
+        path: firstFile.path,
       });
     } catch (e) {
-      await resetPickedFile();
+      await resetPickedFiles();
       setIsDecrypting(false);
-      console.log('Pick file failed', e);
+      console.log('Pick files failed', e);
     }
-  }
-
-  async function handleDeleteFile() {
-    await resetPickedFile();
   }
 
   return (
     <VStack space="sm" alignItems="center">
       <Heading>Decrypt file</Heading>
       <Alert w="100%" status="info">
-        <Text>Only pick file ending with .precloud</Text>
+        <Text>Pick one or multiple encrypted files that end with .precloud</Text>
       </Alert>
-      <Button isDisabled={!password} isLoading={isDecrypting} onPress={pickEncryptedFile}>
-        Pick an encrypted file
+      <Button isDisabled={!password} isLoading={isDecrypting} onPress={pickFiles}>
+        Pick encrypted files
       </Button>
 
-      {!!decryptedFile && (
+      {!!decryptedFiles.length && (
         <VStack space="sm" alignItems="center" px={4} py={4}>
-          <Text bold>Decrypted file:</Text>
-          <FileItem file={decryptedFile} forEncrypt={false} onDelete={handleDeleteFile} />
+          <Text bold>Decrypted {decryptedFiles.length > 1 ? 'files' : 'file'}:</Text>
+          {decryptedFiles.map(file => (
+            <FileItem key={file.fileName} file={file} forEncrypt={false} />
+          ))}
         </VStack>
       )}
     </VStack>

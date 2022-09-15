@@ -43,7 +43,7 @@ export const useStore = create((set, get) => ({
     set({ passwords });
     await savePasswords(passwords);
 
-    if (!get().activePasswordId ) {
+    if (!get().activePasswordId) {
       await setActivePassword(get, set, passwords[0]?.id);
     } else if (get().activePasswordId === password.id) {
       await setActivePassword(get, set, passwords.id);
@@ -100,4 +100,15 @@ export const useStore = create((set, get) => ({
 
   decryptedFile: null,
   setDecryptedFile: file => set({ decryptedFile: file }),
+
+  decryptedFiles: [],
+  setDecryptedFiles: files => set({ decryptedFiles: files }),
+  renameDecryptedFile: (originalFileName, file) =>
+    set(state => ({
+      decryptedFiles: state.decryptedFiles.map(f => (f.fileName === originalFileName ? file : f)),
+    })),
+  deleteDecryptedFile: file =>
+    set(state => ({
+      decryptedFiles: state.decryptedFiles.filter(f => f.fileName !== file.fileName),
+    })),
 }));

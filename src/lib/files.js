@@ -27,9 +27,15 @@ export const internalFilePaths = {
 export const androidDownloadFolder = RNFS.DownloadDirectoryPath;
 
 export const encryptionStatus = {
-  tooLarge: 'tooLarge',
-  encrypted: 'encrypted',
-  error: 'error',
+  tooLarge: 'encryption/tooLarge',
+  encrypted: 'encryption/encrypted',
+  error: 'encryption/error',
+};
+
+export const decryptionStatus = {
+  wrongExtension: 'decryption/wrongExtension',
+  decrypted: 'decryption/decrypted',
+  error: 'decryption/error',
 };
 
 export async function makeInternalFolders() {

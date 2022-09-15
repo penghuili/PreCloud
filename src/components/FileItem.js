@@ -8,6 +8,7 @@ import { isAndroid } from '../lib/device';
 import {
   androidDownloadFolder,
   copyFile,
+  decryptionStatus,
   deleteFile,
   encryptionStatus,
   extractFileExtensionFromPath,
@@ -25,7 +26,8 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   const toast = useToast();
   const renameEncryptedFile = useStore(state => state.renameEncryptedFile);
   const deleteEncryptedFile = useStore(state => state.deleteEncryptedFile);
-  const setDecryptedFile = useStore(state => state.setDecryptedFile);
+  const renameDecryptedFile = useStore(state => state.renameDecryptedFile);
+  const deleteDecryptedFile = useStore(state => state.deleteDecryptedFile);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const { extension } = extractFileNameAndExtension(file?.fileName || '');
@@ -93,7 +95,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
       if (forEncrypt) {
         deleteEncryptedFile(file);
       } else {
-        setDecryptedFile(null);
+        deleteDecryptedFile(file);
       }
 
       if (onDelete) {
@@ -106,11 +108,19 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
 
   function renderActions() {
     if (file.status === encryptionStatus.tooLarge) {
-      return <Text>File size can not be bigger than {MAX_FILE_SIZE_MEGA_BYTES}MB.</Text>;
+      return <Text highlight>File size can not be bigger than {MAX_FILE_SIZE_MEGA_BYTES}MB.</Text>;
     }
 
     if (file.status === encryptionStatus.error) {
-      return <Text>Encryption of this file failed.</Text>;
+      return <Text highlight>Encryption of this file failed.</Text>;
+    }
+
+    if (file.status === decryptionStatus.wrongExtension) {
+      return <Text highlight>Please only pick file ending with .precloud</Text>;
+    }
+
+    if (file.status === decryptionStatus.error) {
+      return <Text highlight>Decryption of this file failed.</Text>;
     }
 
     return (
@@ -192,7 +202,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
           if (forEncrypt) {
             renameEncryptedFile(file.fileName, newFile);
           } else {
-            setDecryptedFile(newFile);
+            renameDecryptedFile(file.fileName, newFile);
           }
         }}
       />

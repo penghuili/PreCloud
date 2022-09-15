@@ -29,7 +29,7 @@ async function readFilesInFolder(path) {
 function Caches({ currentRoute }) {
   const colors = useColors();
   const setEncryptedFilesInStore = useStore(state => state.setEncryptedFiles);
-  const setDecryptedFileInStore = useStore(state => state.setDecryptedFile);
+  const setDecryptedFilesInStore = useStore(state => state.setDecryptedFiles);
 
   const [cacheSize, setCacheSize] = useState(0);
   const [encryptedFiles, setEncryptedFiles] = useState([]);
@@ -56,7 +56,7 @@ function Caches({ currentRoute }) {
     await readFilesInCache();
     setShowCaches(false);
     setEncryptedFilesInStore([]);
-    setDecryptedFileInStore(null);
+    setDecryptedFilesInStore([]);
   }
 
   const hasCachedFile = encryptedFiles.length > 0 || decryptedFiles.length > 0;

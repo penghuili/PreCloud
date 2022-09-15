@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Heading, HStack, Text, VStack } from 'native-base';
+import { Alert, Button, Heading, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
@@ -40,11 +40,26 @@ async function resetPickedFile() {
 
 function EncryptFile() {
   const password = useStore(state => state.activePassword);
-
   const encryptedFiles = useStore(state => state.encryptedFiles);
   const setEncryptedFiles = useStore(state => state.setEncryptedFiles);
 
   const [isEncrypting, setIsEncrypting] = useState(false);
+
+  async function triggerNext() {
+    if (currentIndex + 1 < pickedFiles.length) {
+      currentIndex = currentIndex + 1;
+      const nextFile = pickedFiles[currentIndex];
+
+      await handleTrigger({
+        name: nextFile.name,
+        size: nextFile.size,
+        path: nextFile.path,
+      });
+    } else {
+      setIsEncrypting(false);
+      await resetPickedFile();
+    }
+  }
 
   async function handleTrigger({ name, size, path }) {
     if (size > MAX_FILE_SIZE_BYTES) {
@@ -54,6 +69,9 @@ function EncryptFile() {
         { fileName: name, path, status: encryptionStatus.tooLarge },
       ];
       setEncryptedFiles(processedFiles);
+
+      await triggerNext();
+      return;
     }
 
     const fileBase64 = await RNFS.readFile(path, 'base64');
@@ -104,20 +122,7 @@ function EncryptFile() {
     const listener = async msg => {
       if (msg.type === 'encrypted-file') {
         await handleEncrypted(msg.payload);
-
-        if (currentIndex + 1 < pickedFiles.length) {
-          currentIndex = currentIndex + 1;
-          const nextFile = pickedFiles[currentIndex];
-
-          await handleTrigger({
-            name: nextFile.name,
-            size: nextFile.size,
-            path: nextFile.path,
-          });
-        } else {
-          setIsEncrypting(false);
-          await resetPickedFile();
-        }
+        await triggerNext();
       }
     };
 
@@ -166,6 +171,8 @@ function EncryptFile() {
 
       await handleAfterPick(files);
     } catch (e) {
+      await resetPickedFile();
+      setIsEncrypting(false);
       console.log('Pick images failed', e);
     }
   }
@@ -186,6 +193,8 @@ function EncryptFile() {
 
       await handleAfterPick(files);
     } catch (e) {
+      await resetPickedFile();
+      setIsEncrypting(false);
       console.log('Take photo failed', e);
     }
   }
@@ -210,7 +219,7 @@ function EncryptFile() {
     } catch (e) {
       await resetPickedFile();
       setIsEncrypting(false);
-      console.log('Pick file failed', e);
+      console.log('Pick files failed', e);
     }
   }
 
@@ -218,13 +227,10 @@ function EncryptFile() {
     <VStack space="sm" alignItems="center">
       <Heading>Encrypt file</Heading>
       <Alert w="100%" status="info">
-        <Box
-          _text={{
-            textAlign: 'center',
-          }}
-        >
-          {`Pick one or multiple files to encrypt. Currently file size can't be bigger than ${MAX_FILE_SIZE_MEGA_BYTES}MB.`}
-        </Box>
+        <Text>
+          Pick one or multiple files to encrypt. Currently file size can&lsquo;t be bigger than{' '}
+          {MAX_FILE_SIZE_MEGA_BYTES}MB.
+        </Text>
       </Alert>
       <HStack space="2">
         <PlatformToggle for={platforms.ios}>
