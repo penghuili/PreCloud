@@ -78,6 +78,7 @@ function Router() {
   return (
     <TabView
       lazy
+      swipeEnabled={false}
       navigationState={{ index, routes }}
       renderScene={renderScene}
       onIndexChange={setIndex}
