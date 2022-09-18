@@ -124,6 +124,8 @@ function Settings({ currentRoute }) {
 
           <Link href="https://www.getrevue.co/profile/precloud">PreCloud Blog</Link>
 
+          <Link href="https://twitter.com/penghuili22">My Twitter</Link>
+
           <Divider />
 
           <Link href="https://www.peng.kiwi/precloud">What is it?</Link>
