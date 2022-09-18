@@ -39,7 +39,7 @@ function Settings({ currentRoute }) {
       <>
         <Divider />
         <VStack space="sm">
-          <Text>Support me</Text>
+          <Text>Buy me a beer, I like Hefeweizen beer</Text>
           <Link href="https://paypal.me/penghuili/">
             <Image source={paypal} alt="Support with Paypal" />
           </Link>
@@ -51,7 +51,8 @@ function Settings({ currentRoute }) {
       return support;
     }
 
-    if (Date.now() > buildDate + 3 * 24 * 60 * 60 * 1000) {
+    // eslint-disable-next-line no-undef
+    if (Date.now() > buildDate + 3 * 24 * 60 * 60 * 1000 || __DEV__) {
       return support;
     }
 
