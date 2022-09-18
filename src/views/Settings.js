@@ -51,7 +51,7 @@ function Settings({ currentRoute }) {
       return support;
     }
 
-    if (Date.now() > buildDate + 7 * 24 * 60 * 60 * 1000) {
+    if (Date.now() > buildDate + 3 * 24 * 60 * 60 * 1000) {
       return support;
     }
 
