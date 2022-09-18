@@ -57,7 +57,7 @@ function DecryptFile() {
   }
 
   async function handleTrigger({ name, path }) {
-    if (!name.endsWith('precloud') || !name.endsWith('preupload')) {
+    if (!name.endsWith('precloud')) {
       await deleteFile(path);
       processedFiles = [
         ...processedFiles,

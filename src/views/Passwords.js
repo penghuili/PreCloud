@@ -1,3 +1,4 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import {
   Alert,
   AlertDialog,
@@ -112,6 +113,14 @@ function Passwords() {
                         Move to bottom
                       </Menu.Item>
                     )}
+                    <Menu.Item
+                      onPress={() => {
+                        Clipboard.setString(password.password);
+                        toast.show({ title: 'Copied!', placement: 'top' });
+                      }}
+                    >
+                      Copy
+                    </Menu.Item>
                     <Menu.Item
                       onPress={() => {
                         setShowDeleteAlert(true);
