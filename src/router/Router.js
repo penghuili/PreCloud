@@ -32,13 +32,13 @@ function Router() {
 
   function getIconName(routeName, focused) {
     if (routeName === routeNames.encryptText) {
-      return focused ? 'text-sharp' : 'text-outline';
+      return focused ? 'text' : 'text-outline';
     } else if (routeName === routeNames.encryptFile) {
-      return focused ? 'document-attach-sharp' : 'document-attach-outline';
+      return focused ? 'document-attach' : 'document-attach-outline';
     } else if (routeName === routeNames.passwords) {
-      return focused ? 'key-sharp' : 'key-outline';
+      return focused ? 'key' : 'key-outline';
     } else if (routeName === routeNames.settings) {
-      return focused ? 'settings-sharp' : 'settings-outline';
+      return focused ? 'heart' : 'heart-outline';
     } else {
       return null;
     }

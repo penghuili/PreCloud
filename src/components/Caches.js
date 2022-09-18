@@ -75,7 +75,7 @@ function Caches({ currentRoute }) {
           <IconButton
             icon={
               <Icon
-                name={showCaches ? 'chevron-up-sharp' : 'chevron-down-sharp'}
+                name={showCaches ? 'chevron-up-outline' : 'chevron-down-outline'}
                 color={colors.text}
               />
             }

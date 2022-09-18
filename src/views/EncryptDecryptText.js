@@ -137,7 +137,7 @@ function EncryptDecryptText({ jumpTo }) {
           />
           <Button
             isDisabled={!password || !text}
-            endIcon={<Icon name="chevron-down-sharp" color={colors.white} />}
+            endIcon={<Icon name="chevron-down-outline" color={colors.white} />}
             onPress={() => encryptText(text)}
           >
             Encrypt
@@ -203,7 +203,7 @@ function EncryptDecryptText({ jumpTo }) {
           />
           <Button
             isDisabled={!password || !encryptedText}
-            endIcon={<Icon name="chevron-up-sharp" color={colors.white} />}
+            endIcon={<Icon name="chevron-up-outline" color={colors.white} />}
             onPress={() => decryptText(encryptedText)}
           >
             Decrypt
