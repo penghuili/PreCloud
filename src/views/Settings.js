@@ -1,6 +1,5 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import {
-  Box,
   Button,
   Divider,
   Heading,
@@ -22,11 +21,11 @@ import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import PasswordGeneratorModal from '../components/PasswordGeneratorModal';
-import PlatformToggle from '../components/PlatformToggle';
 import useColors from '../hooks/useColors';
-import { appStoreLink, myEmail, platforms } from '../lib/constants';
-import { getStoreLink } from '../lib/device';
+import { appStoreLink, myEmail } from '../lib/constants';
+import { getStoreLink, isAndroid } from '../lib/device';
 
+const { buildDate } = require('../lib/app-settings.json');
 const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.ios}\n\nAndroid: ${appStoreLink.android}`;
 
 function Settings({ currentRoute }) {
@@ -34,6 +33,30 @@ function Settings({ currentRoute }) {
   const toast = useToast();
 
   const [showPasswordGenerator, setShowPasswordGenerator] = useState(false);
+
+  function renderSupport() {
+    const support = (
+      <>
+        <Divider />
+        <VStack space="sm">
+          <Text>Support me</Text>
+          <Link href="https://paypal.me/penghuili/">
+            <Image source={paypal} alt="Support with Paypal" />
+          </Link>
+        </VStack>
+      </>
+    );
+
+    if (isAndroid()) {
+      return support;
+    }
+
+    if (Date.now() > buildDate + 7 * 24 * 60 * 60 * 1000) {
+      return support;
+    }
+
+    return null;
+  }
 
   return (
     <>
@@ -112,16 +135,7 @@ function Settings({ currentRoute }) {
             How much does it cost to build this free app?
           </Link>
 
-          <PlatformToggle for={platforms.ios}>
-            <Divider />
-
-            <VStack space="sm" mt="4">
-              <Text>Support me</Text>
-              <Link href="https://paypal.me/penghuili/">
-                <Image source={paypal} alt="Support with Paypal" />
-              </Link>
-            </VStack>
-          </PlatformToggle>
+          {renderSupport()}
 
           <Divider />
 
