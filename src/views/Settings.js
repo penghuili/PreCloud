@@ -112,11 +112,7 @@ function Settings({ currentRoute }) {
             How much does it cost to build this free app?
           </Link>
 
-          <Text>
-            {DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
-          </Text>
-
-          <PlatformToggle for={platforms.android}>
+          <PlatformToggle for={platforms.ios}>
             <Divider />
 
             <VStack space="sm" mt="4">
@@ -124,9 +120,14 @@ function Settings({ currentRoute }) {
               <Link href="https://paypal.me/penghuili/">
                 <Image source={paypal} alt="Support with Paypal" />
               </Link>
-              <Box h="8" />
             </VStack>
           </PlatformToggle>
+
+          <Divider />
+
+          <Text>
+            v{DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
+          </Text>
 
           <PasswordGeneratorModal
             isOpen={showPasswordGenerator}
