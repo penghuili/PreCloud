@@ -225,7 +225,7 @@ function EncryptFile() {
 
   return (
     <VStack space="sm" alignItems="center">
-      <Heading>Encrypt file</Heading>
+      <Heading>Encrypt files</Heading>
       <Alert w="100%" status="info">
         <Text>
           Pick one or multiple files to encrypt. Currently file size can&lsquo;t be bigger than{' '}

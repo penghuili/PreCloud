@@ -168,7 +168,7 @@ function DecryptFile() {
 
   return (
     <VStack space="sm" alignItems="center">
-      <Heading>Decrypt file</Heading>
+      <Heading>Decrypt files</Heading>
       <Alert w="100%" status="info">
         <Text>Pick one or multiple encrypted files that end with .precloud</Text>
       </Alert>

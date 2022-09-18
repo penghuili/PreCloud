@@ -11,7 +11,7 @@ import PasswordAlert from '../components/PasswordAlert';
 function EncryptDecryptFile({ currentRoute, jumpTo }) {
   return (
     <>
-      <AppBar title="Encrypt & decrypt file" />
+      <AppBar title="Encrypt & decrypt files" />
       <ContentWrapper>
         <VStack space="sm" alignItems="center">
           <PasswordAlert navigate={jumpTo} />
