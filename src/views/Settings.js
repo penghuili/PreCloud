@@ -128,13 +128,13 @@ function Settings({ currentRoute }) {
 
           <Divider />
 
-          <Link href="https://www.peng.kiwi/precloud">What is it?</Link>
+          <Link href="https://www.peng.kiwi/precloud">What is PreCloud?</Link>
+          <Link href="https://dev.to/penghuili/how-much-does-it-cost-to-build-an-app-2e6">
+            How much does it cost to build this free app?
+          </Link>
           <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
             Privacy policy
-          </Link>
-          <Link href="https://dev.to/penghuili/how-much-does-it-cost-to-build-an-app-2e6">
-            How much does it cost to build this free app?
           </Link>
 
           {renderSupport()}
