@@ -39,7 +39,7 @@ function Settings({ currentRoute }) {
       <>
         <Divider />
         <VStack space="sm">
-          <Text>Buy me a beer, I like Hefeweizen beer</Text>
+          <Text>Buy me a beer, especially Hefeweizen beer 🍺❤️</Text>
           <Link href="https://paypal.me/penghuili/">
             <Image source={paypal} alt="Support with Paypal" />
           </Link>
@@ -68,6 +68,8 @@ function Settings({ currentRoute }) {
           <Heading size="sm" color="primary.400">
             Open source, no tracking, no server and free forever.
           </Heading>
+
+          {renderSupport()}
 
           <Divider />
 
@@ -137,8 +139,6 @@ function Settings({ currentRoute }) {
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
             Privacy policy
           </Link>
-
-          {renderSupport()}
 
           <Divider />
 
