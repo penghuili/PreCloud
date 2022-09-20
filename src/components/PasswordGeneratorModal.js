@@ -51,7 +51,7 @@ function PasswordGeneratorModal({ isOpen, onClose }) {
               setPassword(generatePassword(passwordLength, hasSpecialCharacters));
             }}
           >
-            Generate password
+            Generate
           </Button>
           {!!password && (
             <>

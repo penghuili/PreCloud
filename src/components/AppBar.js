@@ -1,11 +1,13 @@
-import { Avatar, HStack, Text } from 'native-base';
+import { Avatar, Box, HStack, Text } from 'native-base';
 import React from 'react';
 
 import useColors from '../hooks/useColors';
 import logo from '../assets/logo.png';
+import { useWindowDimensions } from 'react-native';
 
 function AppBar({ title }) {
   const colors = useColors();
+  const { width } = useWindowDimensions();
 
   return (
     <HStack
@@ -19,9 +21,11 @@ function AppBar({ title }) {
     >
       <HStack alignItems="center" px="3">
         <Avatar source={logo} size="md" />
-        <Text color={colors.text} fontSize="20" fontWeight="bold">
-          {title}
-        </Text>
+        <Box>
+          <Text color={colors.text} fontSize="20" fontWeight="bold" isTruncated width={width - 72}>
+            {title}
+          </Text>
+        </Box>
       </HStack>
     </HStack>
   );
