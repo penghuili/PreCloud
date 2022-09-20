@@ -6,6 +6,7 @@ import {
   HStack,
   IconButton,
   Popover,
+  Text,
   TextArea,
   useToast,
   VStack,
@@ -209,7 +210,15 @@ function EncryptDecryptText({ jumpTo }) {
             Decrypt
           </Button>
         </HStack>
-        <TextArea isDisabled value={encryptedText} h={40} />
+        <Box width="full" p="2" rounded borderWidth="1" borderColor="gray.200" borderRadius="sm">
+          {!!encryptedText && <Text>{encryptedText}</Text>}
+          {!encryptedText && (
+            <Text color="gray.500">
+              Ecnrypted text will be shown here, or you can paste encrypted text with the paste
+              icon.
+            </Text>
+          )}
+        </Box>
       </>
     );
   }
