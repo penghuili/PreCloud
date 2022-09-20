@@ -228,7 +228,7 @@ function EncryptFile() {
       <Heading>Encrypt files</Heading>
       <Alert w="100%" status="info">
         <Text>
-          Pick one or multiple files to encrypt. Currently file size can&lsquo;t be bigger than{' '}
+          Pick one or multiple files to encrypt. Currently each file size can&lsquo;t be bigger than{' '}
           {MAX_FILE_SIZE_MEGA_BYTES}MB.
         </Text>
       </Alert>
