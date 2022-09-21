@@ -84,7 +84,7 @@ function Settings({ currentRoute }) {
 
           <HStack space="1">
             <Text>Enjoying the app?</Text>
-            <Link href={getStoreLink()}>Give it 5 🌟!</Link>
+            <Link href={getStoreLink()}>Give it 5 🌟</Link>
           </HStack>
 
           <HStack space="1" alignItems="center">
@@ -134,7 +134,7 @@ function Settings({ currentRoute }) {
 
           <Link href="https://www.peng.kiwi/precloud">What is PreCloud?</Link>
           <Link href="https://dev.to/penghuili/how-much-does-it-cost-to-build-an-app-2e6">
-            How much does it cost to build this free app 🤑?
+            How much does it cost to build this free app? 🤑
           </Link>
           <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
           <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
