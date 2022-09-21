@@ -214,8 +214,8 @@ function EncryptDecryptText({ jumpTo }) {
           {!!encryptedText && <Text>{encryptedText}</Text>}
           {!encryptedText && (
             <Text color="gray.500">
-              Ecnrypted text will be shown here, or you can paste encrypted text with the paste
-              icon.
+              Ecnrypted text will be shown here. Or you can paste encrypted text with the paste icon
+              to decrypt.
             </Text>
           )}
         </Box>

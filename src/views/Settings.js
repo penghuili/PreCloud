@@ -126,7 +126,7 @@ function Settings({ currentRoute }) {
             </Link>
           </VStack>
 
-          <Link href="https://www.getrevue.co/profile/precloud">PreCloud Blog</Link>
+          <Link href="https://www.getrevue.co/profile/precloud">What&lsquo;s new?</Link>
 
           <Link href="https://twitter.com/penghuili22">My Twitter</Link>
 
