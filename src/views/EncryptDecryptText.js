@@ -7,16 +7,15 @@ import {
   IconButton,
   Popover,
   Text,
-  TextArea,
   useToast,
   VStack,
 } from 'native-base';
-import React, { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 
 import ActivePasswordAlert from '../components/ActivePasswordAlert';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
+import Editor from '../components/Editor';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import useColors from '../hooks/useColors';
@@ -25,6 +24,7 @@ import { useStore } from '../store/store';
 const nodejs = require('nodejs-mobile-react-native');
 
 function EncryptDecryptText({ jumpTo }) {
+  const editorRef = useRef();
   const toast = useToast();
   const password = useStore(state => state.activePassword);
   const colors = useColors();
@@ -36,7 +36,7 @@ function EncryptDecryptText({ jumpTo }) {
       if (msg.type === 'encrypted-text') {
         if (msg.payload.data) {
           setEncryptedText(msg.payload.data);
-          Keyboard.dismiss();
+          editorRef.current.blurContentEditor();
           toast.show({ title: 'Encrypted.', placement: 'top' });
         } else {
           toast.show({ title: 'Encrypt text failed.', placement: 'top' });
@@ -44,6 +44,7 @@ function EncryptDecryptText({ jumpTo }) {
       } else if (msg.type === 'decrypted-text') {
         if (msg.payload.data) {
           setText(msg.payload.data);
+          editorRef.current.setContentHTML(msg.payload.data);
           toast.show({ title: 'Decrypted.', placement: 'top' });
         } else {
           toast.show({
@@ -115,6 +116,7 @@ function EncryptDecryptText({ jumpTo }) {
               const copied = await Clipboard.getString();
               if (copied) {
                 setText(copied);
+                editorRef.current.setContentHTML(copied);
                 toast.show({ title: 'Pasted!', placement: 'top' });
               } else {
                 toast.show({ title: 'Nothing in clipboard.', placement: 'top' });
@@ -134,6 +136,8 @@ function EncryptDecryptText({ jumpTo }) {
             isDisabled={!password || !text}
             onPress={() => {
               setText('');
+              editorRef.current.setContentHTML('');
+              editorRef.current.blurContentEditor();
             }}
           />
           <Button
@@ -144,7 +148,8 @@ function EncryptDecryptText({ jumpTo }) {
             Encrypt
           </Button>
         </HStack>
-        <TextArea isDisabled={!password} onChangeText={setText} value={text} h={40} />
+
+        <Editor ref={editorRef} onChange={setText} />
       </>
     );
   }

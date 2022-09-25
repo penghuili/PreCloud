@@ -23,5 +23,6 @@ module.exports = {
     'react/prop-types': 0,
     'no-empty': 0,
     'import/namespace': 0,
+    'react/display-name': 0,
   },
 };

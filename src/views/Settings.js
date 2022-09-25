@@ -1,16 +1,5 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import {
-  Button,
-  Divider,
-  Heading,
-  HStack,
-  Image,
-  Link,
-  Popover,
-  Text,
-  useToast,
-  VStack,
-} from 'native-base';
+import { Button, Divider, Heading, HStack, Image, Link, Popover, Text, useToast, VStack } from 'native-base';
 import React, { useState } from 'react';
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
@@ -154,6 +143,8 @@ function Settings({ currentRoute }) {
           <Text>
             v{DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
           </Text>
+
+          <Divider />
 
           <PasswordGeneratorModal
             isOpen={showPasswordGenerator}
