@@ -50,8 +50,9 @@
     "test": "jest",
     "lint": "eslint .",
     "clean-android": "cd android && ./gradlew clean && cd ..",
-    "build-android-apk": "npm run bump-android-build-number && cd android && ./gradlew clean && ./gradlew assembleRelease && cd ..",
-    "build-android-aab": "npm run bump-android-build-number && cd android && ./gradlew clean && ./gradlew bundleRelease && cd ..",
+    "build-android-apk": "npm run bump-build-numbers && cd android && ./gradlew clean && ./gradlew assembleRelease && cd ..",
+    "build-android-aab": "npm run bump-build-numbers && cd android && ./gradlew clean && ./gradlew bundleRelease && cd ..",
+    "bump-build-numbers": "npm run bump-android-build-number && npm run bump-ios-build-number",
     "bump-android-build-number": "node ./scripts/bump-android-build-number.js",
     "bump-ios-build-number": "node ./scripts/bump-ios-build-number.js",
     "bump-version": "node ./scripts/bump-version.js"

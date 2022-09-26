@@ -136,6 +136,13 @@ function Settings({ currentRoute }) {
           <Link href="https://dev.to/penghuili/how-much-does-it-cost-to-build-an-app-2e6">
             How much does it cost to build this free app? 🤑
           </Link>
+          <Link
+            onPress={() => {
+              Linking.openURL(`mailto:${myEmail}`);
+            }}
+          >
+            How are you using PreCloud?
+          </Link>
 
           <Divider />
 
