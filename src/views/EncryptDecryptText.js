@@ -187,7 +187,7 @@ function EncryptDecryptText({ jumpTo }) {
           </HStack>
         </HStack>
         <Box px={4}>
-          <Box width="full" p="2" rounded borderWidth="1" borderColor="gray.200" borderRadius="sm">
+          <Box width="full" p="2" rounded borderWidth={1} borderColor="gray.200" borderRadius={'sm'}>
             {!!encryptedText && <Text>{encryptedText}</Text>}
             {!encryptedText && (
               <Text color="gray.500">
