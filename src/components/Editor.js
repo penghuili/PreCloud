@@ -32,6 +32,7 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
         actions={[
           actions.undo,
           actions.redo,
+          'clear',
           'separator',
           // actions.insertImage,
           actions.keyboard,
@@ -54,8 +55,17 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
               |
             </Text>
           ),
+          clear: () => (
+            <Text color="gray.400" fontSize="xl">
+              X
+            </Text>
+          ),
         }}
         separator={() => {}}
+        clear={() => {
+          ref.current.setContentHTML('');
+          ref.current.blurContentEditor();
+        }}
         onPressAddImage={async () => {
           const result = await launchImageLibrary({
             selectionLimit: 1,
