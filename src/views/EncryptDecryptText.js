@@ -166,8 +166,8 @@ function EncryptDecryptText({ jumpTo }) {
 
   function renderDecryption() {
     return (
-      <>
-        <HStack alignItems="center">
+      <VStack space="sm" alignItems="center" px={4}>
+        <HStack alignItems="center" w="full">
           <Heading>Decrypt text</Heading>
 
           <Popover
@@ -234,17 +234,19 @@ function EncryptDecryptText({ jumpTo }) {
             </Text>
           )}
         </Box>
-      </>
+      </VStack>
     );
   }
 
   return (
     <>
       <AppBar title="Encrypt & decrypt text" />
-      <ContentWrapper>
+      <ContentWrapper hasPX={false}>
         <VStack space="sm" alignItems="center" pb="15">
-          <PasswordAlert navigate={jumpTo} />
-          <ActivePasswordAlert navigate={jumpTo} />
+          <Box px={4} w="full">
+            <PasswordAlert navigate={jumpTo} />
+            <ActivePasswordAlert navigate={jumpTo} />
+          </Box>
 
           {rendrEncryption()}
 

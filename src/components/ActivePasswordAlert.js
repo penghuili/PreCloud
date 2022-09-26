@@ -11,7 +11,7 @@ function ActivePasswordAlert({ navigate }) {
     return (
       <Box w="full" rounded borderBottomWidth="1" borderColor="gray.200" pb="2">
         <Text>
-          Active password: <Text highlight> {activePasswordLabel} </Text>.{' '}
+          Active password: <Text highlight> {activePasswordLabel} </Text>{' '}
           <Text
             underline
             onPress={() => {

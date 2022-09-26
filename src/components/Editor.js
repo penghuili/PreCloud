@@ -9,7 +9,7 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
   const { primary } = useColors();
 
   return (
-    <Box w="full" rounded borderWidth="1" borderColor="gray.200" borderRadius="sm">
+    <Box w="full" rounded borderTopWidth="1" borderColor="gray.200" borderRadius="sm">
       <ScrollView w="full">
         <RichEditor
           ref={ref}
