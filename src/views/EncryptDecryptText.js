@@ -133,7 +133,7 @@ function EncryptDecryptText({ jumpTo }) {
                 .replace(/<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, ' ')
                 .trim();
               Clipboard.setString(cleaned);
-              toast.show({ title: 'Copied without format.', placement: 'top' });
+              toast.show({ title: 'Copied text without format.', placement: 'top' });
             }}
           />
           <IconButton

@@ -33,6 +33,7 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
           actions.redo,
           'separator',
           // actions.insertImage,
+          actions.keyboard,
           actions.insertBulletsList,
           actions.insertOrderedList,
           actions.indent,
