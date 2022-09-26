@@ -1,4 +1,4 @@
-import { Alert, Button, Text, VStack } from 'native-base';
+import { Box, Text } from 'native-base';
 import React from 'react';
 
 import { routeNames } from '../router/Router';
@@ -9,14 +9,19 @@ function ActivePasswordAlert({ navigate }) {
 
   if (activePasswordLabel) {
     return (
-      <Alert w="100%" status="warning" mb={8}>
-        <VStack space={2} flexShrink={1} w="100%" alignItems="center">
-          <Text>
-            Active password: <Text highlight>{activePasswordLabel}</Text>
+      <Box w="full" rounded borderBottomWidth="1" borderColor="gray.200" pb="2">
+        <Text>
+          Active password: <Text highlight> {activePasswordLabel} </Text>.{' '}
+          <Text
+            underline
+            onPress={() => {
+              navigate(routeNames.passwords);
+            }}
+          >
+            Change
           </Text>
-          <Button variant="ghost" size="sm" onPress={() => navigate(routeNames.passwords)}>Change</Button>
-        </VStack>
-      </Alert>
+        </Text>
+      </Box>
     );
   }
 
