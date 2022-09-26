@@ -32,7 +32,7 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
           actions.undo,
           actions.redo,
           'separator',
-          actions.insertImage,
+          // actions.insertImage,
           actions.insertBulletsList,
           actions.insertOrderedList,
           actions.indent,
