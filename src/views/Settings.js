@@ -1,5 +1,16 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Button, Divider, Heading, HStack, Image, Link, Popover, Text, useToast, VStack } from 'native-base';
+import {
+  Button,
+  Divider,
+  Heading,
+  HStack,
+  Image,
+  Link,
+  Popover,
+  Text,
+  useToast,
+  VStack,
+} from 'native-base';
 import React, { useState } from 'react';
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
@@ -125,10 +136,6 @@ function Settings({ currentRoute }) {
           <Link href="https://dev.to/penghuili/how-much-does-it-cost-to-build-an-app-2e6">
             How much does it cost to build this free app? 🤑
           </Link>
-          <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
-          <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
-            Privacy policy
-          </Link>
 
           <Divider />
 
@@ -140,11 +147,16 @@ function Settings({ currentRoute }) {
 
           <Divider />
 
+          <Link href="https://github.com/penghuili/PreCloud">Source code</Link>
+          <Link href="https://github.com/penghuili/PreCloud/blob/master/PRIVACYPOLICY.md#precloud---encrypt-before-upload">
+            Privacy policy
+          </Link>
+
+          <Divider />
+
           <Text>
             v{DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
           </Text>
-
-          <Divider />
 
           <PasswordGeneratorModal
             isOpen={showPasswordGenerator}
