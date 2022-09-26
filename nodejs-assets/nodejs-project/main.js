@@ -1,4 +1,5 @@
 const rn_bridge = require('rn-bridge');
+const { replaceImagesWithHash } = require('./node-crypto');
 const { encryptFile, decryptFile, encryptText, decryptText } = require('./openpgp');
 
 rn_bridge.channel.on('message', async msg => {
@@ -74,6 +75,13 @@ rn_bridge.channel.on('message', async msg => {
         payload: { data: null, error },
       });
     }
+  } else if (msg.type === 'replace-image-with-hash') {
+    const replaced = replaceImagesWithHash(msg.data.text);
+
+    rn_bridge.channel.send({
+      type: 'replaced-image-with-hash',
+      payload: { data: replaced, error: null },
+    });
   }
 });
 

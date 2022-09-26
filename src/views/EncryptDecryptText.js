@@ -33,7 +33,9 @@ function EncryptDecryptText({ jumpTo }) {
 
   useEffect(() => {
     const listner = async msg => {
-      if (msg.type === 'encrypted-text') {
+      if (msg.type === 'replaced-image-with-hash') {
+        await encryptText(msg.payload.data);
+      } else if (msg.type === 'encrypted-text') {
         if (msg.payload.data) {
           setEncryptedText(msg.payload.data);
           editorRef.current.blurContentEditor();
@@ -127,8 +129,11 @@ function EncryptDecryptText({ jumpTo }) {
             icon={<Icon name="copy-outline" color={colors.text} />}
             isDisabled={!password || !text}
             onPress={() => {
-              Clipboard.setString(text);
-              toast.show({ title: 'Copied!', placement: 'top' });
+              const cleaned = (text || '')
+                .replace(/<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g, ' ')
+                .trim();
+              Clipboard.setString(cleaned);
+              toast.show({ title: 'Copied without format.', placement: 'top' });
             }}
           />
           <IconButton
@@ -143,13 +148,18 @@ function EncryptDecryptText({ jumpTo }) {
           <Button
             isDisabled={!password || !text}
             endIcon={<Icon name="chevron-down-outline" color={colors.white} />}
-            onPress={() => encryptText(text)}
+            onPress={() => {
+              nodejs.channel.send({
+                type: 'replace-image-with-hash',
+                data: { text },
+              });
+            }}
           >
             Encrypt
           </Button>
         </HStack>
 
-        <Editor ref={editorRef} onChange={setText} />
+        <Editor ref={editorRef} disabled={!password} onChange={setText} />
       </>
     );
   }

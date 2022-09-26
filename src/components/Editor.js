@@ -1,10 +1,11 @@
-import { Box, ScrollView } from 'native-base';
+import { Box, ScrollView, Text } from 'native-base';
 import React, { forwardRef } from 'react';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 
 import useColors from '../hooks/useColors';
 
-const Editor = forwardRef(({ onChange }, ref) => {
+const Editor = forwardRef(({ disabled, onChange }, ref) => {
   const { primary } = useColors();
 
   return (
@@ -13,7 +14,11 @@ const Editor = forwardRef(({ onChange }, ref) => {
         <RichEditor
           ref={ref}
           placeholder="Type here ..."
-          onChange={onChange}
+          initialContentHTML={''}
+          onChange={value => {
+            onChange(value);
+          }}
+          disabled={disabled}
           initialHeight={100}
           editorStyle={{
             caretColor: primary,
@@ -24,21 +29,43 @@ const Editor = forwardRef(({ onChange }, ref) => {
       <RichToolbar
         editor={ref}
         actions={[
-          actions.setBold,
-          actions.setItalic,
-          actions.setUnderline,
-          actions.setStrikethrough,
-
+          actions.undo,
+          actions.redo,
+          'separator',
+          actions.insertImage,
           actions.insertBulletsList,
           actions.insertOrderedList,
           actions.indent,
           actions.outdent,
-
-          actions.code,
-          actions.line,
-          actions.blockquote,
+          'separator',
+          actions.setBold,
+          actions.setItalic,
+          actions.setUnderline,
           actions.setStrikethrough,
+          actions.removeFormat,
+          'separator',
+          actions.line,
         ]}
+        iconMap={{
+          separator: () => (
+            <Text color="gray.400" fontSize="xl">
+              |
+            </Text>
+          ),
+        }}
+        separator={() => {}}
+        onPressAddImage={async () => {
+          const result = await launchImageLibrary({
+            selectionLimit: 1,
+            mediaType: 'photo',
+            includeBase64: true,
+          });
+          const file = result.assets[0];
+
+          ref.current.insertImage(`data:${file.type};base64,${file.base64}`);
+        }}
+        selectedIconTint={primary}
+        disabled={disabled}
       />
     </Box>
   );
