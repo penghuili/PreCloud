@@ -22,6 +22,7 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
           initialHeight={100}
           editorStyle={{
             caretColor: primary,
+            cssText: `#editor ul {padding-left: 16px} #editor ol {padding-left: 16px}`,
           }}
         />
       </ScrollView>
