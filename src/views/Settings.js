@@ -161,9 +161,15 @@ function Settings({ currentRoute }) {
 
           <Divider />
 
-          <Text>
-            v{DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
-          </Text>
+          <VStack>
+            <Text>
+              v{DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
+            </Text>
+            <Text fontSize="xs" color="gray.400">
+              Released at {new Date(buildDate).toLocaleDateString()}{' '}
+              {new Date(buildDate).toLocaleTimeString()}
+            </Text>
+          </VStack>
 
           <PasswordGeneratorModal
             isOpen={showPasswordGenerator}
