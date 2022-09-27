@@ -9,7 +9,7 @@ function ActivePasswordAlert({ navigate }) {
 
   if (activePasswordLabel) {
     return (
-      <Box w="full" pb="2">
+      <Box w="full" borderBottomWidth={1} borderColor="gray.200" pb={2}>
         <Text>
           Active password: <Text highlight> {activePasswordLabel} </Text>{' '}
           <Text

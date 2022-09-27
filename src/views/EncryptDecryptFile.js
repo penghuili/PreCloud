@@ -13,10 +13,9 @@ function EncryptDecryptFile({ currentRoute, jumpTo }) {
     <>
       <AppBar title="Encrypt & decrypt files" />
       <ContentWrapper>
+        <PasswordAlert navigate={jumpTo} />
+        <ActivePasswordAlert navigate={jumpTo} />
         <VStack space="sm" alignItems="center">
-          <PasswordAlert navigate={jumpTo} />
-          <ActivePasswordAlert navigate={jumpTo} />
-
           <EncryptFile currentRoute={currentRoute} />
 
           <Divider my={8} />
