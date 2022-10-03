@@ -18,7 +18,6 @@ import DeviceInfoModule from 'react-native-device-info';
 import paypal from '../assets/paypal.png';
 import xiangcai from '../assets/xiangcai.jpeg';
 import AppBar from '../components/AppBar';
-import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -73,13 +72,17 @@ function Settings({ navigation }) {
 
           <Divider />
 
-          <Caches />
+          <Link onPress={() => navigation.navigate(routeNames.caches)}>Caches</Link>
 
           <Divider />
 
           <Link onPress={() => navigation.navigate(routeNames.passwordGenerator)}>
             Generate password
           </Link>
+
+          <Divider />
+
+          <Link href="https://www.getrevue.co/profile/precloud">What&lsquo;s new?</Link>
 
           <Divider />
 
@@ -126,8 +129,6 @@ function Settings({ navigation }) {
               {myEmail}
             </Link>
           </VStack>
-
-          <Link href="https://www.getrevue.co/profile/precloud">What&lsquo;s new?</Link>
 
           <Link href="https://twitter.com/penghuili22">My twitter</Link>
 
