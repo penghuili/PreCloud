@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
+import PasswordGenerator from '../views/PasswordGenerator';
 
 import RichTextEditor from '../views/RichTextEditor';
 import BottomTab from './BottomTab';
@@ -14,6 +15,7 @@ function Router() {
 
       <NavStack.Group screenOptions={{ headerShown: false }}>
         <NavStack.Screen name={routeNames.richTextEditor} component={RichTextEditor} />
+        <NavStack.Screen name={routeNames.passwordGenerator} component={PasswordGenerator} />
       </NavStack.Group>
     </NavStack.Navigator>
   );

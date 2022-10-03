@@ -11,30 +11,28 @@ import {
   useToast,
   VStack,
 } from 'native-base';
-import React, { useState } from 'react';
+import React from 'react';
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
 
 import paypal from '../assets/paypal.png';
 import xiangcai from '../assets/xiangcai.jpeg';
 import AppBar from '../components/AppBar';
-import ScreenWrapper from '../components/ScreenWrapper';
 import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
-import PasswordGeneratorModal from '../components/PasswordGeneratorModal';
+import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail } from '../lib/constants';
 import { getStoreLink, isAndroid } from '../lib/device';
+import { routeNames } from '../router/routes';
 
 const { buildDate } = require('../lib/app-settings.json');
 const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.ios}\n\nAndroid: ${appStoreLink.android}`;
 
-function Settings() {
+function Settings({ navigation }) {
   const colors = useColors();
   const toast = useToast();
-
-  const [showPasswordGenerator, setShowPasswordGenerator] = useState(false);
 
   function renderSupport() {
     const support = (
@@ -79,7 +77,9 @@ function Settings() {
 
           <Divider />
 
-          <Link onPress={() => setShowPasswordGenerator(true)}>Generate password</Link>
+          <Link onPress={() => navigation.navigate(routeNames.passwordGenerator)}>
+            Generate password
+          </Link>
 
           <Divider />
 
@@ -171,11 +171,6 @@ function Settings() {
               {new Date(buildDate).toLocaleTimeString()}
             </Text>
           </VStack>
-
-          <PasswordGeneratorModal
-            isOpen={showPasswordGenerator}
-            onClose={() => setShowPasswordGenerator(false)}
-          />
         </VStack>
       </ContentWrapper>
     </ScreenWrapper>

@@ -4,4 +4,5 @@ export const routeNames = {
   passwords: 'passwords',
   settings: 'settings',
   richTextEditor: 'richTextEditor',
+  passwordGenerator: 'passwordGenerator',
 };
