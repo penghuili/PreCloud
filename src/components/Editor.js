@@ -1,5 +1,6 @@
 import { Box, ScrollView, Text } from 'native-base';
 import React, { forwardRef } from 'react';
+import { Image } from 'react-native-compressor';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 
@@ -10,7 +11,7 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
 
   return (
     <Box w="full" borderTopWidth={1} borderColor="gray.200">
-      <ScrollView w="full">
+      <ScrollView>
         <RichEditor
           ref={ref}
           placeholder="Type here ..."
@@ -19,66 +20,76 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
             onChange(value);
           }}
           disabled={disabled}
-          initialHeight={100}
           editorStyle={{
             caretColor: primary,
             cssText: `#editor ul {padding-left: 16px} #editor ol {padding-left: 16px}`,
           }}
+          initialHeight={200}
+          useContainer
         />
       </ScrollView>
 
-      <RichToolbar
-        editor={ref}
-        actions={[
-          actions.undo,
-          actions.redo,
-          'clear',
-          'separator',
-          // actions.insertImage,
-          actions.keyboard,
-          actions.insertBulletsList,
-          actions.insertOrderedList,
-          actions.indent,
-          actions.outdent,
-          'separator',
-          actions.setBold,
-          actions.setItalic,
-          actions.setUnderline,
-          actions.setStrikethrough,
-          actions.removeFormat,
-          'separator',
-          actions.line,
-        ]}
-        iconMap={{
-          separator: () => (
-            <Text color="gray.400" fontSize="xl">
-              |
-            </Text>
-          ),
-          clear: () => (
-            <Text color="gray.400" fontSize="xl">
-              X
-            </Text>
-          ),
-        }}
-        separator={() => {}}
-        clear={() => {
-          ref.current.setContentHTML('');
-          ref.current.blurContentEditor();
-        }}
-        onPressAddImage={async () => {
-          const result = await launchImageLibrary({
-            selectionLimit: 1,
-            mediaType: 'photo',
-            includeBase64: true,
-          });
-          const file = result.assets[0];
+      {!disabled && (
+        <RichToolbar
+          editor={ref}
+          actions={[
+            actions.undo,
+            actions.redo,
+            'clear',
+            'separator',
+            actions.insertImage,
+            actions.keyboard,
+            actions.insertBulletsList,
+            actions.insertOrderedList,
+            actions.indent,
+            actions.outdent,
+            'separator',
+            actions.setBold,
+            actions.setItalic,
+            actions.setUnderline,
+            actions.setStrikethrough,
+            actions.removeFormat,
+            'separator',
+            actions.line,
+          ]}
+          iconMap={{
+            separator: () => (
+              <Text color="gray.400" fontSize="xl">
+                |
+              </Text>
+            ),
+            clear: () => (
+              <Text color="gray.400" fontSize="xl">
+                X
+              </Text>
+            ),
+          }}
+          separator={() => {}}
+          clear={() => {
+            ref.current.setContentHTML('');
+            ref.current.blurContentEditor();
+          }}
+          onPressAddImage={async () => {
+            const result = await launchImageLibrary({
+              selectionLimit: 1,
+              mediaType: 'photo',
+              includeBase64: false,
+            });
+            const file = result.assets[0];
 
-          ref.current.insertImage(`data:${file.type};base64,${file.base64}`);
-        }}
-        selectedIconTint={primary}
-        disabled={disabled}
-      />
+            const resized = await Image.compress(file.uri, {
+              compressionMethod: 'auto',
+              maxWidth: 500,
+              input: 'uri',
+              output: 'jpg',
+              returnableOutputType: 'base64',
+            });
+
+            ref.current.insertImage(`data:${file.type};base64,${resized}`);
+          }}
+          selectedIconTint={primary}
+        />
+      )}
     </Box>
   );
 });

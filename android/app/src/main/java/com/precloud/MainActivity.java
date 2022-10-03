@@ -18,7 +18,7 @@ public class MainActivity extends ReactActivity {
     return "PreCloud";
   }
 
-  // react-native-splash-screen
+  // react-native-splash-screen and react-navigation
   @Override
   protected void onCreate(Bundle savedInstanceState) {
       SplashScreen.show(this);

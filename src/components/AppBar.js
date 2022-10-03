@@ -1,11 +1,13 @@
-import { Avatar, Box, HStack, Text } from 'native-base';
+import { Avatar, HStack, IconButton, Text } from 'native-base';
 import React from 'react';
-
-import useColors from '../hooks/useColors';
-import logo from '../assets/logo.png';
 import { useWindowDimensions } from 'react-native';
 
-function AppBar({ title }) {
+import logo from '../assets/logo.png';
+import useColors from '../hooks/useColors';
+import { navigationRef } from '../router/navigationRef';
+import Icon from './Icon';
+
+function AppBar({ title, hasBack }) {
   const colors = useColors();
   const { width } = useWindowDimensions();
 
@@ -20,12 +22,18 @@ function AppBar({ title }) {
       h="16"
     >
       <HStack alignItems="center" px="3">
-        <Avatar source={logo} size="md" />
-        <Box>
-          <Text color={colors.text} fontSize="20" fontWeight="bold" isTruncated width={width - 72}>
-            {title}
-          </Text>
-        </Box>
+        {hasBack ? (
+          <IconButton
+            icon={<Icon name="chevron-back-outline" size={16} color={colors.text} />}
+            onPress={navigationRef.goBack}
+          />
+        ) : (
+          <Avatar source={logo} size="md" />
+        )}
+
+        <Text color={colors.text} fontSize="20" fontWeight="bold" isTruncated width={width - 72}>
+          {title}
+        </Text>
       </HStack>
     </HStack>
   );

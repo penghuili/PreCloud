@@ -14,6 +14,7 @@ import {
 import React, { useState } from 'react';
 
 import AppBar from '../components/AppBar';
+import ScreenWrapper from '../components/ScreenWrapper';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import PasswordForm from '../components/PasswordForm';
@@ -35,7 +36,7 @@ function Passwords() {
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   return (
-    <>
+    <ScreenWrapper>
       <AppBar title="Manage passwords" />
       <ContentWrapper>
         <VStack space="sm" alignItems="flex-start">
@@ -187,7 +188,7 @@ function Passwords() {
           </AlertDialog>
         </VStack>
       </ContentWrapper>
-    </>
+    </ScreenWrapper>
   );
 }
 

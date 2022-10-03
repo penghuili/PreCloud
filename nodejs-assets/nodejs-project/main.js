@@ -1,18 +1,15 @@
 const rn_bridge = require('rn-bridge');
-const { replaceImagesWithHash } = require('./node-crypto');
+const { stringToBase64, base64ToString } = require('./helpers');
 const { encryptFile, decryptFile, encryptText, decryptText } = require('./openpgp');
 
 rn_bridge.channel.on('message', async msg => {
   if (msg.type === 'encrypt-file') {
-    const { data: encrypted, error } = await encryptFile(
-      msg.data.fileBase64,
-      msg.data.password
-    );
-    if (encrypted) {
+    const { data, error } = await encryptFile(msg.data.fileBase64, msg.data.password);
+    if (data) {
       rn_bridge.channel.send({
         type: 'encrypted-file',
         payload: {
-          data: encrypted,
+          data,
           error: null,
           name: msg.data.name,
           path: msg.data.path,
@@ -30,13 +27,13 @@ rn_bridge.channel.on('message', async msg => {
       });
     }
   } else if (msg.type === 'decrypt-file') {
-    const { data: decrypted, error } = await decryptFile(msg.data.fileBase64, msg.data.password);
+    const { data, error } = await decryptFile(msg.data.fileBase64, msg.data.password);
 
-    if (decrypted) {
+    if (data) {
       rn_bridge.channel.send({
         type: 'decrypted-file',
         payload: {
-          data: decrypted.file,
+          data,
           error: null,
           path: msg.data.path,
         },
@@ -75,13 +72,51 @@ rn_bridge.channel.on('message', async msg => {
         payload: { data: null, error },
       });
     }
-  } else if (msg.type === 'replace-image-with-hash') {
-    const replaced = replaceImagesWithHash(msg.data.text);
+  } else if (msg.type === 'encrypt-rich-text') {
+    const base64 = stringToBase64(msg.data.content);
+    const { data, error } = await encryptFile(base64, msg.data.password);
 
-    rn_bridge.channel.send({
-      type: 'replaced-image-with-hash',
-      payload: { data: replaced, error: null },
-    });
+    if (data) {
+      rn_bridge.channel.send({
+        type: 'encrypted-rich-text',
+        payload: {
+          data,
+          title: msg.data.title,
+          error: null,
+        },
+      });
+    } else {
+      rn_bridge.channel.send({
+        type: 'encrypted-rich-text',
+        payload: {
+          data: null,
+          title: msg.data.title,
+          error,
+        },
+      });
+    }
+  } else if (msg.type === 'decrypt-rich-text') {
+    const { data, error } = await decryptFile(msg.data.fileBase64, msg.data.password);
+
+    if (data) {
+      const text = base64ToString(data);
+      rn_bridge.channel.send({
+        type: 'decrypted-rich-text',
+        payload: {
+          data: text,
+          fileName: msg.data.fileName,
+          error: null,
+        },
+      });
+    } else {
+      rn_bridge.channel.send({
+        type: 'decrypted-rich-text',
+        payload: {
+          data: null,
+          error,
+        },
+      });
+    }
   }
 });
 

@@ -1,16 +1,6 @@
-var openpgp = require('openpgp');
+const openpgp = require('openpgp');
 
-function base64ToString(b64) {
-  return Buffer.from(b64, 'base64').toString('utf8');
-}
-
-function base64ToUint8(base64String) {
-  return new Uint8Array(Buffer.from(base64String, 'base64'));
-}
-
-function unit8ToBase64(unit8) {
-  return Buffer.from(unit8).toString('base64');
-}
+const { unit8ToBase64, base64ToString, base64ToUint8 } = require('./helpers')
 
 async function encryptText(text, password) {
   try {
@@ -111,7 +101,7 @@ async function decryptFile(encryptedBase64, password) {
       format: 'binary',
     });
 
-    return { data: { file: unit8ToBase64(data) }, error: null };
+    return { data: unit8ToBase64(data), error: null };
   } catch (e) {
     return { data: null, error: e };
   }

@@ -1,7 +1,7 @@
 import { Alert, Button, Text, VStack } from 'native-base';
 import React from 'react';
 
-import { routeNames } from '../router/Router';
+import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
 function PasswordAlert({ navigate }) {

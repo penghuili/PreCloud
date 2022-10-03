@@ -11,6 +11,7 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.68.2)
   - fmt (6.2.1)
   - glog (0.3.5)
+  - NextLevelSessionExporter (0.4.6)
   - nodejs-mobile-react-native (0.8.1):
     - React-Core
   - RCT-Folly (2021.06.28.00-v2):
@@ -220,6 +221,9 @@ PODS:
   - React-jsinspector (0.68.2)
   - React-logger (0.68.2):
     - glog
+  - react-native-compressor (1.6.1):
+    - NextLevelSessionExporter
+    - React-Core
   - react-native-document-picker (8.1.1):
     - React-Core
   - react-native-image-picker (4.10.0):
@@ -313,6 +317,9 @@ PODS:
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
+  - RNScreens (3.17.0):
+    - React-Core
+    - React-RCTImage
   - RNShare (7.6.6):
     - React-Core
   - RNSVG (12.4.3):
@@ -343,6 +350,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-compressor (from `../node_modules/react-native-compressor`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
@@ -367,6 +375,7 @@ DEPENDENCIES:
   - RNFileViewer (from `../node_modules/react-native-file-viewer`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -375,6 +384,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - fmt
+    - NextLevelSessionExporter
 
 EXTERNAL SOURCES:
   boost:
@@ -415,6 +425,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-compressor:
+    :path: "../node_modules/react-native-compressor"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
   react-native-image-picker:
@@ -463,6 +475,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fs"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
   RNShare:
     :path: "../node_modules/react-native-share"
   RNSVG:
@@ -479,6 +493,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 81ce99032d5b586fddd6a38d450f8595f7e04be4
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
+  NextLevelSessionExporter: 4d8aa5e617f1c709724f2453efe5d4628480f65a
   nodejs-mobile-react-native: b5285a77bfdee0e1d116952ba506b8afba7e9078
   RCT-Folly: 4d8508a426467c48885f1151029bc15fa5d7b3b8
   RCTRequired: 3e917ea5377751094f38145fdece525aa90545a0
@@ -493,6 +508,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b7b553412f2ec768fe6c8f27cd6bafdb9d8719e6
   React-jsinspector: c5989c77cb89ae6a69561095a61cce56a44ae8e8
   React-logger: a0833912d93b36b791b7a521672d8ee89107aff1
+  react-native-compressor: 17b13a98c06ffa9262182a78be27099b443fd162
   react-native-document-picker: 3c074fa194fddbcd46867c3a1c44b9331bd9dcbc
   react-native-image-picker: 35834940bc572ba914707c39b60e043a06f88178
   react-native-pager-view: fc311e95f8ba2b710deae6cb0a21f2102fb49d99
@@ -517,6 +533,7 @@ SPEC CHECKSUMS:
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
+  RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNShare: d56424e3926cbc239db1cc1c168adcb051aad50b
   RNSVG: f3b60aeeaa81960e2e0536c3a9eef50b667ef3a9
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8

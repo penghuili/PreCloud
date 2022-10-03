@@ -1,5 +1,6 @@
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
+import { isAndroid } from './device';
 
 export const MAX_FILE_SIZE_MEGA_BYTES = 20;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
@@ -32,6 +33,8 @@ export const encryptionStatus = {
   error: 'encryption/error',
 };
 
+export const notesFolder = `${RNFS.DocumentDirectoryPath}/notes`;
+
 export const decryptionStatus = {
   wrongExtension: 'decryption/wrongExtension',
   decrypted: 'decryption/decrypted',
@@ -48,6 +51,19 @@ export async function makeInternalFolders() {
   if (!decryptedExists) {
     await RNFS.mkdir(internalFilePaths.decrypted);
   }
+}
+
+export async function makeNotesFolders() {
+  const exists = await RNFS.exists(notesFolder);
+  if (!exists) {
+    await RNFS.mkdir(notesFolder);
+  }
+}
+
+export async function readNotes() {
+  await makeNotesFolders();
+  const notes = await RNFS.readDir(notesFolder);
+  return notes.map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }));
 }
 
 export async function getFolderSize(folderPath) {
@@ -164,4 +180,25 @@ export async function copyFile(src, dest) {
     await RNFS.unlink(dest);
   }
   await RNFS.copyFile(src, dest);
+}
+
+export async function downloadFile({ path, fileName }) {
+  try {
+    if (isAndroid()) {
+      const downloadPath = `${androidDownloadFolder}/${fileName}`;
+      await copyFile(path, downloadPath);
+
+      return `File is downloaded to ${downloadPath}`;
+    }
+
+    await shareFile({
+      fileName: fileName,
+      filePath: path,
+      saveToFiles: true,
+    });
+    return `File is downloaded.`;
+  } catch (error) {
+    console.log('Download file failed:', error);
+    return null;
+  }
 }

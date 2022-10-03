@@ -14,6 +14,7 @@ async function setActivePassword(get, set, passwordId) {
 }
 
 export const useStore = create((set, get) => ({
+  // passwords
   passwords: [],
   isLoadingPasswords: true,
   activePassword: '',
@@ -87,6 +88,7 @@ export const useStore = create((set, get) => ({
     await setActivePassword(get, set, passwordId);
   },
 
+  // encryptedFiles
   encryptedFiles: [],
   setEncryptedFiles: files => set({ encryptedFiles: files }),
   renameEncryptedFile: (originalFileName, file) =>
@@ -98,9 +100,7 @@ export const useStore = create((set, get) => ({
       encryptedFiles: state.encryptedFiles.filter(f => f.fileName !== file.fileName),
     })),
 
-  decryptedFile: null,
-  setDecryptedFile: file => set({ decryptedFile: file }),
-
+  // decryptedFiles
   decryptedFiles: [],
   setDecryptedFiles: files => set({ decryptedFiles: files }),
   renameDecryptedFile: (originalFileName, file) =>
@@ -111,4 +111,12 @@ export const useStore = create((set, get) => ({
     set(state => ({
       decryptedFiles: state.decryptedFiles.filter(f => f.fileName !== file.fileName),
     })),
+
+  // rich text
+  richTexts: [],
+  setRichTexts: texts => set({ richTexts: texts }),
+  richTextTitle: '',
+  setRichTextTitle: title => set({ richTextTitle: title }),
+  richTextContent: '',
+  setRichTextContent: content => set({ richTextContent: content }),
 }));

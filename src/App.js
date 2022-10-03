@@ -1,9 +1,10 @@
+import { NavigationContainer } from '@react-navigation/native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useEffect } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 
-import AppWrapper from './components/AppWrapper';
 import { getTheme } from './lib/style';
+import { navigationRef } from './router/navigationRef';
 import Router from './router/Router';
 import { useStore } from './store/store';
 
@@ -21,11 +22,11 @@ function App() {
   }, []);
 
   return (
-    <NativeBaseProvider theme={theme}>
-      <AppWrapper>
+    <NavigationContainer ref={navigationRef}>
+      <NativeBaseProvider theme={theme}>
         <Router />
-      </AppWrapper>
-    </NativeBaseProvider>
+      </NativeBaseProvider>
+    </NavigationContainer>
   );
 }
 

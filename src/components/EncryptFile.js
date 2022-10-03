@@ -19,6 +19,7 @@ import { useStore } from '../store/store';
 import FileItem from './FileItem';
 import PlatformToggle from './PlatformToggle';
 
+
 const nodejs = require('nodejs-mobile-react-native');
 
 let pickedFiles = [];

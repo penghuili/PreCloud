@@ -1,8 +1,8 @@
 import { Button, HStack, IconButton, PresenceTransition, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import RNFS from 'react-native-fs';
-import useColors from '../hooks/useColors';
 
+import useColors from '../hooks/useColors';
 import {
   bytesToMB,
   emptyFolder,
@@ -10,7 +10,6 @@ import {
   getFolderSize,
   internalFilePaths,
 } from '../lib/files';
-import { routeNames } from '../router/Router';
 import { useStore } from '../store/store';
 import FileItem from './FileItem';
 import Icon from './Icon';
@@ -26,7 +25,7 @@ async function readFilesInFolder(path) {
   }
 }
 
-function Caches({ currentRoute }) {
+function Caches() {
   const colors = useColors();
   const setEncryptedFilesInStore = useStore(state => state.setEncryptedFiles);
   const setDecryptedFilesInStore = useStore(state => state.setDecryptedFiles);
@@ -37,10 +36,8 @@ function Caches({ currentRoute }) {
   const [showCaches, setShowCaches] = useState(false);
 
   useEffect(() => {
-    if (currentRoute === routeNames.settings) {
-      readFilesInCache();
-    }
-  }, [currentRoute]);
+    readFilesInCache();
+  }, []);
 
   async function readFilesInCache() {
     getFolderSize(RNFS.CachesDirectoryPath).then(size => {

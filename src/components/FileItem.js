@@ -4,12 +4,11 @@ import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs';
 
 import useColors from '../hooks/useColors';
-import { isAndroid } from '../lib/device';
 import {
-  androidDownloadFolder,
   copyFile,
   decryptionStatus,
   deleteFile,
+  downloadFile,
   encryptionStatus,
   extractFileExtensionFromPath,
   extractFileNameAndExtension,
@@ -50,26 +49,11 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   }
 
   const handleDownloadFile = async () => {
-    try {
-      setIsDownloading(true);
+    setIsDownloading(true);
 
-      if (isAndroid()) {
-        const downloadPath = `${androidDownloadFolder}/${file.fileName}`;
-        await copyFile(file.path, downloadPath);
-        toast.show({ title: `File is downloaded to ${downloadPath}`, placement: 'top' });
-      } else {
-        await shareFile({
-          fileName: file.fileName,
-          filePath: file.path,
-          saveToFiles: true,
-        });
-        toast.show({ title: `File is downloaded.`, placement: 'top' });
-      }
-    } catch (error) {
-      console.log('Download file failed:', error);
-      if (isAndroid()) {
-        toast.show({ title: 'Download file failed.', placement: 'top' });
-      }
+    const message = await downloadFile({ path: file.path, fileName: file.fileName });
+    if (message) {
+      toast.show({ title: message, placement: 'top' });
     }
 
     setIsDownloading(false);

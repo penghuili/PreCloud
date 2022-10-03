@@ -3,29 +3,30 @@ import React from 'react';
 
 import ActivePasswordAlert from '../components/ActivePasswordAlert';
 import AppBar from '../components/AppBar';
+import ScreenWrapper from '../components/ScreenWrapper';
 import ContentWrapper from '../components/ContentWrapper';
 import DecryptFile from '../components/DecryptFile';
 import EncryptFile from '../components/EncryptFile';
 import PasswordAlert from '../components/PasswordAlert';
 
-function EncryptDecryptFile({ currentRoute, jumpTo }) {
+function EncryptDecryptFile({ navigation }) {
   return (
-    <>
+    <ScreenWrapper>
       <AppBar title="Encrypt & decrypt files" />
       <ContentWrapper>
-        <PasswordAlert navigate={jumpTo} />
-        <ActivePasswordAlert navigate={jumpTo} />
+        <PasswordAlert navigate={navigation.navigate} />
+        <ActivePasswordAlert navigate={navigation.navigate} />
         <VStack space="sm" alignItems="center">
-          <EncryptFile currentRoute={currentRoute} />
+          <EncryptFile />
 
           <Divider my={8} />
 
-          <DecryptFile currentRoute={currentRoute} />
+          <DecryptFile />
 
           <Box h="8" />
         </VStack>
       </ContentWrapper>
-    </>
+    </ScreenWrapper>
   );
 }
 

@@ -18,6 +18,7 @@ import DeviceInfoModule from 'react-native-device-info';
 import paypal from '../assets/paypal.png';
 import xiangcai from '../assets/xiangcai.jpeg';
 import AppBar from '../components/AppBar';
+import ScreenWrapper from '../components/ScreenWrapper';
 import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
@@ -29,7 +30,7 @@ import { getStoreLink, isAndroid } from '../lib/device';
 const { buildDate } = require('../lib/app-settings.json');
 const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.ios}\n\nAndroid: ${appStoreLink.android}`;
 
-function Settings({ currentRoute }) {
+function Settings() {
   const colors = useColors();
   const toast = useToast();
 
@@ -61,7 +62,7 @@ function Settings({ currentRoute }) {
   }
 
   return (
-    <>
+    <ScreenWrapper>
       <AppBar title="Settings" />
       <ContentWrapper>
         <VStack space="lg" alignItems="flex-start">
@@ -74,7 +75,7 @@ function Settings({ currentRoute }) {
 
           <Divider />
 
-          <Caches currentRoute={currentRoute} />
+          <Caches />
 
           <Divider />
 
@@ -128,7 +129,7 @@ function Settings({ currentRoute }) {
 
           <Link href="https://www.getrevue.co/profile/precloud">What&lsquo;s new?</Link>
 
-          <Link href="https://twitter.com/penghuili22">My Twitter</Link>
+          <Link href="https://twitter.com/penghuili22">My twitter</Link>
 
           <Divider />
 
@@ -177,7 +178,7 @@ function Settings({ currentRoute }) {
           />
         </VStack>
       </ContentWrapper>
-    </>
+    </ScreenWrapper>
   );
 }
 
