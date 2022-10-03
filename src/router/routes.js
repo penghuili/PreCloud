@@ -5,4 +5,5 @@ export const routeNames = {
   settings: 'settings',
   richTextEditor: 'richTextEditor',
   passwordGenerator: 'passwordGenerator',
+  passwordForm: 'passwordForm',
 };

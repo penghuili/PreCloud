@@ -14,14 +14,14 @@ import {
 import React, { useState } from 'react';
 
 import AppBar from '../components/AppBar';
-import ScreenWrapper from '../components/ScreenWrapper';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
-import PasswordForm from '../components/PasswordForm';
+import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
+import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function Passwords() {
+function Passwords({ navigation }) {
   const toast = useToast();
   const colors = useColors();
   const passwords = useStore(state => state.passwords);
@@ -32,7 +32,6 @@ function Passwords() {
   const deletePassword = useStore(state => state.deletePassword);
 
   const [selectedPassword, setSelectedPassword] = useState('');
-  const [showForm, setShowForm] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   return (
@@ -90,8 +89,9 @@ function Passwords() {
                   >
                     <Menu.Item
                       onPress={() => {
-                        setSelectedPassword(password);
-                        setShowForm(true);
+                        navigation.navigate(routeNames.passwordForm, {
+                          selectedPassword: password,
+                        });
                       }}
                     >
                       Edit
@@ -138,21 +138,11 @@ function Passwords() {
 
           <Button
             onPress={() => {
-              setSelectedPassword(null);
-              setShowForm(true);
+              navigation.navigate(routeNames.passwordForm, { selectedPassword: null });
             }}
           >
             {passwords?.length ? 'Add new password' : 'Add your first password'}
           </Button>
-
-          <PasswordForm
-            isOpen={showForm}
-            selectedPassword={selectedPassword}
-            onClose={() => {
-              setShowForm(false);
-              setSelectedPassword(null);
-            }}
-          />
 
           <AlertDialog isOpen={showDeleteAlert}>
             <AlertDialog.Content>
