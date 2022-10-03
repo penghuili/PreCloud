@@ -52,7 +52,6 @@ function RichTextEditor({
           );
 
           if (msg.payload.title !== richTextTitle && richTextTitle) {
-            console.log(richTextTitle);
             await deleteFile(`${notesFolder}/${richTextTitle}.precloudnote`);
           }
 
