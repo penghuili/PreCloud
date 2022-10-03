@@ -46,14 +46,14 @@ function RichTextEditor({
         if (msg.payload.data) {
           await makeNotesFolders();
           await RNFS.writeFile(
-            `${notesFolder}/${msg.payload.title}.precloudnote.precloud`,
+            `${notesFolder}/${msg.payload.title}.precloudnote`,
             msg.payload.data,
             'base64'
           );
 
           if (msg.payload.title !== richTextTitle && richTextTitle) {
             console.log(richTextTitle);
-            await deleteFile(`${notesFolder}/${richTextTitle}.precloudnote.precloud`);
+            await deleteFile(`${notesFolder}/${richTextTitle}.precloudnote`);
           }
 
           const texts = await readNotes();

@@ -14,7 +14,7 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
       <ScrollView>
         <RichEditor
           ref={ref}
-          placeholder="Type here ..."
+          placeholder={disabled ? '' : 'Type here ...'}
           initialContentHTML={''}
           onChange={value => {
             onChange(value);
@@ -36,14 +36,14 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
             actions.undo,
             actions.redo,
             'clear',
-            'separator',
-            actions.insertImage,
             actions.keyboard,
+            'separator',
             actions.insertBulletsList,
             actions.insertOrderedList,
             actions.indent,
             actions.outdent,
             'separator',
+            actions.insertImage,
             actions.setBold,
             actions.setItalic,
             actions.setUnderline,

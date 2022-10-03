@@ -29,13 +29,12 @@ function EncryptDecryptRichText({ navigation }) {
   useEffect(() => {
     const listener = async msg => {
       if (msg.type === 'decrypted-rich-text') {
-        if (msg.payload.data) {
+        if (!msg.payload.error) {
           setRichTextTitle(msg.payload.fileName);
-          setRichTextContent(msg.payload.data);
+          setRichTextContent(msg.payload.data || '');
           navigation.navigate(routeNames.richTextEditor, { isNew: false });
         } else {
           toast.show({ title: 'Decrypt note failed.', placement: 'top' });
-          console.log(msg.payload);
         }
       }
     };
@@ -92,7 +91,7 @@ function EncryptDecryptRichText({ navigation }) {
     if (!richTexts.length) {
       return (
         <VStack space="sm" alignItems="center">
-          <Text>Create your first note.</Text>
+          <Text>Create your first rich text note.</Text>
           <Button onPress={handleAddNew} isDisabled={!password}>
             Add note
           </Button>

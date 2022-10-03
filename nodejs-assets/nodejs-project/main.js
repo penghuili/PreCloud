@@ -5,7 +5,7 @@ const { encryptFile, decryptFile, encryptText, decryptText } = require('./openpg
 rn_bridge.channel.on('message', async msg => {
   if (msg.type === 'encrypt-file') {
     const { data, error } = await encryptFile(msg.data.fileBase64, msg.data.password);
-    if (data) {
+    if (!error) {
       rn_bridge.channel.send({
         type: 'encrypted-file',
         payload: {
@@ -29,7 +29,7 @@ rn_bridge.channel.on('message', async msg => {
   } else if (msg.type === 'decrypt-file') {
     const { data, error } = await decryptFile(msg.data.fileBase64, msg.data.password);
 
-    if (data) {
+    if (!error) {
       rn_bridge.channel.send({
         type: 'decrypted-file',
         payload: {
@@ -45,12 +45,12 @@ rn_bridge.channel.on('message', async msg => {
       });
     }
   } else if (msg.type === 'encrypt-text') {
-    const { data: encrypted, error } = await encryptText(msg.data.text, msg.data.password);
+    const { data, error } = await encryptText(msg.data.text, msg.data.password);
 
-    if (encrypted) {
+    if (!error) {
       rn_bridge.channel.send({
         type: 'encrypted-text',
-        payload: { data: encrypted, error: null },
+        payload: { data, error: null },
       });
     } else {
       rn_bridge.channel.send({
@@ -59,12 +59,12 @@ rn_bridge.channel.on('message', async msg => {
       });
     }
   } else if (msg.type === 'decrypt-text') {
-    const { data: decrypted, error } = await decryptText(msg.data.encryptedText, msg.data.password);
+    const { data, error } = await decryptText(msg.data.encryptedText, msg.data.password);
 
-    if (decrypted) {
+    if (!error) {
       rn_bridge.channel.send({
         type: 'decrypted-text',
-        payload: { data: decrypted, error: null },
+        payload: { data, error: null },
       });
     } else {
       rn_bridge.channel.send({
@@ -76,7 +76,7 @@ rn_bridge.channel.on('message', async msg => {
     const base64 = stringToBase64(msg.data.content);
     const { data, error } = await encryptFile(base64, msg.data.password);
 
-    if (data) {
+    if (!error) {
       rn_bridge.channel.send({
         type: 'encrypted-rich-text',
         payload: {
@@ -98,7 +98,7 @@ rn_bridge.channel.on('message', async msg => {
   } else if (msg.type === 'decrypt-rich-text') {
     const { data, error } = await decryptFile(msg.data.fileBase64, msg.data.password);
 
-    if (data) {
+    if (!error) {
       const text = base64ToString(data);
       rn_bridge.channel.send({
         type: 'decrypted-rich-text',
