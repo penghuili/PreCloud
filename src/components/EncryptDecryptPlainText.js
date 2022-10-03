@@ -105,7 +105,7 @@ function EncryptDecryptPlainText() {
         </HStack>
 
         <TextArea isDisabled={!password} onChangeText={setText} value={text} h={40} />
-        <HStack justifyContent="flex-start" w="full">
+        <HStack justifyContent="space-between" w="full">
           <Button
             isDisabled={!password || !text}
             endIcon={<Icon name="chevron-down-outline" color={colors.white} />}
@@ -113,6 +113,37 @@ function EncryptDecryptPlainText() {
           >
             Encrypt
           </Button>
+
+          <HStack alignItems="center">
+            <IconButton
+              icon={<Icon name="clipboard-outline" color={colors.text} />}
+              isDisabled={!password}
+              onPress={async () => {
+                const copied = await Clipboard.getString();
+                if (copied) {
+                  setText(copied);
+                  toast.show({ title: 'Pasted!', placement: 'top' });
+                } else {
+                  toast.show({ title: 'Nothing in clipboard.', placement: 'top' });
+                }
+              }}
+            />
+            <IconButton
+              icon={<Icon name="copy-outline" color={colors.text} />}
+              isDisabled={!password || !text}
+              onPress={() => {
+                Clipboard.setString(text);
+                toast.show({ title: 'Copied!', placement: 'top' });
+              }}
+            />
+            <IconButton
+              icon={<Icon name="close-outline" color={colors.text} />}
+              isDisabled={!password || !text}
+              onPress={() => {
+                setText('');
+              }}
+            />
+          </HStack>
         </HStack>
       </>
     );
@@ -170,6 +201,13 @@ function EncryptDecryptPlainText() {
               onPress={() => {
                 Clipboard.setString(encryptedText);
                 toast.show({ title: 'Copied!', placement: 'top' });
+              }}
+            />
+            <IconButton
+              icon={<Icon name="close-outline" color={colors.text} />}
+              isDisabled={!password || !encryptedText}
+              onPress={() => {
+                setEncryptedText('');
               }}
             />
           </HStack>
