@@ -28,10 +28,10 @@ function AppBar({ title, hasBack }) {
             onPress={navigationRef.goBack}
           />
         ) : (
-          <Avatar source={logo} size="md" />
+          <Avatar source={logo} size="sm" mr="2" />
         )}
 
-        <Text color={colors.text} fontSize="20" fontWeight="bold" isTruncated width={width - 72}>
+        <Text color={colors.text} fontSize="20" fontWeight="bold" isTruncated width={width - 40}>
           {title}
         </Text>
       </HStack>
