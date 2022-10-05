@@ -1,16 +1,5 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import {
-  Button,
-  Divider,
-  Heading,
-  HStack,
-  Image,
-  Link,
-  Popover,
-  Text,
-  useToast,
-  VStack,
-} from 'native-base';
+import { Button, Divider, Heading, HStack, Image, Link, Popover, Text, VStack } from 'native-base';
 import React from 'react';
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
@@ -24,6 +13,7 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail } from '../lib/constants';
 import { getStoreLink, isAndroid } from '../lib/device';
+import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 
 const { buildDate } = require('../lib/app-settings.json');
@@ -31,7 +21,6 @@ const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.io
 
 function Settings({ navigation }) {
   const colors = useColors();
-  const toast = useToast();
 
   function renderSupport() {
     const support = (
@@ -120,7 +109,7 @@ function Settings({ navigation }) {
                     icon={<Icon name="copy-outline" color={colors.text} />}
                     onPress={() => {
                       Clipboard.setString(recommendText);
-                      toast.show({ title: 'Copied!', placement: 'top' });
+                      showToast('Copied!')
                     }}
                   >
                     Copy

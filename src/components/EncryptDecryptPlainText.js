@@ -9,7 +9,6 @@ import {
   Popover,
   Text,
   TextArea,
-  useToast,
   VStack,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
@@ -17,12 +16,12 @@ import { Keyboard } from 'react-native';
 
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
+import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
 function EncryptDecryptPlainText() {
-  const toast = useToast();
   const password = useStore(state => state.activePassword);
   const colors = useColors();
   const [text, setText] = useState('');
@@ -34,19 +33,16 @@ function EncryptDecryptPlainText() {
         if (msg.payload.data) {
           setEncryptedText(msg.payload.data);
           Keyboard.dismiss();
-          toast.show({ title: 'Encrypted.', placement: 'top' });
+          showToast('Encrypted.');
         } else {
-          toast.show({ title: 'Encrypt text failed.', placement: 'top' });
+          showToast('Encrypt text failed.', 'error');
         }
       } else if (msg.type === 'decrypted-text') {
         if (msg.payload.data) {
           setText(msg.payload.data);
-          toast.show({ title: 'Decrypted.', placement: 'top' });
+          showToast('Decrypted.');
         } else {
-          toast.show({
-            title: 'Decrypt text failed. Please only decrypt texts that are encrypted by this app.',
-            placement: 'top',
-          });
+          showToast('Decrypt text failed. Please only decrypt texts that are encrypted by this app.', 'error');
         }
       }
     };
@@ -122,9 +118,9 @@ function EncryptDecryptPlainText() {
                 const copied = await Clipboard.getString();
                 if (copied) {
                   setText(copied);
-                  toast.show({ title: 'Pasted!', placement: 'top' });
+                  showToast('Pasted!');
                 } else {
-                  toast.show({ title: 'Nothing in clipboard.', placement: 'top' });
+                  showToast('Nothing in clipboard.', 'info');
                 }
               }}
             />
@@ -133,7 +129,7 @@ function EncryptDecryptPlainText() {
               isDisabled={!password || !text}
               onPress={() => {
                 Clipboard.setString(text);
-                toast.show({ title: 'Copied!', placement: 'top' });
+                showToast('Copied!');
               }}
             />
             <IconButton
@@ -189,9 +185,9 @@ function EncryptDecryptPlainText() {
                 const copied = await Clipboard.getString();
                 if (copied) {
                   setEncryptedText(copied);
-                  toast.show({ title: 'Pasted!', placement: 'top' });
+                  showToast('Pasted!');
                 } else {
-                  toast.show({ title: 'Nothing in clipboard.', placement: 'top' });
+                  showToast('Nothing in clipboard.', 'info');
                 }
               }}
             />
@@ -200,7 +196,7 @@ function EncryptDecryptPlainText() {
               isDisabled={!password || !encryptedText}
               onPress={() => {
                 Clipboard.setString(encryptedText);
-                toast.show({ title: 'Copied!', placement: 'top' });
+                showToast('Copied!');
               }}
             />
             <IconButton

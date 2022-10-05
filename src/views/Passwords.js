@@ -8,7 +8,6 @@ import {
   Menu,
   Radio,
   Text,
-  useToast,
   VStack,
 } from 'native-base';
 import React, { useState } from 'react';
@@ -18,11 +17,11 @@ import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
+import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
 function Passwords({ navigation }) {
-  const toast = useToast();
   const colors = useColors();
   const passwords = useStore(state => state.passwords);
   const activePasswordId = useStore(state => state.activePasswordId);
@@ -61,10 +60,7 @@ function Passwords({ navigation }) {
                 await setActivePassword(id);
                 const password = passwords.find(p => p.id === id);
                 if (password) {
-                  toast.show({
-                    title: `From now on you will use the "${password.label}" password to encrypt and decrypt.`,
-                    placement: 'top',
-                  });
+                  showToast(`From now on you will use the "${password.label}" password to encrypt and decrypt.`, 'info')
                 }
               }}
             >
@@ -117,7 +113,7 @@ function Passwords({ navigation }) {
                     <Menu.Item
                       onPress={() => {
                         Clipboard.setString(password.password);
-                        toast.show({ title: 'Copied!', placement: 'top' });
+                        showToast('Copied!')
                       }}
                     >
                       Copy

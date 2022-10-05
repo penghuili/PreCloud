@@ -1,9 +1,10 @@
-import { Button, HStack, IconButton, Menu, Text, useToast, VStack } from 'native-base';
+import { Button, HStack, IconButton, Menu, Text, VStack } from 'native-base';
 import React, { useEffect } from 'react';
 import FS from 'react-native-fs';
 
 import useColors from '../hooks/useColors';
 import { deleteFile, downloadFile, readNotes, shareFile } from '../lib/files';
+import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 import Icon from './Icon';
@@ -11,7 +12,6 @@ import Icon from './Icon';
 const nodejs = require('nodejs-mobile-react-native');
 
 function EncryptDecryptRichText({ navigation }) {
-  const toast = useToast();
   const colors = useColors();
   const password = useStore(state => state.activePassword);
   const richTexts = useStore(state => state.richTexts);
@@ -34,7 +34,7 @@ function EncryptDecryptRichText({ navigation }) {
           setRichTextContent(msg.payload.data || '');
           navigation.navigate(routeNames.richTextEditor, { isNew: false });
         } else {
-          toast.show({ title: 'Decrypt note failed.', placement: 'top' });
+          showToast('Decrypt note failed.', 'error')
         }
       }
     };
@@ -59,7 +59,7 @@ function EncryptDecryptRichText({ navigation }) {
   async function handleDownload(note) {
     const message = await downloadFile({ path: note.path, fileName: note.name });
     if (message) {
-      toast.show({ title: message, placement: 'top' });
+      showToast(message)
     }
   }
 
@@ -70,7 +70,7 @@ function EncryptDecryptRichText({ navigation }) {
         filePath: note.path,
         saveToFiles: false,
       });
-      toast.show({ title: 'Shared.', placement: 'top' });
+      showToast('Shared!')
     } catch (error) {
       console.log('Share file failed:', error);
     }

@@ -1,15 +1,14 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Button, Checkbox, Slider, Text, useToast } from 'native-base';
+import { Button, Checkbox, Slider, Text } from 'native-base';
 import React, { useState } from 'react';
 
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { generatePassword } from '../lib/password';
+import { showToast } from '../lib/toast';
 
 function PasswordGenerator() {
-  const toast = useToast();
-
   const [passwordLength, setPasswordLength] = useState(16);
   const [hasSpecialCharacters, setHasSpecialCharacters] = useState(true);
   const [password, setPassword] = useState(generatePassword(passwordLength, hasSpecialCharacters));
@@ -62,7 +61,7 @@ function PasswordGenerator() {
               variant="outline"
               onPress={() => {
                 Clipboard.setString(password);
-                toast.show({ title: 'Copied!', placement: 'top' });
+                showToast('Copied!')
               }}
             >
               Copy

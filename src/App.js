@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useEffect } from 'react';
 import SplashScreen from 'react-native-splash-screen';
+import Toast from 'react-native-toast-message';
 
 import { getTheme } from './lib/style';
 import { navigationRef } from './router/navigationRef';
@@ -25,6 +26,8 @@ function App() {
     <NavigationContainer ref={navigationRef}>
       <NativeBaseProvider theme={theme}>
         <Router />
+
+        <Toast />
       </NativeBaseProvider>
     </NavigationContainer>
   );

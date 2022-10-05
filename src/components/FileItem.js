@@ -1,4 +1,4 @@
-import { HStack, IconButton, Text, useToast, VStack } from 'native-base';
+import { HStack, IconButton, Text, VStack } from 'native-base';
 import React, { useMemo, useState } from 'react';
 import FileViewer from 'react-native-file-viewer';
 import RNFS from 'react-native-fs';
@@ -16,13 +16,13 @@ import {
   shareFile,
   viewableFileTypes,
 } from '../lib/files';
+import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import Icon from './Icon';
 import RenameFileModal from './RenameFileModal';
 
 function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   const colors = useColors();
-  const toast = useToast();
   const renameEncryptedFile = useStore(state => state.renameEncryptedFile);
   const deleteEncryptedFile = useStore(state => state.deleteEncryptedFile);
   const renameDecryptedFile = useStore(state => state.renameDecryptedFile);
@@ -53,7 +53,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
 
     const message = await downloadFile({ path: file.path, fileName: file.fileName });
     if (message) {
-      toast.show({ title: message, placement: 'top' });
+      showToast(message)
     }
 
     setIsDownloading(false);
@@ -66,7 +66,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
         filePath: file.path,
         saveToFiles: false,
       });
-      toast.show({ title: 'Shared.', placement: 'top' });
+      showToast('Shared!')
     } catch (error) {
       console.log('Share file failed:', error);
     }
@@ -75,7 +75,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   const handleDeleteFile = async () => {
     try {
       await RNFS.unlink(file.path);
-      toast.show({ title: 'Deleted from cache.', placement: 'top' });
+      showToast('Deleted from cache.')
       if (forEncrypt) {
         deleteEncryptedFile(file);
       } else {

@@ -1,4 +1,4 @@
-import { Button, FormControl, HStack, Input, Text, useToast } from 'native-base';
+import { Button, FormControl, HStack, Input, Text } from 'native-base';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import AppBar from '../components/AppBar';
@@ -6,6 +6,7 @@ import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
+import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
@@ -16,7 +17,6 @@ function PasswordForm({
   },
 }) {
   const colors = useColors();
-  const toast = useToast();
   const passwords = useStore(state => state.passwords);
   const savePassword = useStore(state => state.savePassword);
   const passwordLabels = useMemo(() => passwords.map(p => p.label), [passwords]);
@@ -41,7 +41,7 @@ function PasswordForm({
     try {
       await savePassword({ id: selectedPassword?.id, label: label.trim(), password });
       navigation.goBack();
-      toast.show({ title: 'Password is saved in secure storage.', placement: 'top' });
+      showToast('Password is saved in secure storage.')
     } catch (e) {
       setError('Save password failed. Please choose another one.');
     }
