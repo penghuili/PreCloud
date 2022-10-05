@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const LocalStorageKeys = {
   activePassword: 'activePassword',
+  donateBannerCheckDate: 'donateBannerCheckDate',
+  donateBannerDonateDate: 'donateBannerDonateDate',
 };
 
 export const LocalStorage = {

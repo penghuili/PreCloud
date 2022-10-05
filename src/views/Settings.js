@@ -12,7 +12,8 @@ import Icon from '../components/Icon';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail } from '../lib/constants';
-import { getStoreLink, isAndroid } from '../lib/device';
+import { getStoreLink } from '../lib/device';
+import { showDonate } from '../lib/money';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 
@@ -23,25 +24,18 @@ function Settings({ navigation }) {
   const colors = useColors();
 
   function renderSupport() {
-    const support = (
-      <>
-        <Divider />
-        <VStack space="sm">
-          <Text>Buy me a beer, especially Hefeweizen beer 🍺❤️</Text>
-          <Link href="https://paypal.me/penghuili/">
-            <Image source={paypal} alt="Support with Paypal" />
-          </Link>
-        </VStack>
-      </>
-    );
-
-    if (isAndroid()) {
-      return support;
-    }
-
-    // eslint-disable-next-line no-undef
-    if (Date.now() > buildDate + 3 * 24 * 60 * 60 * 1000 || __DEV__) {
-      return support;
+    if (showDonate()) {
+      return (
+        <>
+          <Divider />
+          <VStack space="sm">
+            <Text>Buy me a beer, especially Hefeweizen beer 🍺❤️</Text>
+            <Link href="https://paypal.me/penghuili/">
+              <Image source={paypal} alt="Support with Paypal" />
+            </Link>
+          </VStack>
+        </>
+      );
     }
 
     return null;
@@ -109,7 +103,7 @@ function Settings({ navigation }) {
                     icon={<Icon name="copy-outline" color={colors.text} />}
                     onPress={() => {
                       Clipboard.setString(recommendText);
-                      showToast('Copied!')
+                      showToast('Copied!');
                     }}
                   >
                     Copy

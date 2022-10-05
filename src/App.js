@@ -3,6 +3,7 @@ import { NativeBaseProvider } from 'native-base';
 import React, { useEffect } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import Toast from 'react-native-toast-message';
+import DonateBanner from './components/DonateBanner';
 
 import { getTheme } from './lib/style';
 import { navigationRef } from './router/navigationRef';
@@ -28,6 +29,7 @@ function App() {
         <Router />
 
         <Toast />
+        <DonateBanner />
       </NativeBaseProvider>
     </NavigationContainer>
   );

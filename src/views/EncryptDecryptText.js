@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 
 import ActivePasswordAlert from '../components/ActivePasswordAlert';
 import AppBar from '../components/AppBar';
-import ScreenWrapper from '../components/ScreenWrapper';
 import ContentWrapper from '../components/ContentWrapper';
 import EncryptDecryptPlainText from '../components/EncryptDecryptPlainText';
 import EncryptDecryptRichText from '../components/EncryptDecryptRichText';
 import PasswordAlert from '../components/PasswordAlert';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 const tabs = {
   plainText: 'plainText',
