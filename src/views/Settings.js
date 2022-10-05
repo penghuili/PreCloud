@@ -74,8 +74,6 @@ function Settings({ navigation }) {
 
           <Link onPress={() => navigation.navigate(routeNames.caches)}>Caches</Link>
 
-          <Divider />
-
           <Link onPress={() => navigation.navigate(routeNames.passwordGenerator)}>
             Generate password
           </Link>
@@ -90,6 +88,19 @@ function Settings({ navigation }) {
             <Text>Enjoying the app?</Text>
             <Link href={getStoreLink()}>Give it 5 🌟</Link>
           </HStack>
+
+          <VStack>
+            <Text>Or write to me, I reply to all emails</Text>
+            <Link
+              onPress={() => {
+                Linking.openURL(`mailto:${myEmail}`);
+              }}
+            >
+              {myEmail}
+            </Link>
+          </VStack>
+
+          <Link href="https://twitter.com/penghuili22">My twitter</Link>
 
           <HStack space="1" alignItems="center">
             <Text>And recommend it to</Text>
@@ -119,31 +130,18 @@ function Settings({ navigation }) {
             </Popover>
           </HStack>
 
-          <VStack>
-            <Text>Or write to me, I reply to all emails</Text>
-            <Link
-              onPress={() => {
-                Linking.openURL(`mailto:${myEmail}`);
-              }}
-            >
-              {myEmail}
-            </Link>
-          </VStack>
-
-          <Link href="https://twitter.com/penghuili22">My twitter</Link>
-
           <Divider />
 
           <Link href="https://www.peng.kiwi/precloud">What is PreCloud?</Link>
-          <Link href="https://dev.to/penghuili/how-much-does-it-cost-to-build-an-app-2e6">
-            How much does it cost to build this free app? 🤑
-          </Link>
           <Link
             onPress={() => {
               Linking.openURL(`mailto:${myEmail}`);
             }}
           >
             How are you using PreCloud?
+          </Link>
+          <Link href="https://dev.to/penghuili/how-much-does-it-cost-to-build-an-app-2e6">
+            How much does it cost to build this free app? 🤑
           </Link>
 
           <Divider />
