@@ -1,12 +1,12 @@
-import { Button, Heading, Input, Text, VStack } from 'native-base';
+import { Heading, Input, KeyboardAvoidingView, VStack } from 'native-base';
 import React, { useEffect, useRef, useState } from 'react';
 import RNFS from 'react-native-fs';
 
 import AppBar from '../components/AppBar';
-import ScreenWrapper from '../components/ScreenWrapper';
-import ContentWrapper from '../components/ContentWrapper';
 import Editor from '../components/Editor';
+import ScreenWrapper from '../components/ScreenWrapper';
 import { deleteFile, makeNotesFolders, notesFolder, readNotes } from '../lib/files';
+import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
@@ -27,7 +27,6 @@ function RichTextEditor({
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     setTitle(richTextTitle);
@@ -53,7 +52,7 @@ function RichTextEditor({
 
           navigation.goBack();
         } else {
-          setErrorMessage('Encryption failed.');
+          showToast('Encryption failed.', 'error');
         }
       }
     };
@@ -67,10 +66,9 @@ function RichTextEditor({
   }, [richTextTitle]);
 
   async function handleSave() {
-    setErrorMessage('');
 
     if (content.match(/<img.*?src=.*?base64,(.*?)>/g)?.length > 10) {
-      setErrorMessage('You can only insert 10 images.');
+      showToast('You can only insert 10 images.', 'error');
       return;
     }
 
@@ -83,11 +81,22 @@ function RichTextEditor({
   const editable = isNew || isEditing;
   return (
     <ScreenWrapper>
-      <AppBar title="Rich text" hasBack />
-      <ContentWrapper>
-        <VStack space="sm" pb="15">
+      <AppBar
+        title="Rich text"
+        hasBack
+        rightIconName={editable ? 'checkmark-outline' : 'create-outline'}
+        onRightIconPress={() => {
+          if (editable) {
+            handleSave();
+          } else {
+            setIsEditing(true);
+          }
+        }}
+      />
+      <KeyboardAvoidingView>
+        <VStack px={2} py={4} space="sm" keyboardShouldPersistTaps="handled">
           {editable ? (
-            <Input value={title} onChangeText={setTitle} autoFocus={isNew} />
+            <Input value={title} onChangeText={setTitle} />
           ) : (
             <Heading>{title}</Heading>
           )}
@@ -101,19 +110,8 @@ function RichTextEditor({
             }}
             onChange={setContent}
           />
-
-          {editable ? (
-            <Button isDisabled={!title.trim()} onPress={handleSave}>
-              Encrypt and Save
-            </Button>
-          ) : (
-            <Button onPress={() => setIsEditing(true)} variant="outline">
-              Edit
-            </Button>
-          )}
-          {!!errorMessage && <Text colorScheme="error">{errorMessage}</Text>}
         </VStack>
-      </ContentWrapper>
+      </KeyboardAvoidingView>
     </ScreenWrapper>
   );
 }

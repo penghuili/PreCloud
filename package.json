@@ -28,6 +28,7 @@
     "react-native-splash-screen": "3.3.0",
     "react-native-svg": "12.4.3",
     "react-native-toast-message": "2.1.5",
+    "react-native-use-keyboard-height": "0.1.1",
     "react-native-vector-icons": "9.2.0",
     "react-native-webview": "11.23.1",
     "zustand": "4.0.0"
