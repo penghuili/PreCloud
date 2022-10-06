@@ -6,7 +6,7 @@ import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor'
 
 import useColors from '../hooks/useColors';
 
-const Editor = forwardRef(({ disabled, onChange }, ref) => {
+const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   const { primary } = useColors();
 
   return (
@@ -26,6 +26,11 @@ const Editor = forwardRef(({ disabled, onChange }, ref) => {
           }}
           initialHeight={200}
           useContainer
+          editorInitializedCallback={() => {
+            if (onInitialized) {
+              onInitialized();
+            }
+          }}
         />
       </ScrollView>
 

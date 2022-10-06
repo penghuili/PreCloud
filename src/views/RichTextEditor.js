@@ -34,13 +34,6 @@ function RichTextEditor({
   }, [richTextTitle]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setContent(richTextContent);
-      editorRef.current.setContentHTML(richTextContent);
-    }, 500);
-  }, [richTextContent]);
-
-  useEffect(() => {
     const listener = async msg => {
       if (msg.type === 'encrypted-rich-text') {
         if (msg.payload.data) {
@@ -93,15 +86,30 @@ function RichTextEditor({
       <AppBar title="Rich text" hasBack />
       <ContentWrapper>
         <VStack space="sm" pb="15">
-          {editable ? <Input value={title} onChangeText={setTitle} autoFocus={isNew} /> : <Heading>{title}</Heading>}
+          {editable ? (
+            <Input value={title} onChangeText={setTitle} autoFocus={isNew} />
+          ) : (
+            <Heading>{title}</Heading>
+          )}
 
-          <Editor ref={editorRef} disabled={!password || !editable} onChange={setContent} />
+          <Editor
+            ref={editorRef}
+            disabled={!password || !editable}
+            onInitialized={() => {
+              setContent(richTextContent);
+              editorRef.current.setContentHTML(richTextContent);
+            }}
+            onChange={setContent}
+          />
+
           {editable ? (
             <Button isDisabled={!title.trim()} onPress={handleSave}>
               Encrypt and Save
             </Button>
           ) : (
-            <Button onPress={() => setIsEditing(true)} variant="outline">Edit</Button>
+            <Button onPress={() => setIsEditing(true)} variant="outline">
+              Edit
+            </Button>
           )}
           {!!errorMessage && <Text colorScheme="error">{errorMessage}</Text>}
         </VStack>
