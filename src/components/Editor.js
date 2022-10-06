@@ -5,7 +5,6 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 
 import useColors from '../hooks/useColors';
-import Icon from './Icon';
 
 const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   const colors = useColors();
@@ -48,7 +47,6 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
             actions.insertOrderedList,
             actions.indent,
             actions.outdent,
-            'newLine',
             'separator',
             actions.insertImage,
             actions.setBold,
@@ -70,15 +68,11 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
                 X
               </Text>
             ),
-            newLine: () => <Icon name="enter-outline" color={colors.text} />,
           }}
           separator={() => {}}
           clear={() => {
             ref.current.setContentHTML('');
             ref.current.blurContentEditor();
-          }}
-          newLine={() => {
-            ref.current.insertHTML('<br/>')
           }}
           onPressAddImage={async () => {
             const result = await launchImageLibrary({

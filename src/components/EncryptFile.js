@@ -19,7 +19,6 @@ import { useStore } from '../store/store';
 import FileItem from './FileItem';
 import PlatformToggle from './PlatformToggle';
 
-
 const nodejs = require('nodejs-mobile-react-native');
 
 let pickedFiles = [];
@@ -44,7 +43,15 @@ function EncryptFile() {
   const encryptedFiles = useStore(state => state.encryptedFiles);
   const setEncryptedFiles = useStore(state => state.setEncryptedFiles);
 
-  const [isEncrypting, setIsEncrypting] = useState(false);
+  const [isEncryptingFiles, setIsEncryptingFiles] = useState(false);
+  const [isEncryptingImages, setIsEncryptingImages] = useState(false);
+  const [isEncryptingNewImage, setIsEncryptingNewImage] = useState(false);
+
+  function resetLoading() {
+    setIsEncryptingFiles(false);
+    setIsEncryptingImages(false);
+    setIsEncryptingNewImage(false);
+  }
 
   async function triggerNext() {
     if (currentIndex + 1 < pickedFiles.length) {
@@ -57,7 +64,7 @@ function EncryptFile() {
         path: nextFile.path,
       });
     } else {
-      setIsEncrypting(false);
+      resetLoading();
       await resetPickedFile();
     }
   }
@@ -141,7 +148,7 @@ function EncryptFile() {
     currentIndex = 0;
   }
 
-  async function handleAfterPick(files) {
+  async function handleAfterPick(files, setIsEncrypting) {
     if (!files?.length) {
       return;
     }
@@ -170,10 +177,10 @@ function EncryptFile() {
         path: extractFilePath(f.uri),
       }));
 
-      await handleAfterPick(files);
+      await handleAfterPick(files, setIsEncryptingImages);
     } catch (e) {
       await resetPickedFile();
-      setIsEncrypting(false);
+      setIsEncryptingImages(false);
       console.log('Pick images failed', e);
     }
   }
@@ -192,10 +199,10 @@ function EncryptFile() {
         path: extractFilePath(f.uri),
       }));
 
-      await handleAfterPick(files);
+      await handleAfterPick(files, setIsEncryptingNewImage);
     } catch (e) {
       await resetPickedFile();
-      setIsEncrypting(false);
+      setIsEncryptingNewImage(false);
       console.log('Take photo failed', e);
     }
   }
@@ -216,14 +223,15 @@ function EncryptFile() {
         path: extractFilePath(f.fileCopyUri),
       }));
 
-      await handleAfterPick(files);
+      await handleAfterPick(files, setIsEncryptingFiles);
     } catch (e) {
       await resetPickedFile();
-      setIsEncrypting(false);
+      setIsEncryptingFiles(false);
       console.log('Pick files failed', e);
     }
   }
 
+  const isLoading = isEncryptingFiles || isEncryptingImages || isEncryptingNewImage;
   return (
     <VStack space="sm" alignItems="center">
       <Heading>Encrypt files</Heading>
@@ -235,17 +243,29 @@ function EncryptFile() {
       </Alert>
       <HStack space="2">
         <PlatformToggle for={platforms.ios}>
-          <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickImages}>
+          <Button
+            isDisabled={!password || isLoading}
+            isLoading={isEncryptingImages}
+            onPress={pickImages}
+          >
             Pick images
           </Button>
         </PlatformToggle>
 
-        <Button isDisabled={!password} isLoading={isEncrypting} onPress={pickFiles}>
+        <Button
+          isDisabled={!password || isLoading}
+          isLoading={isEncryptingFiles}
+          onPress={pickFiles}
+        >
           Pick files
         </Button>
       </HStack>
 
-      <Button isDisabled={!password} isLoading={isEncrypting} onPress={takePhoto}>
+      <Button
+        isDisabled={!password || isLoading}
+        isLoading={isEncryptingNewImage}
+        onPress={takePhoto}
+      >
         Take photo and encrypt
       </Button>
 

@@ -142,7 +142,7 @@ function EncryptDecryptRichText({ navigation }) {
             Add note
           </Button>
 
-          <Button onPress={() => setShowPickConfirm(true)} variant="outline" size="sm">
+          <Button onPress={() => setShowPickConfirm(true)} isDisabled={!password} variant="outline" size="sm">
             Select notes
           </Button>
           <Text>
@@ -157,11 +157,13 @@ function EncryptDecryptRichText({ navigation }) {
         <HStack space="sm">
           <IconButton
             onPress={handleAddNew}
+            isDisabled={!password}
             icon={<Icon name="add-outline" color={colors.text} size={24} />}
           />
 
           <IconButton
             onPress={() => setShowPickConfirm(true)}
+            isDisabled={!password}
             icon={<Icon name="folder-open-outline" color={colors.text} size={24} />}
           />
         </HStack>

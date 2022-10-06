@@ -71,7 +71,7 @@ function Caches() {
         </HStack>
 
         {hasCachedFile && (
-          <VStack space="xs" alignItems="flex-start" ml="2">
+          <VStack space="xs" alignItems="flex-start">
             {encryptedFiles.length > 0 && (
               <>
                 <Text bold mt="2">
