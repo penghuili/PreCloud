@@ -12,7 +12,6 @@ import { useStore } from '../store/store';
 const nodejs = require('nodejs-mobile-react-native');
 
 function RichTextEditor({
-  navigation,
   route: {
     params: { isNew },
   },
