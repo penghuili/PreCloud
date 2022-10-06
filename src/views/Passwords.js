@@ -1,18 +1,9 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import {
-  Alert,
-  AlertDialog,
-  Button,
-  HStack,
-  IconButton,
-  Menu,
-  Radio,
-  Text,
-  VStack,
-} from 'native-base';
+import { Alert, Button, HStack, IconButton, Menu, Radio, Text, VStack } from 'native-base';
 import React, { useState } from 'react';
 
 import AppBar from '../components/AppBar';
+import Confirm from '../components/Confirm';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -60,7 +51,10 @@ function Passwords({ navigation }) {
                 await setActivePassword(id);
                 const password = passwords.find(p => p.id === id);
                 if (password) {
-                  showToast(`From now on you will use the "${password.label}" password to encrypt and decrypt.`, 'info')
+                  showToast(
+                    `From now on you will use the "${password.label}" password to encrypt and decrypt.`,
+                    'info'
+                  );
                 }
               }}
             >
@@ -113,7 +107,7 @@ function Passwords({ navigation }) {
                     <Menu.Item
                       onPress={() => {
                         Clipboard.setString(password.password);
-                        showToast('Copied!')
+                        showToast('Copied!');
                       }}
                     >
                       Copy
@@ -140,38 +134,21 @@ function Passwords({ navigation }) {
             {passwords?.length ? 'Add new password' : 'Add your first password'}
           </Button>
 
-          <AlertDialog isOpen={showDeleteAlert}>
-            <AlertDialog.Content>
-              <AlertDialog.Header>Delete password</AlertDialog.Header>
-              <AlertDialog.Body>
-                After the password is deleted, you can&lsquo;t decrypt the texts and files that are
-                encrypted with this password. Do you still want to delete this password?
-              </AlertDialog.Body>
-              <AlertDialog.Footer>
-                <Button.Group space={2}>
-                  <Button
-                    variant="ghost"
-                    onPress={() => {
-                      setShowDeleteAlert(false);
-                      setSelectedPassword(null);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    colorScheme="danger"
-                    onPress={async () => {
-                      await deletePassword(selectedPassword);
-                      setSelectedPassword(null);
-                      setShowDeleteAlert(false);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </Button.Group>
-              </AlertDialog.Footer>
-            </AlertDialog.Content>
-          </AlertDialog>
+          <Confirm
+            isOpen={showDeleteAlert}
+            title="Delete password"
+            message="After the password is deleted, you can&lsquo;t decrypt the texts and files that are encrypted with this password. Do you still want to delete this password?"
+            onClose={() => {
+              setShowDeleteAlert(false);
+              setSelectedPassword(null);
+            }}
+            onConfirm={async () => {
+              await deletePassword(selectedPassword);
+              setSelectedPassword(null);
+              setShowDeleteAlert(false);
+            }}
+            isDanger
+          />
         </VStack>
       </ContentWrapper>
     </ScreenWrapper>
