@@ -50,7 +50,7 @@ function RichTextEditor({
           const texts = await readNotes();
           setRichTexts(texts);
 
-          navigation.goBack();
+          setIsEditing(false);
         } else {
           showToast('Encryption failed.', 'error');
         }
@@ -66,7 +66,6 @@ function RichTextEditor({
   }, [richTextTitle]);
 
   async function handleSave() {
-
     if (content.match(/<img.*?src=.*?base64,(.*?)>/g)?.length > 10) {
       showToast('You can only insert 10 images.', 'error');
       return;
@@ -95,11 +94,7 @@ function RichTextEditor({
       />
       <KeyboardAvoidingView>
         <VStack px={2} py={4} space="sm" keyboardShouldPersistTaps="handled">
-          {editable ? (
-            <Input value={title} onChangeText={setTitle} />
-          ) : (
-            <Heading>{title}</Heading>
-          )}
+          {editable ? <Input value={title} onChangeText={setTitle} /> : <Heading>{title}</Heading>}
 
           <Editor
             ref={editorRef}

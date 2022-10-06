@@ -8,16 +8,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import useColors from '../hooks/useColors';
+import { isAndroid } from '../lib/device';
 
 const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   const colors = useColors();
   const { height } = useWindowDimensions();
   const { top, bottom } = useSafeAreaInsets();
-  const keyboardHeight = useKeyboardHeight()
+  const keyboardHeight = useKeyboardHeight();
 
+  const editorHeight =
+    height - top - 64 - 60 - (disabled ? 0 : 44) - bottom - keyboardHeight - (isAndroid() ? 40 : 0);
   return (
     <Box borderTopWidth={1} borderColor="gray.200">
-      <ScrollView h={height - top - 64 - 60 - (disabled ? 0 : 44) - bottom - keyboardHeight}>
+      <ScrollView h={editorHeight}>
         <RichEditor
           ref={ref}
           placeholder={disabled ? '' : 'Type here ...'}
@@ -30,7 +33,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
             caretColor: colors.primary,
             cssText: `#editor ul {padding-left: 24px} #editor ol {padding-left: 24px} .pell-content {padding: 10px 0}`,
           }}
-          initialHeight={200}
+          initialHeight={editorHeight}
           useContainer
           editorInitializedCallback={() => {
             if (onInitialized) {
