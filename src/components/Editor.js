@@ -5,9 +5,10 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 
 import useColors from '../hooks/useColors';
+import Icon from './Icon';
 
 const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
-  const { primary } = useColors();
+  const colors = useColors();
 
   return (
     <Box w="full" borderTopWidth={1} borderColor="gray.200">
@@ -21,7 +22,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
           }}
           disabled={disabled}
           editorStyle={{
-            caretColor: primary,
+            caretColor: colors.primary,
             cssText: `#editor ul {padding-left: 24px} #editor ol {padding-left: 24px} .pell-content {padding: 10px 0}`,
           }}
           initialHeight={200}
@@ -47,6 +48,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
             actions.insertOrderedList,
             actions.indent,
             actions.outdent,
+            'newLine',
             'separator',
             actions.insertImage,
             actions.setBold,
@@ -64,15 +66,19 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
               </Text>
             ),
             clear: () => (
-              <Text color="gray.400" fontSize="xl">
+              <Text color={colors.text} fontSize="xl">
                 X
               </Text>
             ),
+            newLine: () => <Icon name="enter-outline" color={colors.text} />,
           }}
           separator={() => {}}
           clear={() => {
             ref.current.setContentHTML('');
             ref.current.blurContentEditor();
+          }}
+          newLine={() => {
+            ref.current.insertHTML('<br/>')
           }}
           onPressAddImage={async () => {
             const result = await launchImageLibrary({
@@ -92,7 +98,8 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
 
             ref.current.insertImage(`data:${file.type};base64,${resized}`);
           }}
-          selectedIconTint={primary}
+          iconTint={colors.text}
+          selectedIconTint={colors.primary}
         />
       )}
     </Box>
