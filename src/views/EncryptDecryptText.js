@@ -21,7 +21,7 @@ function EncryptDecryptText({ navigation }) {
     <ScreenWrapper>
       <AppBar title="Encrypt & decrypt text" />
       <ContentWrapper hasPX={false}>
-        <Box px={4} w="full">
+        <Box px={2} w="full">
           <PasswordAlert navigate={navigation.navigate} />
           <ActivePasswordAlert navigate={navigation.navigate} />
         </Box>

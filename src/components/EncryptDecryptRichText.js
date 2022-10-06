@@ -229,7 +229,7 @@ function EncryptDecryptRichText({ navigation }) {
 
   return (
     <>
-      <VStack px={4} space="sm" pb="15">
+      <VStack px={2} space="sm" pb="15">
         {renderNotes()}
       </VStack>
 
