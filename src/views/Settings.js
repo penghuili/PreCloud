@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-clipboard/clipboard';
+import { format } from 'date-fns';
 import { Button, Divider, Heading, HStack, Image, Link, Popover, Text, VStack } from 'native-base';
 import React from 'react';
 import { Linking } from 'react-native';
@@ -149,8 +150,7 @@ function Settings({ navigation }) {
               v{DeviceInfoModule.getVersion()}({DeviceInfoModule.getBuildNumber()})
             </Text>
             <Text fontSize="xs" color="gray.400">
-              Released at {new Date(buildDate).toLocaleDateString()}{' '}
-              {new Date(buildDate).toLocaleTimeString()}
+              Released at {format(new Date(buildDate), 'PPpp')}
             </Text>
           </VStack>
         </VStack>
