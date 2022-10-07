@@ -5,9 +5,9 @@ export function showToast(message, type = 'success') {
     type,
     text1: message,
     position: 'top',
-    visibilityTime: 4000,
     autoHide: true,
-    topOffset: 100,
+    visibilityTime: 4000,
+    topOffset: 40,
     onPress: () => Toast.hide(),
   });
 }
