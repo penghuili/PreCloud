@@ -50,6 +50,8 @@ function RichTextEditor({
           setRichTexts(texts);
 
           setIsEditing(false);
+
+          showToast('Your note is encrypted and saved on your phone.');
         } else {
           showToast('Encryption failed.', 'error');
         }
@@ -65,11 +67,6 @@ function RichTextEditor({
   }, [richTextTitle]);
 
   async function handleSave() {
-    if (content.match(/<img.*?src=.*?base64,(.*?)>/g)?.length > 10) {
-      showToast('You can only insert 10 images.', 'error');
-      return;
-    }
-
     nodejs.channel.send({
       type: 'encrypt-rich-text',
       data: { title: title.trim(), content, password },

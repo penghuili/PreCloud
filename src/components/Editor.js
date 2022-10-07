@@ -1,5 +1,5 @@
 import { Box, ScrollView, Text } from 'native-base';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Image } from 'react-native-compressor';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -9,12 +9,15 @@ import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import useColors from '../hooks/useColors';
 import { isAndroid } from '../lib/device';
+import { showToast } from '../lib/toast';
 
 const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   const colors = useColors();
   const { height } = useWindowDimensions();
   const { top, bottom } = useSafeAreaInsets();
   const keyboardHeight = useKeyboardHeight();
+
+  const [innerValue, setInnerValue] = useState('');
 
   const editorHeight =
     height - top - 64 - 60 - (disabled ? 0 : 44) - bottom - keyboardHeight - (isAndroid() ? 40 : 0);
@@ -26,6 +29,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
           placeholder={disabled ? '' : 'Type here ...'}
           initialContentHTML={''}
           onChange={value => {
+            setInnerValue(value);
             onChange(value);
           }}
           disabled={disabled}
@@ -84,6 +88,11 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
             ref.current.blurContentEditor();
           }}
           onPressAddImage={async () => {
+            if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length > 10) {
+              showToast('You can only insert 10 images.', 'error');
+              return;
+            }
+
             const result = await launchImageLibrary({
               selectionLimit: 1,
               mediaType: 'photo',
