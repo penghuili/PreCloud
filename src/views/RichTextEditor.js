@@ -12,6 +12,7 @@ import { useStore } from '../store/store';
 const nodejs = require('nodejs-mobile-react-native');
 
 function RichTextEditor({
+  navigation,
   route: {
     params: { isNew },
   },
@@ -49,7 +50,11 @@ function RichTextEditor({
           const texts = await readNotes();
           setRichTexts(texts);
 
-          setIsEditing(false);
+          if (isNew) {
+            navigation.goBack();
+          } else {
+            setIsEditing(false);
+          }
 
           showToast('Your note is encrypted and saved on your phone.');
         } else {
