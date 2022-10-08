@@ -9,6 +9,7 @@ import {
   deleteFile,
   downloadFile,
   extractFilePath,
+  getSizeText,
   notesFolder,
   readNotes,
   shareFile,
@@ -142,7 +143,12 @@ function EncryptDecryptRichText({ navigation }) {
             Add note
           </Button>
 
-          <Button onPress={() => setShowPickConfirm(true)} isDisabled={!password} variant="outline" size="sm">
+          <Button
+            onPress={() => setShowPickConfirm(true)}
+            isDisabled={!password}
+            variant="outline"
+            size="sm"
+          >
             Select notes
           </Button>
           <Text>
@@ -220,6 +226,11 @@ function EncryptDecryptRichText({ navigation }) {
               >
                 Delete
               </Menu.Item>
+              <Menu.Item>
+                <Text fontSize="xs" color="gray.400">
+                  {getSizeText(note.size)}
+                </Text>
+              </Menu.Item>
             </Menu>
           </HStack>
         ))}
@@ -229,7 +240,7 @@ function EncryptDecryptRichText({ navigation }) {
 
   return (
     <>
-      <VStack px={2} space="sm" pb="15">
+      <VStack px={2} space="sm">
         {renderNotes()}
       </VStack>
 

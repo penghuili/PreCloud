@@ -202,3 +202,20 @@ export async function downloadFile({ path, fileName }) {
     return null;
   }
 }
+
+export function toFixed2(number) {
+  return +number.toFixed(2);
+}
+
+export function getSizeText(size) {
+  if (!size) {
+    return '0KB';
+  }
+
+  const kbs = size / 1024;
+  if (kbs < 1024) {
+    return `${toFixed2(kbs)}KB`;
+  }
+
+  return `${toFixed2(kbs / 1024)}MB`;
+}

@@ -12,6 +12,7 @@ import {
   encryptionStatus,
   extractFileExtensionFromPath,
   extractFileNameAndExtension,
+  getSizeText,
   MAX_FILE_SIZE_MEGA_BYTES,
   shareFile,
   viewableFileTypes,
@@ -53,7 +54,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
 
     const message = await downloadFile({ path: file.path, fileName: file.fileName });
     if (message) {
-      showToast(message)
+      showToast(message);
     }
 
     setIsDownloading(false);
@@ -66,7 +67,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
         filePath: file.path,
         saveToFiles: false,
       });
-      showToast('Shared!')
+      showToast('Shared!');
     } catch (error) {
       console.log('Share file failed:', error);
     }
@@ -75,7 +76,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   const handleDeleteFile = async () => {
     try {
       await RNFS.unlink(file.path);
-      showToast('Deleted from cache.')
+      showToast('Deleted from cache.');
       if (forEncrypt) {
         deleteEncryptedFile(file);
       } else {
@@ -160,10 +161,16 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   }
 
   return (
-    <VStack space="sm" alignItems="flex-start">
+    <VStack space="xs" alignItems="flex-start">
       <Text w="xs">{file.fileName}</Text>
 
       {renderActions()}
+
+      {!!file.size && (
+        <Text fontSize="xs" color="gray.400">
+          {getSizeText(file.size)}
+        </Text>
+      )}
 
       <RenameFileModal
         fileName={file.fileName}

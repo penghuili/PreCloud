@@ -88,8 +88,8 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
             ref.current.blurContentEditor();
           }}
           onPressAddImage={async () => {
-            if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length > 10) {
-              showToast('You can only insert 10 images.', 'error');
+            if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length > 20) {
+              showToast('You can only insert 20 images.', 'error');
               return;
             }
 
