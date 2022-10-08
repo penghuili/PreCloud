@@ -6,6 +6,7 @@ import Notebook from '../views/Notebook';
 import NotebookForm from '../views/NotebookForm';
 import PasswordForm from '../views/PasswordForm';
 import PasswordGenerator from '../views/PasswordGenerator';
+import PlainText from '../views/PlainText';
 import RichTextEditor from '../views/RichTextEditor';
 import BottomTab from './BottomTab';
 import { routeNames } from './routes';
@@ -21,6 +22,7 @@ function Router() {
         <NavStack.Screen name={routeNames.notebookForm} component={NotebookForm} />
         <NavStack.Screen name={routeNames.notebook} component={Notebook} />
         <NavStack.Screen name={routeNames.richTextEditor} component={RichTextEditor} />
+        <NavStack.Screen name={routeNames.plainText} component={PlainText} />
         <NavStack.Screen name={routeNames.passwordGenerator} component={PasswordGenerator} />
         <NavStack.Screen name={routeNames.passwordForm} component={PasswordForm} />
         <NavStack.Screen name={routeNames.caches} component={Caches} />

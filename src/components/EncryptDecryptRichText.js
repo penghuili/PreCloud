@@ -40,7 +40,7 @@ function EncryptDecryptRichText({ navigation }) {
         <VStack space="sm" alignItems="center">
           <Text>Create your first notebook.</Text>
           <Button onPress={handleAddNotebook} isDisabled={!password} size="sm">
-            Add notebook
+            Create notebook
           </Button>
         </VStack>
       );
@@ -55,7 +55,7 @@ function EncryptDecryptRichText({ navigation }) {
           variant="solid"
           size="xs"
         >
-          New notebook
+          Add new notebook
         </Button>
         <HStack space="sm" flexWrap="wrap" w="full">
           {notebooks.map(notebook => (
@@ -89,7 +89,7 @@ function EncryptDecryptRichText({ navigation }) {
 
     return (
       <>
-        <Heading size="sm" mt="6">
+        <Heading size="sm" mt="10">
           You can move these notes to notebooks:
         </Heading>
         {notes.map(note => (
@@ -110,7 +110,7 @@ function EncryptDecryptRichText({ navigation }) {
   }
 
   return (
-    <VStack px={2} space="sm">
+    <VStack space="sm">
       {renderNotebooks()}
       {renderLegacyNotes()}
     </VStack>

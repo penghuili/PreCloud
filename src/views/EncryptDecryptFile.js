@@ -12,7 +12,7 @@ import PasswordAlert from '../components/PasswordAlert';
 function EncryptDecryptFile({ navigation }) {
   return (
     <ScreenWrapper>
-      <AppBar title="Encrypt & decrypt files" />
+      <AppBar title="Encrypt files" />
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
         <ActivePasswordAlert navigate={navigation.navigate} />

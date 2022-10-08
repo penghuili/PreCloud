@@ -6,6 +6,7 @@ export const routeNames = {
   richTextEditor: 'richTextEditor',
   notebookForm: 'notebookForm',
   notebook: 'notebook',
+  plainText: 'plainText',
   passwordGenerator: 'passwordGenerator',
   passwordForm: 'passwordForm',
   caches: 'caches',
