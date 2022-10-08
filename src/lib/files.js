@@ -20,7 +20,7 @@ export const viewableFileTypes = [
   'webp',
 ];
 
-export const internalFilePaths = {
+export const fileCachePaths = {
   encrypted: `${RNFS.CachesDirectoryPath}/encrypted`,
   decrypted: `${RNFS.CachesDirectoryPath}/decrypted`,
 };
@@ -33,25 +33,25 @@ export const encryptionStatus = {
   error: 'encryption/error',
 };
 
-export const notesFolder = `${RNFS.DocumentDirectoryPath}/notes`;
-
 export const decryptionStatus = {
   wrongExtension: 'decryption/wrongExtension',
   decrypted: 'decryption/decrypted',
   error: 'decryption/error',
 };
 
-export async function makeInternalFolders() {
-  const encryptedExists = await RNFS.exists(internalFilePaths.encrypted);
+export async function makeFileCacheFolders() {
+  const encryptedExists = await RNFS.exists(fileCachePaths.encrypted);
   if (!encryptedExists) {
-    await RNFS.mkdir(internalFilePaths.encrypted);
+    await RNFS.mkdir(fileCachePaths.encrypted);
   }
 
-  const decryptedExists = await RNFS.exists(internalFilePaths.decrypted);
+  const decryptedExists = await RNFS.exists(fileCachePaths.decrypted);
   if (!decryptedExists) {
-    await RNFS.mkdir(internalFilePaths.decrypted);
+    await RNFS.mkdir(fileCachePaths.decrypted);
   }
 }
+
+export const notesFolder = `${RNFS.DocumentDirectoryPath}/notes`;
 
 export async function makeNotesFolders() {
   const exists = await RNFS.exists(notesFolder);
@@ -60,10 +60,37 @@ export async function makeNotesFolders() {
   }
 }
 
-export async function readNotes() {
+export async function makeNotebook(label) {
+  const trimed = label?.trim();
+  if (!trimed) {
+    return;
+  }
+
+  await makeNotesFolders();
+
+  const path = `${notesFolder}/${trimed}`;
+  const exists = await RNFS.exists(path);
+  if (!exists) {
+    await RNFS.mkdir(path);
+  }
+}
+
+export async function readNotebooks() {
   await makeNotesFolders();
   const notes = await RNFS.readDir(notesFolder);
-  return notes.map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }));
+  return notes.filter(n => n.isDirectory());
+}
+
+export async function readNotes(path) {
+  const exists = await RNFS.exists(path);
+  if (!exists) {
+    return [];
+  }
+
+  const notes = await RNFS.readDir(path);
+  return notes
+    .filter(n => n.isFile())
+    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }));
 }
 
 export async function getFolderSize(folderPath) {

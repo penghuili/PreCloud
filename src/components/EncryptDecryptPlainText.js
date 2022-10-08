@@ -208,7 +208,7 @@ function EncryptDecryptPlainText() {
             />
           </HStack>
         </HStack>
-        <Box width="full" p="2" rounded borderWidth={1} borderColor="gray.200" borderRadius={'sm'}>
+        <Box width="full" p="2" rounded borderWidth="1" borderColor="gray.200" borderRadius="sm">
           {!!encryptedText && <Text>{encryptedText}</Text>}
           {!encryptedText && (
             <Text color="gray.500">

@@ -82,7 +82,7 @@ function PasswordForm({
           )}
           {!!error && <FormControl.ErrorMessage>{error}</FormControl.ErrorMessage>}
         </FormControl>
-        <Button mt="4" isDisabled={!password || !label.trim()} onPress={() => handleSavePassword()}>
+        <Button mt="4" isDisabled={!password || !label.trim()} onPress={handleSavePassword}>
           Save
         </Button>
       </ContentWrapper>

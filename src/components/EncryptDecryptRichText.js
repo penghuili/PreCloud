@@ -1,265 +1,119 @@
-import { Button, HStack, IconButton, Menu, Text, VStack } from 'native-base';
+import { Button, Heading, HStack, Pressable, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import DocumentPicker, { types } from 'react-native-document-picker';
-import FS from 'react-native-fs';
 
 import useColors from '../hooks/useColors';
-import { asyncForEach } from '../lib/array';
-import {
-  deleteFile,
-  downloadFile,
-  extractFilePath,
-  getSizeText,
-  notesFolder,
-  readNotes,
-  shareFile,
-} from '../lib/files';
-import { showToast } from '../lib/toast';
+import { notesFolder, readNotebooks, readNotes } from '../lib/files';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
-import Confirm from './Confirm';
 import Icon from './Icon';
-
-const nodejs = require('nodejs-mobile-react-native');
+import Note from './Note';
 
 function EncryptDecryptRichText({ navigation }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
-  const richTexts = useStore(state => state.richTexts);
-  const setRichTexts = useStore(state => state.setRichTexts);
-  const setRichTextTitle = useStore(state => state.setRichTextTitle);
-  const setRichTextContent = useStore(state => state.setRichTextContent);
+  const notebooks = useStore(state => state.notebooks);
+  const setNotebooks = useStore(state => state.setNotebooks);
 
-  const [showPickConfirm, setShowPickConfirm] = useState(false);
+  const [notes, setNotes] = useState([]);
 
   useEffect(() => {
-    readNotes().then(result => {
-      setRichTexts(result);
+    readNotebooks().then(value => {
+      setNotebooks(value);
+    });
+    readNotes(notesFolder).then(result => {
+      setNotes(result);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const listener = async msg => {
-      if (msg.type === 'decrypted-rich-text') {
-        if (!msg.payload.error) {
-          setRichTextTitle(msg.payload.fileName);
-          setRichTextContent(msg.payload.data || '');
-          navigation.navigate(routeNames.richTextEditor, { isNew: false });
-        } else {
-          showToast('Decrypt note failed.', 'error');
-        }
-      }
-    };
-
-    nodejs.channel.addListener('message', listener);
-
-    return () => {
-      nodejs.channel.removeListener('message', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function handleOpen(note) {
-    const base64 = await FS.readFile(note.path, 'base64');
-
-    nodejs.channel.send({
-      type: 'decrypt-rich-text',
-      data: { fileBase64: base64, fileName: note.fileName, password },
-    });
+  async function handleOpen(notebook) {
+    navigation.navigate(routeNames.notebook, { notebook });
   }
 
-  async function handleDownload(note) {
-    const message = await downloadFile({ path: note.path, fileName: note.name });
-    if (message) {
-      showToast(message);
-    }
+  function handleAddNotebook() {
+    navigation.navigate(routeNames.notebookForm);
   }
 
-  async function handleShare(note) {
-    try {
-      await shareFile({
-        fileName: note.fileName,
-        filePath: note.path,
-        saveToFiles: false,
-      });
-      showToast('Shared!');
-    } catch (error) {
-      console.log('Share file failed:', error);
-    }
-  }
-
-  async function handleDelete(note) {
-    await deleteFile(note.path);
-    setRichTexts(richTexts.filter(n => n.fileName !== note.fileName));
-  }
-
-  function handleAddNew() {
-    setRichTextTitle('');
-    setRichTextContent('');
-    navigation.navigate(routeNames.richTextEditor, { isNew: true });
-  }
-
-  async function handlePickNotes() {
-    try {
-      const result = await DocumentPicker.pick({
-        allowMultiSelection: true,
-        type: types.allFiles,
-        presentationStyle: 'fullScreen',
-        copyTo: 'cachesDirectory',
-      });
-      const files = result
-        .filter(f => f.name.endsWith('.precloudnote'))
-        .map(f => ({
-          name: f.name,
-          size: f.size,
-          path: extractFilePath(f.fileCopyUri),
-        }));
-
-      await asyncForEach(files, async file => {
-        await FS.copyFile(file.path, `${notesFolder}/${file.name}`);
-        await deleteFile(file.path);
-      });
-
-      const newNotes = await readNotes();
-      setRichTexts(newNotes);
-
-      if (files.length) {
-        showToast(`Selected ${files.length} ${files.length === 1 ? 'note' : 'notes'}.`);
-      } else {
-        showToast('No notes selected.');
-      }
-    } catch (e) {
-      console.log('Pick notes failed', e);
-    }
-  }
-
-  function renderNotes() {
-    if (!richTexts.length) {
+  function renderNotebooks() {
+    if (!notebooks.length) {
       return (
         <VStack space="sm" alignItems="center">
-          <Text>Create your first rich text note.</Text>
-          <Button onPress={handleAddNew} isDisabled={!password} size="sm">
-            Add note
+          <Text>Create your first notebook.</Text>
+          <Button onPress={handleAddNotebook} isDisabled={!password} size="sm">
+            Add notebook
           </Button>
-
-          <Button
-            onPress={() => setShowPickConfirm(true)}
-            isDisabled={!password}
-            variant="outline"
-            size="sm"
-          >
-            Select notes
-          </Button>
-          <Text>
-            (Only select files ending with <Text highlight>.precloudnote</Text>)
-          </Text>
         </VStack>
       );
     }
 
     return (
-      <>
-        <HStack space="sm">
-          <IconButton
-            onPress={handleAddNew}
-            isDisabled={!password}
-            icon={<Icon name="add-outline" color={colors.white} size={24} />}
-            variant="solid"
-            size="xs"
-          />
-
-          <IconButton
-            onPress={() => setShowPickConfirm(true)}
-            isDisabled={!password}
-            icon={<Icon name="folder-open-outline" color={colors.white} size={24} />}
-            variant="solid"
-            size="xs"
-          />
-        </HStack>
-        {richTexts.map(note => (
-          <HStack key={note.path} alignItems="center" justifyContent="space-between">
-            <Text
+      <VStack space="sm" alignItems="center">
+        <Button
+          onPress={handleAddNotebook}
+          isDisabled={!password}
+          startIcon={<Icon name="add-outline" color={colors.white} size={16} />}
+          variant="solid"
+          size="xs"
+        >
+          New notebook
+        </Button>
+        <HStack space="sm" flexWrap="wrap" w="full">
+          {notebooks.map(notebook => (
+            <Pressable
+              key={notebook.path}
+              rounded
+              borderWidth="1"
+              borderColor="gray.200"
+              borderRadius="sm"
+              p="2"
+              w="20"
+              h="24"
               onPress={() => {
                 if (password) {
-                  handleOpen(note);
+                  handleOpen({ name: notebook.name, path: notebook.path });
                 }
               }}
             >
-              {note.fileName}
-            </Text>
-            <Menu
-              trigger={triggerProps => {
-                return (
-                  <IconButton
-                    {...triggerProps}
-                    icon={<Icon name="ellipsis-vertical-outline" size={20} color={colors.text} />}
-                    size="sm"
-                  />
-                );
-              }}
-            >
-              <Menu.Item
-                onPress={() => {
-                  if (password) {
-                    handleShare(note);
-                  }
-                }}
-              >
-                Share
-              </Menu.Item>
-              <Menu.Item
-                onPress={() => {
-                  if (password) {
-                    handleDownload(note);
-                  }
-                }}
-              >
-                Download
-              </Menu.Item>
-              <Menu.Item
-                onPress={() => {
-                  if (password) {
-                    handleDelete(note);
-                  }
-                }}
-              >
-                Delete
-              </Menu.Item>
-              <Menu.Item>
-                <Text fontSize="xs" color="gray.400">
-                  {getSizeText(note.size)}
-                </Text>
-              </Menu.Item>
-            </Menu>
-          </HStack>
+              <Text>{notebook.name}</Text>
+            </Pressable>
+          ))}
+        </HStack>
+      </VStack>
+    );
+  }
+
+  function renderLegacyNotes() {
+    if (!notes.length) {
+      return null;
+    }
+
+    return (
+      <>
+        <Heading size="sm" mt="6">
+          You can move these notes to notebooks:
+        </Heading>
+        {notes.map(note => (
+          <Note
+            key={note.path}
+            navigation={navigation}
+            note={note}
+            notebook={null}
+            onMove={() => {
+              readNotes(notesFolder).then(result => {
+                setNotes(result);
+              });
+            }}
+          />
         ))}
       </>
     );
   }
 
   return (
-    <>
-      <VStack px={2} space="sm">
-        {renderNotes()}
-      </VStack>
-
-      <Confirm
-        isOpen={showPickConfirm}
-        message={
-          <Text>
-            Only select files ending with <Text highlight>.precloudnote</Text>
-          </Text>
-        }
-        onClose={() => {
-          setShowPickConfirm(false);
-        }}
-        onConfirm={async () => {
-          setShowPickConfirm(false);
-          handlePickNotes();
-        }}
-      />
-    </>
+    <VStack px={2} space="sm">
+      {renderNotebooks()}
+      {renderLegacyNotes()}
+    </VStack>
   );
 }
 

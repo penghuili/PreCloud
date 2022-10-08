@@ -1,5 +1,6 @@
 import create from 'zustand';
 
+import { makeNotebook, readNotebooks } from '../lib/files';
 import { getPasswords, savePasswords } from '../lib/keychain';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
@@ -113,8 +114,15 @@ export const useStore = create((set, get) => ({
     })),
 
   // rich text
-  richTexts: [],
-  setRichTexts: texts => set({ richTexts: texts }),
+  notebooks: [],
+  setNotebooks: value => set({ notebooks: value }),
+  createNotebook: async label => {
+    await makeNotebook(label);
+    const newNotebooks = await readNotebooks();
+    set({ notebooks: newNotebooks });
+  },
+  notes: [],
+  setNotes: value => set({ notes: value }),
   richTextTitle: '',
   setRichTextTitle: title => set({ richTextTitle: title }),
   richTextContent: '',

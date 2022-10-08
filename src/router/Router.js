@@ -2,6 +2,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 
 import Caches from '../views/Caches';
+import Notebook from '../views/Notebook';
+import NotebookForm from '../views/NotebookForm';
 import PasswordForm from '../views/PasswordForm';
 import PasswordGenerator from '../views/PasswordGenerator';
 import RichTextEditor from '../views/RichTextEditor';
@@ -12,15 +14,16 @@ const NavStack = createNativeStackNavigator();
 
 function Router() {
   return (
-    <NavStack.Navigator screenOptions={{ headerShown: false}}>
+    <NavStack.Navigator screenOptions={{ headerShown: false }}>
       <NavStack.Screen name="BottomTab" component={BottomTab} />
 
       <NavStack.Group screenOptions={{ headerShown: false }}>
+        <NavStack.Screen name={routeNames.notebookForm} component={NotebookForm} />
+        <NavStack.Screen name={routeNames.notebook} component={Notebook} />
         <NavStack.Screen name={routeNames.richTextEditor} component={RichTextEditor} />
         <NavStack.Screen name={routeNames.passwordGenerator} component={PasswordGenerator} />
         <NavStack.Screen name={routeNames.passwordForm} component={PasswordForm} />
         <NavStack.Screen name={routeNames.caches} component={Caches} />
-
       </NavStack.Group>
     </NavStack.Navigator>
   );

@@ -22,7 +22,7 @@ function RichTextEditor({
   const password = useStore(state => state.activePassword);
   const richTextTitle = useStore(state => state.richTextTitle);
   const richTextContent = useStore(state => state.richTextContent);
-  const setRichTexts = useStore(state => state.setRichTexts);
+  const setNotes = useStore(state => state.setNotes);
 
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
@@ -47,8 +47,8 @@ function RichTextEditor({
             await deleteFile(`${notesFolder}/${richTextTitle}.precloudnote`);
           }
 
-          const texts = await readNotes();
-          setRichTexts(texts);
+          const notes = await readNotes();
+          setNotes(notes);
 
           if (isNew) {
             navigation.goBack();
@@ -82,7 +82,7 @@ function RichTextEditor({
   return (
     <ScreenWrapper>
       <AppBar
-        title="Rich text"
+        title="Note"
         hasBack
         rightIconName={editable ? 'checkmark-outline' : 'create-outline'}
         onRightIconPress={() => {

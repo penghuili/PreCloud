@@ -9,8 +9,8 @@ import {
   deleteFile,
   extractFileNameFromPath,
   extractFilePath,
-  internalFilePaths,
-  makeInternalFolders,
+  fileCachePaths,
+  makeFileCacheFolders,
 } from '../lib/files';
 import { useStore } from '../store/store';
 import FileItem from './FileItem';
@@ -77,7 +77,7 @@ function DecryptFile() {
   }
 
   async function handleDecrypted(payload) {
-    await makeInternalFolders();
+    await makeFileCacheFolders();
 
     let processedFile;
     try {
@@ -87,7 +87,7 @@ function DecryptFile() {
         const fileExtension = paths.pop();
         const tmpPath = `${paths.join('.')}.${fileExtension}`;
         const fileName = extractFileNameFromPath(tmpPath);
-        const newPath = `${internalFilePaths.decrypted}/${fileName}`;
+        const newPath = `${fileCachePaths.decrypted}/${fileName}`;
         await RNFS.writeFile(newPath, payload.data, 'base64');
 
         processedFile = {

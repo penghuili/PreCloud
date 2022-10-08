@@ -10,8 +10,8 @@ import {
   deleteFile,
   encryptionStatus,
   extractFilePath,
-  internalFilePaths,
-  makeInternalFolders,
+  fileCachePaths,
+  makeFileCacheFolders,
   MAX_FILE_SIZE_BYTES,
   MAX_FILE_SIZE_MEGA_BYTES,
 } from '../lib/files';
@@ -90,13 +90,13 @@ function EncryptFile() {
   }
 
   async function handleEncrypted(payload) {
-    await makeInternalFolders();
+    await makeFileCacheFolders();
 
     let processedFile;
     try {
       if (payload.data) {
         const fileName = `${payload.name}.precloud`;
-        const newPath = `${internalFilePaths.encrypted}/${fileName}`;
+        const newPath = `${fileCachePaths.encrypted}/${fileName}`;
         await RNFS.writeFile(newPath, payload.data, 'base64');
 
         processedFile = {

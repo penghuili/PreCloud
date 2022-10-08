@@ -11,7 +11,7 @@ import {
   emptyFolder,
   extractFileNameFromPath,
   getFolderSize,
-  internalFilePaths,
+  fileCachePaths,
 } from '../lib/files';
 import { useStore } from '../store/store';
 
@@ -43,8 +43,8 @@ function Caches() {
       setCacheSize(bytesToMB(size));
     });
 
-    readFilesInFolder(internalFilePaths.encrypted).then(setEncryptedFiles);
-    readFilesInFolder(internalFilePaths.decrypted).then(setDecryptedFiles);
+    readFilesInFolder(fileCachePaths.encrypted).then(setEncryptedFiles);
+    readFilesInFolder(fileCachePaths.decrypted).then(setDecryptedFiles);
   }
 
   async function handleClearCache() {
