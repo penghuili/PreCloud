@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import useColors from '../hooks/useColors';
+import { heights } from '../lib/constants';
 import { isAndroid } from '../lib/device';
 import { showToast } from '../lib/toast';
 
@@ -20,7 +21,17 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   const [innerValue, setInnerValue] = useState('');
 
   const editorHeight =
-    height - top - 64 - 60 - (disabled ? 0 : 44) - bottom - keyboardHeight - (isAndroid() ? 40 : 0);
+    height -
+    top -
+    heights.appBar -
+    // title input
+    60 -
+    (disabled ? 0 : heights.editorToolBar) -
+    bottom -
+    keyboardHeight -
+    // no idea what's this
+    (isAndroid() ? 40 : 0);
+
   return (
     <Box borderTopWidth={1} borderColor="gray.200">
       <ScrollView h={editorHeight}>

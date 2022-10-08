@@ -9,3 +9,8 @@ export const platforms = {
   ios: 'ios',
   android: 'android',
 };
+
+export const heights = {
+  appBar: 40,
+  editorToolBar: 44,
+};

@@ -15,29 +15,30 @@ function AppBar({ title, hasBack, rightIconName, onRightIconPress }) {
     <HStack
       bg={colors.primary}
       px="2"
-      py="3"
       justifyContent="space-between"
       alignItems="center"
       w="full"
-      h="16"
+      h="10"
     >
       <HStack alignItems="center">
         {hasBack ? (
           <IconButton
-            icon={<Icon name="chevron-back-outline" size={20} color={colors.text} />}
+            size="10"
+            icon={<Icon name="chevron-back-outline" size={24} color={colors.text} />}
             onPress={navigationRef.goBack}
           />
         ) : (
-          <Avatar source={logo} size="10" mr="2" />
+          <Avatar source={logo} size="9" mr="2" />
         )}
 
-        <Text color={colors.text} fontSize="20" fontWeight="bold" isTruncated width={width - 96}>
+        <Text color={colors.text} fontSize="md" fontWeight="bold" isTruncated width={width - 16 - 40 - 40}>
           {title}
         </Text>
       </HStack>
       {!!rightIconName && (
         <IconButton
-          icon={<Icon name={rightIconName} size={20} color={colors.text} />}
+          size="10"
+          icon={<Icon name={rightIconName} size={24} color={colors.text} />}
           onPress={onRightIconPress}
         />
       )}
