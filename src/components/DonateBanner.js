@@ -1,12 +1,12 @@
 import { addMonths, addSeconds, addWeeks } from 'date-fns';
-import { Box, HStack, Text } from 'native-base';
+import { Box, HStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import useColors from '../hooks/useColors';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 import { showDonate } from '../lib/money';
+import DonateMessage from './DonateMessage';
 import Icon from './Icon';
 
 function DonateBanner() {
@@ -84,21 +84,13 @@ function DonateBanner() {
       alignItems="flex-start"
       justifyContent="flex-start"
     >
-      <Text color={colors.white} bold>
-        Consider to donate to this free and open source app.{' '}
-        <Text
-          bold
-          underline
-          color={colors.primary}
-          onPress={() => {
-            updateCheckDate();
-            updateDonateDate();
-            Linking.openURL(`https://paypal.me/penghuili/`);
-          }}
-        >
-          Donate
-        </Text>
-      </Text>
+      <DonateMessage
+        color={colors.white}
+        onDonate={() => {
+          updateCheckDate();
+          updateDonateDate();
+        }}
+      />
       <Box position="absolute" right="2" top="2">
         <Icon name="close-outline" color={colors.white} onPress={updateCheckDate} />
       </Box>

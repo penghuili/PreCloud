@@ -9,6 +9,7 @@ import paypal from '../assets/paypal.png';
 import xiangcai from '../assets/xiangcai.jpeg';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
+import DonateMessage from '../components/DonateMessage';
 import Icon from '../components/Icon';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
@@ -30,10 +31,7 @@ function Settings({ navigation }) {
         <>
           <Divider />
           <VStack space="sm">
-            <Text>Buy me a beer, especially Hefeweizen beer 🍺❤️</Text>
-            <Link href="https://paypal.me/penghuili/">
-              <Image source={paypal} alt="Support with Paypal" />
-            </Link>
+            <DonateMessage color={colors.text} />
           </VStack>
         </>
       );
