@@ -61,10 +61,10 @@ function EncryptDecryptRichText({ navigation }) {
           {notebooks.map(notebook => (
             <Pressable
               key={notebook.path}
-              rounded
               borderWidth="1"
               borderColor="gray.200"
-              borderRadius="sm"
+              borderBottomRightRadius="md"
+              borderTopRightRadius="md"
               p="2"
               w="20"
               h="24"
