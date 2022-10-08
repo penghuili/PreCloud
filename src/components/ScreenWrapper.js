@@ -10,7 +10,7 @@ function ScreenWrapper({ children }) {
   const { top } = useSafeAreaInsets();
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: colors.white, paddingBottom: 80 }}
+      style={{ flex: 1, backgroundColor: colors.white }}
       edges={['left', 'right', 'bottom']}
     >
       <View style={{ height: top, width: '100%', backgroundColor: colors.primary }} />

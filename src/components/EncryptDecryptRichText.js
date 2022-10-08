@@ -74,7 +74,7 @@ function EncryptDecryptRichText({ navigation }) {
                 }
               }}
             >
-              <Text>{notebook.name}</Text>
+              <Text numberOfLines={3}>{notebook.name}</Text>
             </Pressable>
           ))}
         </HStack>
