@@ -5,7 +5,6 @@ import React from 'react';
 import { Linking } from 'react-native';
 import DeviceInfoModule from 'react-native-device-info';
 
-import paypal from '../assets/paypal.png';
 import xiangcai from '../assets/xiangcai.jpeg';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';

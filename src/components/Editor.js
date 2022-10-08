@@ -35,7 +35,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
           disabled={disabled}
           editorStyle={{
             caretColor: colors.primary,
-            cssText: `#editor ul {padding-left: 24px} #editor ol {padding-left: 24px} .pell-content {padding: 10px 0}`,
+            cssText: `#editor {font-size: 16px;} #editor ul {padding-left: 24px} #editor ol {padding-left: 24px} .pell-content {padding: 10px 0}`,
           }}
           initialHeight={editorHeight}
           useContainer
