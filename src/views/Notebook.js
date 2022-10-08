@@ -41,7 +41,7 @@ function Notebook({
   function handleAddNote() {
     setRichTextTitle('');
     setRichTextContent('');
-    navigation.navigate(routeNames.richTextEditor, { isNew: true });
+    navigation.navigate(routeNames.richTextEditor, { isNew: true, notebook });
   }
 
   async function handlePickNotes() {
@@ -133,9 +133,7 @@ function Notebook({
       <AppBar title={notebook.name} hasBack />
 
       <ContentWrapper>
-        <VStack space="sm">
-          {renderNotes()}
-        </VStack>
+        <VStack space="sm">{renderNotes()}</VStack>
       </ContentWrapper>
 
       <Confirm

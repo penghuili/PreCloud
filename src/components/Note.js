@@ -29,7 +29,7 @@ function Note({ navigation, note, notebook, onMove }) {
           setRichTextTitle(msg.payload.fileName);
           setRichTextContent(msg.payload.data || '');
           showToast('Note is decrypted.');
-          navigation.navigate(routeNames.richTextEditor, { isNew: false });
+          navigation.navigate(routeNames.richTextEditor, { isNew: false, notebook });
         } else {
           showToast('Decrypt note failed.', 'error');
         }
@@ -42,7 +42,7 @@ function Note({ navigation, note, notebook, onMove }) {
       nodejs.channel.removeListener('message', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [notebook]);
 
   async function handleOpen() {
     const base64 = await FS.readFile(note.path, 'base64');
