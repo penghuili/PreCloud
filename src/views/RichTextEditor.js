@@ -69,7 +69,7 @@ function RichTextEditor({
       nodejs.channel.removeListener('message', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [richTextTitle]);
+  }, [richTextTitle, notebook]);
 
   async function handleSave() {
     nodejs.channel.send({
