@@ -142,7 +142,10 @@ function Note({ navigation, note, notebook }) {
           </Actionsheet.Item>
           <Actionsheet.Item
             startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
-            onPress={() => setShowPicker(true)}
+            onPress={() => {
+              setShowActions(false);
+              setShowPicker(true);
+            }}
           >
             Move to ...
           </Actionsheet.Item>
