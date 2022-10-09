@@ -1,6 +1,6 @@
 export const routeNames = {
   encryptFile: 'encryptFile',
-  encryptText: 'encryptText',
+  encryptNote: 'encryptNote',
   passwords: 'passwords',
   settings: 'settings',
   richTextEditor: 'richTextEditor',

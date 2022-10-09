@@ -4,7 +4,7 @@ import React from 'react';
 import ActivePasswordAlert from '../components/ActivePasswordAlert';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
-import EncryptDecryptRichText from '../components/EncryptDecryptRichText';
+import Notebooks from '../components/Notebooks';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { routeNames } from '../router/routes';
@@ -17,7 +17,7 @@ function EncryptDecryptText({ navigation }) {
         <PasswordAlert navigate={navigation.navigate} />
         <ActivePasswordAlert navigate={navigation.navigate} />
 
-        <EncryptDecryptRichText navigation={navigation} />
+        <Notebooks navigation={navigation} />
 
         <Alert w="100%" status="info" mt="10">
           <Text>
