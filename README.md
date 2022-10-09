@@ -36,6 +36,5 @@ Write to me, I reply to all emails: peng@duck.com
 ---
 
 ## Donate
-<a href="https://paypal.me/penghuili/" target="_blank"><img src="src/assets/paypal.png" height="40"></a> 
 
-If you enjoyed this project — or just feeling generous, consider buying me a beer.
+❤️ Consider donating to this free and open source app: [PayPal](https://paypal.me/penghuili/) or [Ko-Fi](https://ko-fi.com/penghuili)
