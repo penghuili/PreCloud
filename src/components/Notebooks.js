@@ -62,7 +62,7 @@ function EncryptDecryptRichText({ navigation }) {
             <Pressable
               key={notebook.path}
               borderWidth="1"
-              borderColor="gray.200"
+              borderColor="yellow.400"
               borderBottomRightRadius="md"
               borderTopRightRadius="md"
               p="2"
