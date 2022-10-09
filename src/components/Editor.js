@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import useColors from '../hooks/useColors';
-import { heights } from '../lib/constants';
+import { heights, imageLimit } from '../lib/constants';
 import { isAndroid } from '../lib/device';
 import { showToast } from '../lib/toast';
 
@@ -99,8 +99,8 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
             ref.current.blurContentEditor();
           }}
           onPressAddImage={async () => {
-            if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length > 20) {
-              showToast('You can only insert 20 images.', 'error');
+            if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length >= imageLimit) {
+              showToast(`You can only insert ${imageLimit} images.`, 'error');
               return;
             }
 

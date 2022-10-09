@@ -14,3 +14,5 @@ export const heights = {
   appBar: 40,
   editorToolBar: 44,
 };
+
+export const imageLimit = 100;
