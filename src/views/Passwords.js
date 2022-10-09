@@ -1,28 +1,18 @@
-import Clipboard from '@react-native-clipboard/clipboard';
-import { Alert, Button, HStack, IconButton, Menu, Radio, Text, VStack } from 'native-base';
-import React, { useState } from 'react';
+import { Alert, Button, Radio, Text, VStack } from 'native-base';
+import React from 'react';
 
 import AppBar from '../components/AppBar';
-import Confirm from '../components/Confirm';
 import ContentWrapper from '../components/ContentWrapper';
-import Icon from '../components/Icon';
+import PasswordItem from '../components/PasswordItem';
 import ScreenWrapper from '../components/ScreenWrapper';
-import useColors from '../hooks/useColors';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
 function Passwords({ navigation }) {
-  const colors = useColors();
   const passwords = useStore(state => state.passwords);
   const activePasswordId = useStore(state => state.activePasswordId);
   const setActivePassword = useStore(state => state.setActivePassword);
-  const movePasswordToTop = useStore(state => state.movePasswordToTop);
-  const movePasswordToBottom = useStore(state => state.movePasswordToBottom);
-  const deletePassword = useStore(state => state.deletePassword);
-
-  const [selectedPassword, setSelectedPassword] = useState('');
-  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   return (
     <ScreenWrapper>
@@ -59,69 +49,12 @@ function Passwords({ navigation }) {
               }}
             >
               {passwords.map((password, index) => (
-                <HStack key={password.id} justifyContent="space-between" width="full">
-                  <Radio value={password.id} my={2}>
-                    <Text>{password.label}</Text>
-                  </Radio>
-
-                  <Menu
-                    trigger={triggerProps => {
-                      return (
-                        <IconButton
-                          {...triggerProps}
-                          icon={
-                            <Icon name="ellipsis-vertical-outline" size={20} color={colors.text} />
-                          }
-                          size="sm"
-                        />
-                      );
-                    }}
-                  >
-                    <Menu.Item
-                      onPress={() => {
-                        navigation.navigate(routeNames.passwordForm, {
-                          selectedPassword: password,
-                        });
-                      }}
-                    >
-                      Edit
-                    </Menu.Item>
-                    {index !== 0 && passwords.length > 1 && (
-                      <Menu.Item
-                        onPress={() => {
-                          movePasswordToTop(password);
-                        }}
-                      >
-                        Move to top
-                      </Menu.Item>
-                    )}
-                    {index !== passwords.length - 1 && passwords.length > 1 && (
-                      <Menu.Item
-                        onPress={() => {
-                          movePasswordToBottom(password);
-                        }}
-                      >
-                        Move to bottom
-                      </Menu.Item>
-                    )}
-                    <Menu.Item
-                      onPress={() => {
-                        Clipboard.setString(password.password);
-                        showToast('Copied!');
-                      }}
-                    >
-                      Copy
-                    </Menu.Item>
-                    <Menu.Item
-                      onPress={() => {
-                        setShowDeleteAlert(true);
-                        setSelectedPassword(password);
-                      }}
-                    >
-                      Delete
-                    </Menu.Item>
-                  </Menu>
-                </HStack>
+                <PasswordItem
+                  key={password.id}
+                  password={password}
+                  index={index}
+                  navigate={navigation.navigate}
+                />
               ))}
             </Radio.Group>
           )}
@@ -133,22 +66,6 @@ function Passwords({ navigation }) {
           >
             {passwords?.length ? 'Add new password' : 'Add your first password'}
           </Button>
-
-          <Confirm
-            isOpen={showDeleteAlert}
-            title="Delete password"
-            message="After the password is deleted, you can&lsquo;t decrypt the texts and files that are encrypted with this password. Do you still want to delete this password?"
-            onClose={() => {
-              setShowDeleteAlert(false);
-              setSelectedPassword(null);
-            }}
-            onConfirm={async () => {
-              await deletePassword(selectedPassword);
-              setSelectedPassword(null);
-              setShowDeleteAlert(false);
-            }}
-            isDanger
-          />
         </VStack>
       </ContentWrapper>
     </ScreenWrapper>

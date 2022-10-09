@@ -1,4 +1,4 @@
-import { HStack, IconButton, Menu, Text } from 'native-base';
+import { Actionsheet, HStack, IconButton, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import FS from 'react-native-fs';
 
@@ -22,6 +22,7 @@ function Note({ navigation, note, notebook }) {
   const setRichTextContent = useStore(state => state.setRichTextContent);
 
   const [showPicker, setShowPicker] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
   useEffect(() => {
     const listener = async msg => {
@@ -59,6 +60,8 @@ function Note({ navigation, note, notebook }) {
     if (message) {
       showToast(message);
     }
+
+    setShowActions(false);
   }
 
   async function handleMove(notebook) {
@@ -79,6 +82,8 @@ function Note({ navigation, note, notebook }) {
       showToast('Shared!');
     } catch (error) {
       console.log('Share file failed:', error);
+    } finally {
+      setShowActions(false);
     }
   }
 
@@ -86,6 +91,7 @@ function Note({ navigation, note, notebook }) {
     await deleteFile(note.path);
     setNotes(notes.filter(n => n.path !== note.path));
     setLegacyNotes(notes.filter(n => n.path !== note.path));
+    setShowActions(false);
     showToast('Deleted!');
   }
 
@@ -101,59 +107,15 @@ function Note({ navigation, note, notebook }) {
         >
           {note.fileName}
         </Text>
-        <Menu
-          trigger={triggerProps => {
-            return (
-              <IconButton
-                {...triggerProps}
-                icon={<Icon name="ellipsis-vertical-outline" size={20} color={colors.text} />}
-                size="sm"
-              />
-            );
+        <IconButton
+          icon={<Icon name="ellipsis-vertical-outline" size={20} color={colors.text} />}
+          size="sm"
+          onPress={() => {
+            if (password) {
+              setShowActions(true);
+            }
           }}
-        >
-          <Menu.Item
-            onPress={() => {
-              if (password) {
-                handleShare();
-              }
-            }}
-          >
-            Share
-          </Menu.Item>
-          <Menu.Item
-            onPress={() => {
-              if (password) {
-                handleDownload();
-              }
-            }}
-          >
-            Download
-          </Menu.Item>
-          <Menu.Item
-            onPress={() => {
-              if (password) {
-                setShowPicker(true);
-              }
-            }}
-          >
-            Move to ...
-          </Menu.Item>
-          <Menu.Item
-            onPress={() => {
-              if (password) {
-                handleDelete();
-              }
-            }}
-          >
-            Delete
-          </Menu.Item>
-          <Menu.Item>
-            <Text fontSize="xs" color="gray.400">
-              {getSizeText(note.size)}
-            </Text>
-          </Menu.Item>
-        </Menu>
+        />
       </HStack>
 
       <NotebookPicker
@@ -163,6 +125,39 @@ function Note({ navigation, note, notebook }) {
         navigate={navigation.navigate}
         notebook={notebook}
       />
+
+      <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
+        <Actionsheet.Content>
+          <Actionsheet.Item
+            startIcon={<Icon name="share-outline" color={colors.text} />}
+            onPress={handleShare}
+          >
+            Share
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="download-outline" color={colors.text} />}
+            onPress={handleDownload}
+          >
+            Download
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
+            onPress={() => setShowPicker(true)}
+          >
+            Move to ...
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="trash-outline" color={colors.text} />}
+            onPress={handleDelete}
+          >
+            Delete
+          </Actionsheet.Item>
+
+          <Text fontSize="xs" color="gray.400">
+            {getSizeText(note.size)}
+          </Text>
+        </Actionsheet.Content>
+      </Actionsheet>
     </>
   );
 }
