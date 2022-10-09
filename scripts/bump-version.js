@@ -59,12 +59,6 @@ gradlePropsEditor.set('releaseVersionCode', (+versionCode + 1).toString());
 gradlePropsEditor.save(gradlePath);
 console.log(`Version written to ${gradlePath}`);
 
-const appSettings = require('../src/lib/app-settings.json');
-const appSettingsPath = join(__dirname, '../src/lib/app-settings.json');
-const appSettingsContent = JSON.stringify({ ...appSettings, buildDate: Date.now() }, null, 2);
-writeFileSync(appSettingsPath, `${appSettingsContent}\n`);
-console.log(`Build date written to ${appSettingsContent}`);
-
 // Commit a version change
 execSync(`git cc -am v${version} && git tag v${version} && git push && git push --tags`, {
   stdio: 'inherit',
