@@ -12,11 +12,12 @@ import NotebookPicker from './NotebookPicker';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function Note({ navigation, note, notebook, onMove }) {
+function Note({ navigation, note, notebook }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
   const notes = useStore(state => state.notes);
   const setNotes = useStore(state => state.setNotes);
+  const setLegacyNotes = useStore(state => state.setLegacyNotes);
   const setRichTextTitle = useStore(state => state.setRichTextTitle);
   const setRichTextContent = useStore(state => state.setRichTextContent);
 
@@ -62,11 +63,9 @@ function Note({ navigation, note, notebook, onMove }) {
 
   async function handleMove(notebook) {
     await FS.moveFile(note.path, `${notebook.path}/${note.name}`);
-    setNotes(notes.filter(n => n.fileName !== note.fileName));
+    setNotes(notes.filter(n => n.path !== note.path));
+    setLegacyNotes(notes.filter(n => n.path !== note.path));
     setShowPicker(false);
-    if (onMove) {
-      onMove();
-    }
     showToast('Moved!');
   }
 
@@ -85,7 +84,8 @@ function Note({ navigation, note, notebook, onMove }) {
 
   async function handleDelete() {
     await deleteFile(note.path);
-    setNotes(notes.filter(n => n.fileName !== note.fileName));
+    setNotes(notes.filter(n => n.path !== note.path));
+    setLegacyNotes(notes.filter(n => n.path !== note.path));
     showToast('Deleted!');
   }
 

@@ -113,7 +113,7 @@ export const useStore = create((set, get) => ({
       decryptedFiles: state.decryptedFiles.filter(f => f.fileName !== file.fileName),
     })),
 
-  // rich text
+  // notes
   notebooks: [],
   setNotebooks: value => set({ notebooks: value }),
   createNotebook: async label => {
@@ -123,6 +123,8 @@ export const useStore = create((set, get) => ({
   },
   notes: [],
   setNotes: value => set({ notes: value }),
+  legacyNotes: [],
+  setLegacyNotes: value => set({ legacyNotes: value }),
   richTextTitle: '',
   setRichTextTitle: title => set({ richTextTitle: title }),
   richTextContent: '',

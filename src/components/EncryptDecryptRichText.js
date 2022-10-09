@@ -1,5 +1,5 @@
 import { Button, Heading, HStack, Pressable, Text, VStack } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import useColors from '../hooks/useColors';
 import { notesFolder, readNotebooks, readNotes } from '../lib/files';
@@ -13,15 +13,15 @@ function EncryptDecryptRichText({ navigation }) {
   const password = useStore(state => state.activePassword);
   const notebooks = useStore(state => state.notebooks);
   const setNotebooks = useStore(state => state.setNotebooks);
-
-  const [notes, setNotes] = useState([]);
+  const legacyNotes = useStore(state => state.legacyNotes);
+  const setLegacyNotes = useStore(state => state.setLegacyNotes);
 
   useEffect(() => {
     readNotebooks().then(value => {
       setNotebooks(value);
     });
     readNotes(notesFolder).then(result => {
-      setNotes(result);
+      setLegacyNotes(result);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -83,7 +83,7 @@ function EncryptDecryptRichText({ navigation }) {
   }
 
   function renderLegacyNotes() {
-    if (!notes.length) {
+    if (!legacyNotes.length) {
       return null;
     }
 
@@ -92,18 +92,8 @@ function EncryptDecryptRichText({ navigation }) {
         <Heading size="sm" mt="10">
           You can move these notes to notebooks:
         </Heading>
-        {notes.map(note => (
-          <Note
-            key={note.path}
-            navigation={navigation}
-            note={note}
-            notebook={null}
-            onMove={() => {
-              readNotes(notesFolder).then(result => {
-                setNotes(result);
-              });
-            }}
-          />
+        {legacyNotes.map(note => (
+          <Note key={note.path} navigation={navigation} note={note} notebook={null} />
         ))}
       </>
     );
