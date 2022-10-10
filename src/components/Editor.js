@@ -1,6 +1,6 @@
 import { Actionsheet, Box, ScrollView, Text } from 'native-base';
 import React, { forwardRef, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { Keyboard, useWindowDimensions } from 'react-native';
 import { Image } from 'react-native-compressor';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
@@ -151,6 +151,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
               }
 
               setShowImageActions(true);
+              Keyboard.dismiss();
             }}
             iconTint={colors.text}
             selectedIconTint={colors.primary}
