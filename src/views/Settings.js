@@ -133,6 +133,18 @@ function Settings({ navigation }) {
             <Text>This is my cat, Xiangcai</Text>
 
             <Image source={xiangcai} alt="My cat" size="xl" />
+
+            <Text fontSize="xs" mt="1" color="gray.500">
+              Want to show your pets?{' '}
+              <Link
+                onPress={() => {
+                  Linking.openURL(`mailto:${myEmail}`);
+                }}
+                _text={{ fontSize: 'xs', color: 'gray.500' }}
+              >
+                Send it to me!
+              </Link>
+            </Text>
           </VStack>
 
           <Divider />

@@ -23,9 +23,9 @@ function EncryptDecryptText({ navigation }) {
           <Text>
             Plain text encryption is moved to{' '}
             <Text underline onPress={() => navigation.navigate(routeNames.settings)}>
-              Heart
-            </Text>{' '}
-            screen.
+              Settings
+            </Text>
+            .
           </Text>
         </Alert>
       </ContentWrapper>
