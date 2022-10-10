@@ -25,7 +25,13 @@ function NotebookPicker({ isOpen, onClose, onSave, navigate, notebook }) {
       return (
         <Text>
           You don&lsquo;t have notebook yet,{' '}
-          <Text underline onPress={() => navigate(routeNames.notebookForm)}>
+          <Text
+            underline
+            onPress={() => {
+              handleClose();
+              navigate(routeNames.notebookForm);
+            }}
+          >
             create one
           </Text>
         </Text>
