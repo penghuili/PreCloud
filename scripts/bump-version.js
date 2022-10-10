@@ -42,7 +42,6 @@ const infoPlist = plist.parse(String(readFileSync(plistPath)));
 const content = plist.stringify({
   ...infoPlist,
   CFBundleShortVersionString: version,
-  CFBundleVersion: ((+infoPlist.CFBundleVersion || 0) + 1).toString(),
 });
 const contentTabbed = content.replace(/^\s+/gm, spaces => {
   const indent = spaces.length / 2;
@@ -54,8 +53,6 @@ console.log(`Version written to ${plistPath}`);
 const gradlePath = join(__dirname, '../android/gradle.properties');
 const gradlePropsEditor = properties.createEditor(gradlePath);
 gradlePropsEditor.set('releaseVersionName', version);
-const versionCode = gradlePropsEditor.get('releaseVersionCode');
-gradlePropsEditor.set('releaseVersionCode', (+versionCode + 1).toString());
 gradlePropsEditor.save(gradlePath);
 console.log(`Version written to ${gradlePath}`);
 
