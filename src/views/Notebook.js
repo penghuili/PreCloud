@@ -11,7 +11,7 @@ import NoteItem from '../components/NoteItem';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
-import { deleteFile, extractFilePath, getSizeText, readNotes } from '../lib/files';
+import { deleteFile, extractFilePath, readNotes } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
@@ -24,9 +24,13 @@ function Notebook({ navigation }) {
   const setNotes = useStore(state => state.setNotes);
   const setRichTextTitle = useStore(state => state.setRichTextTitle);
   const setRichTextContent = useStore(state => state.setRichTextContent);
+  const notebooks = useStore(state => state.notebooks);
+  const setNotebooks = useStore(state => state.setNotebooks);
+  const setActiveNotebook = useStore(state => state.setActiveNotebook);
 
   const [showActions, setShowActions] = useState(false);
   const [showPickConfirm, setShowPickConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     readNotes(notebook.path).then(result => {
@@ -153,14 +157,13 @@ function Notebook({ navigation }) {
           </Actionsheet.Item>
           <Actionsheet.Item
             startIcon={<Icon name="trash-outline" color={colors.text} />}
-            onPress={() => {}}
+            onPress={() => {
+              setShowDeleteConfirm(true);
+              setShowActions(false);
+            }}
           >
             Delete
           </Actionsheet.Item>
-
-          <Text fontSize="xs" color="gray.400">
-            {getSizeText(notebook.size)}
-          </Text>
         </Actionsheet.Content>
       </Actionsheet>
 
@@ -178,6 +181,22 @@ function Notebook({ navigation }) {
           setShowPickConfirm(false);
           handlePickNotes();
         }}
+      />
+
+      <Confirm
+        isOpen={showDeleteConfirm}
+        message="All notes in this notebook will be deleted. Are you sure?"
+        onClose={() => {
+          setShowDeleteConfirm(false);
+        }}
+        onConfirm={async () => {
+          await deleteFile(notebook.path);
+          setShowDeleteConfirm(false);
+          navigation.goBack();
+          setNotebooks(notebooks.filter(n => n.path !== notebook.path));
+          setActiveNotebook(null);
+        }}
+        isDanger
       />
     </ScreenWrapper>
   );
