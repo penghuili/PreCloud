@@ -8,10 +8,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import useColors from '../hooks/useColors';
+import { asyncForEach } from '../lib/array';
 import { heights, imageLimit } from '../lib/constants';
 import { isAndroid } from '../lib/device';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
+
+const editorStyle = `
+#editor {font-size: 16px;}
+#editor ul {padding-left: 24px}
+#editor ol {padding-left: 24px}
+.pell-content {padding: 10px 0}
+#editor img {margin-bottom: 16px}
+`
 
 const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   const colors = useColors();
@@ -33,18 +42,23 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   }
 
   async function hanldePickPhoto() {
-    const result = await launchImageLibrary({
-      selectionLimit: 1,
-      mediaType: 'photo',
-      includeBase64: false,
-    });
-    const file = result.assets[0];
+    try {
+      const result = await launchImageLibrary({
+        selectionLimit: 0,
+        mediaType: 'photo',
+        includeBase64: false,
+      });
+      const file = result.assets[0];
 
-    const resized = await compressImage(file.uri);
-
-    ref.current.insertImage(`data:${file.type};base64,${resized}`);
-
-    handleCloseImageActions();
+      await asyncForEach(result.assets, async image => {
+        const resized = await compressImage(image.uri);
+        ref.current.insertImage(`data:${file.type};base64,${resized}`);
+      });
+    } catch (e) {
+      console.log(e, 'pick image failed');
+    } finally {
+      handleCloseImageActions();
+    }
   }
 
   async function handleTakePhoto() {
@@ -92,7 +106,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
             disabled={disabled}
             editorStyle={{
               caretColor: colors.primary,
-              cssText: `#editor {font-size: 16px;} #editor ul {padding-left: 24px} #editor ol {padding-left: 24px} .pell-content {padding: 10px 0}`,
+              cssText: editorStyle,
             }}
             initialHeight={editorHeight}
             useContainer
