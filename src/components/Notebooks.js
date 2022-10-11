@@ -13,6 +13,7 @@ function EncryptDecryptRichText({ navigation }) {
   const password = useStore(state => state.activePassword);
   const notebooks = useStore(state => state.notebooks);
   const setNotebooks = useStore(state => state.setNotebooks);
+  const setActiveNotebook = useStore(state => state.setActiveNotebook);
   const legacyNotes = useStore(state => state.legacyNotes);
   const setLegacyNotes = useStore(state => state.setLegacyNotes);
 
@@ -27,11 +28,12 @@ function EncryptDecryptRichText({ navigation }) {
   }, []);
 
   async function handleOpen(notebook) {
-    navigation.navigate(routeNames.notebook, { notebook });
+    setActiveNotebook(notebook);
+    navigation.navigate(routeNames.notebook);
   }
 
   function handleAddNotebook() {
-    navigation.navigate(routeNames.notebookForm);
+    navigation.navigate(routeNames.notebookForm, { notebook: null });
   }
 
   function renderNotebooks() {

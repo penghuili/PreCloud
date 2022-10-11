@@ -1,18 +1,29 @@
 import { Button, FormControl, Input } from 'native-base';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { showToast } from '../lib/toast';
+import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function NotebookForm({ navigation }) {
+function NotebookForm({
+  navigation,
+  route: {
+    params: { notebook },
+  },
+}) {
   const notebooks = useStore(state => state.notebooks);
   const notebookLabels = useMemo(() => notebooks.map(n => n.name), [notebooks]);
   const createNotebook = useStore(state => state.createNotebook);
+  const renameNotebook = useStore(state => state.renameNotebook);
 
   const [label, setLabel] = useState('');
+
+  useEffect(() => {
+    setLabel(notebook?.name || '');
+  }, [notebook]);
 
   async function handleSave() {
     if (notebookLabels.includes(label)) {
@@ -21,9 +32,15 @@ function NotebookForm({ navigation }) {
     }
 
     try {
-      await createNotebook(label);
-      navigation.goBack();
-      showToast(`Notebook ${label} is created!`);
+      if (notebook) {
+        await renameNotebook({ notebook, label });
+        navigation.goBack();
+        showToast(`Notebook "${notebook.name}" is renamed to "${label.trim()}"!`);
+      } else {
+        await createNotebook(label);
+        navigation.replace(routeNames.notebook);
+        showToast(`Notebook ${label} is created!`);
+      }
     } catch (e) {
       showToast(`Notebook creation failed, please try again`, 'error');
     }

@@ -29,7 +29,7 @@ function NotebookPicker({ isOpen, onClose, onSave, navigate, notebook }) {
             underline
             onPress={() => {
               handleClose();
-              navigate(routeNames.notebookForm);
+              navigate(routeNames.notebookForm, { notebook: null });
             }}
           >
             create one

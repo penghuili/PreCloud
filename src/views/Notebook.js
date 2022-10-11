@@ -1,4 +1,4 @@
-import { Button, HStack, IconButton, Text, VStack } from 'native-base';
+import { Actionsheet, Button, HStack, IconButton, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import FS from 'react-native-fs';
@@ -11,24 +11,21 @@ import NoteItem from '../components/NoteItem';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
-import { deleteFile, extractFilePath, readNotes } from '../lib/files';
+import { deleteFile, extractFilePath, getSizeText, readNotes } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function Notebook({
-  navigation,
-  route: {
-    params: { notebook },
-  },
-}) {
+function Notebook({ navigation }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
+  const notebook = useStore(state => state.activeNotebook);
   const notes = useStore(state => state.notes);
   const setNotes = useStore(state => state.setNotes);
   const setRichTextTitle = useStore(state => state.setRichTextTitle);
   const setRichTextContent = useStore(state => state.setRichTextContent);
 
+  const [showActions, setShowActions] = useState(false);
   const [showPickConfirm, setShowPickConfirm] = useState(false);
 
   useEffect(() => {
@@ -130,11 +127,42 @@ function Notebook({
 
   return (
     <ScreenWrapper>
-      <AppBar title={notebook.name} hasBack />
+      <AppBar
+        title={notebook.name}
+        hasBack
+        rightIconName="ellipsis-vertical-outline"
+        onRightIconPress={() => setShowActions(true)}
+      />
 
       <ContentWrapper>
         <VStack space="sm">{renderNotes()}</VStack>
       </ContentWrapper>
+
+      <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
+        <Actionsheet.Content>
+          <Actionsheet.Item
+            startIcon={<Icon name="create-outline" color={colors.text} />}
+            onPress={() => {
+              navigation.navigate(routeNames.notebookForm, {
+                notebook,
+              });
+              setShowActions(false);
+            }}
+          >
+            Rename
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="trash-outline" color={colors.text} />}
+            onPress={() => {}}
+          >
+            Delete
+          </Actionsheet.Item>
+
+          <Text fontSize="xs" color="gray.400">
+            {getSizeText(notebook.size)}
+          </Text>
+        </Actionsheet.Content>
+      </Actionsheet>
 
       <Confirm
         isOpen={showPickConfirm}

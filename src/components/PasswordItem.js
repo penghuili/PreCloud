@@ -40,7 +40,7 @@ function PasswordItem({ navigate, password, index }) {
       <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
         <Actionsheet.Content>
           <Actionsheet.Item
-            startIcon={<Icon name="share-outline" color={colors.text} />}
+            startIcon={<Icon name="create-outline" color={colors.text} />}
             onPress={() => {
               navigate(routeNames.passwordForm, {
                 selectedPassword: password,

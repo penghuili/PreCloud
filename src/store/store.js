@@ -1,6 +1,7 @@
 import create from 'zustand';
+import FS from 'react-native-fs';
 
-import { makeNotebook, readNotebooks } from '../lib/files';
+import { makeNotebook, notesFolder, readNotebooks } from '../lib/files';
 import { getPasswords, savePasswords } from '../lib/keychain';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
@@ -114,12 +115,23 @@ export const useStore = create((set, get) => ({
     })),
 
   // notes
+  activeNotebook: null,
   notebooks: [],
   setNotebooks: value => set({ notebooks: value }),
+  setActiveNotebook: value => set({ activeNotebook: value }),
   createNotebook: async label => {
     await makeNotebook(label);
     const newNotebooks = await readNotebooks();
-    set({ notebooks: newNotebooks });
+    set({
+      notebooks: newNotebooks,
+      activeNotebook: newNotebooks.find(n => n.name === label.trim()),
+    });
+  },
+  renameNotebook: async ({ notebook, label }) => {
+    const newNotebook = { path: `${notesFolder}/${label.trim()}`, name: label.trim() };
+    await FS.moveFile(notebook.path, newNotebook.path);
+    const newNotebooks = await readNotebooks();
+    set({ notebooks: newNotebooks, activeNotebook: newNotebook });
   },
   notes: [],
   setNotes: value => set({ notes: value }),
