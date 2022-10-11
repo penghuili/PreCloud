@@ -11,7 +11,7 @@ import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function RichTextEditor({
+function NoteDetails({
   navigation,
   route: {
     params: { isNew, notebook },
@@ -112,4 +112,4 @@ function RichTextEditor({
   );
 }
 
-export default RichTextEditor;
+export default NoteDetails;

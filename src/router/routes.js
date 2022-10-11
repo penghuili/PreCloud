@@ -3,7 +3,7 @@ export const routeNames = {
   encryptNote: 'encryptNote',
   passwords: 'passwords',
   settings: 'settings',
-  richTextEditor: 'richTextEditor',
+  noteDetails: 'noteDetails',
   notebookForm: 'notebookForm',
   notebook: 'notebook',
   plainText: 'plainText',

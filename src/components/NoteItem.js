@@ -31,7 +31,7 @@ function NoteItem({ navigation, note, notebook }) {
           setRichTextTitle(msg.payload.fileName);
           setRichTextContent(msg.payload.data || '');
           showToast('Note is decrypted.');
-          navigation.navigate(routeNames.richTextEditor, { isNew: false, notebook });
+          navigation.navigate(routeNames.noteDetails, { isNew: false, notebook });
         } else {
           showToast('Decrypt note failed.', 'error');
         }
