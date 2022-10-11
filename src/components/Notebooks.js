@@ -49,7 +49,7 @@ function EncryptDecryptRichText({ navigation }) {
     }
 
     return (
-      <VStack space="sm" alignItems="center">
+      <VStack space="sm" alignItems="flex-start">
         <Button
           onPress={handleAddNotebook}
           isDisabled={!password}
