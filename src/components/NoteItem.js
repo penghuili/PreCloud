@@ -16,6 +16,7 @@ function NoteItem({ navigation, note, notebook }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
   const notes = useStore(state => state.notes);
+  const legacyNotes = useStore(state => state.legacyNotes);
   const setNotes = useStore(state => state.setNotes);
   const setLegacyNotes = useStore(state => state.setLegacyNotes);
   const setRichTextTitle = useStore(state => state.setRichTextTitle);
@@ -90,7 +91,7 @@ function NoteItem({ navigation, note, notebook }) {
   async function handleDelete() {
     await deleteFile(note.path);
     setNotes(notes.filter(n => n.path !== note.path));
-    setLegacyNotes(notes.filter(n => n.path !== note.path));
+    setLegacyNotes(legacyNotes.filter(n => n.path !== note.path));
     setShowActions(false);
     showToast('Deleted!');
   }
