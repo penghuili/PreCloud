@@ -1,4 +1,4 @@
-import { Actionsheet, Box, ScrollView, Text } from 'native-base';
+import { Box, Button, ScrollView, Text } from 'native-base';
 import React, { forwardRef, useState } from 'react';
 import { Keyboard, useWindowDimensions } from 'react-native';
 import { Image } from 'react-native-compressor';
@@ -20,7 +20,7 @@ const editorStyle = `
 #editor ol {padding-left: 24px}
 .pell-content {padding: 10px 0}
 #editor img {margin-bottom: 16px}
-`
+`;
 
 const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   const colors = useColors();
@@ -48,11 +48,10 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
         mediaType: 'photo',
         includeBase64: false,
       });
-      const file = result.assets[0];
 
       await asyncForEach(result.assets, async image => {
         const resized = await compressImage(image.uri);
-        ref.current.insertImage(`data:${file.type};base64,${resized}`);
+        ref.current.insertImage(`data:${image.type};base64,${resized}`);
       });
     } catch (e) {
       console.log(e, 'pick image failed');
@@ -119,76 +118,82 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
         </ScrollView>
 
         {!disabled && (
-          <RichToolbar
-            editor={ref}
-            actions={[
-              actions.undo,
-              actions.redo,
-              'clear',
-              actions.keyboard,
-              'separator',
-              actions.insertBulletsList,
-              actions.insertOrderedList,
-              actions.indent,
-              actions.outdent,
-              'separator',
-              actions.insertImage,
-              actions.setBold,
-              actions.setItalic,
-              actions.setUnderline,
-              actions.setStrikethrough,
-              actions.removeFormat,
-              'separator',
-              actions.line,
-            ]}
-            iconMap={{
-              separator: () => (
-                <Text color="gray.400" fontSize="xl">
-                  |
-                </Text>
-              ),
-              clear: () => (
-                <Text color={colors.text} fontSize="xl">
-                  X
-                </Text>
-              ),
-            }}
-            separator={() => {}}
-            clear={() => {
-              ref.current.setContentHTML('');
-              ref.current.blurContentEditor();
-            }}
-            onPressAddImage={async () => {
-              if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length >= imageLimit) {
-                showToast(`You can only insert ${imageLimit} images.`, 'error');
-                return;
-              }
+          <>
+            {showImageActions && (
+              <Button.Group isAttached>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  startIcon={<Icon name="image-outline" size={16} color={colors.text} />}
+                  onPress={hanldePickPhoto}
+                >
+                  Existing images
+                </Button>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  startIcon={<Icon name="camera-outline" size={16} color={colors.text} />}
+                  onPress={handleTakePhoto}
+                >
+                  Take photo
+                </Button>
+              </Button.Group>
+            )}
+            <RichToolbar
+              editor={ref}
+              actions={[
+                actions.undo,
+                actions.redo,
+                'clear',
+                actions.keyboard,
+                'separator',
+                actions.insertBulletsList,
+                actions.insertOrderedList,
+                actions.indent,
+                actions.outdent,
+                'separator',
+                actions.insertImage,
+                actions.setBold,
+                actions.setItalic,
+                actions.setUnderline,
+                actions.setStrikethrough,
+                actions.removeFormat,
+                'separator',
+                actions.line,
+              ]}
+              iconMap={{
+                separator: () => (
+                  <Text color="gray.400" fontSize="xl">
+                    |
+                  </Text>
+                ),
+                clear: () => (
+                  <Text color={colors.text} fontSize="xl">
+                    X
+                  </Text>
+                ),
+              }}
+              separator={() => {}}
+              clear={() => {
+                ref.current.setContentHTML('');
+                ref.current.blurContentEditor();
+              }}
+              onPressAddImage={() => {
+                if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length >= imageLimit) {
+                  showToast(`You can only insert ${imageLimit} images.`, 'error');
+                  return;
+                }
 
-              setShowImageActions(true);
-              Keyboard.dismiss();
-            }}
-            iconTint={colors.text}
-            selectedIconTint={colors.primary}
-          />
+                setShowImageActions(true);
+                Keyboard.dismiss();
+                console.log('keyboard dismiss');
+              }}
+              iconTint={colors.text}
+              selectedIconTint={colors.primary}
+            />
+          </>
         )}
       </Box>
-
-      <Actionsheet isOpen={showImageActions} onClose={handleCloseImageActions}>
-        <Actionsheet.Content>
-          <Actionsheet.Item
-            startIcon={<Icon name="image-outline" color={colors.text} />}
-            onPress={hanldePickPhoto}
-          >
-            Existing photo
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="camera-outline" color={colors.text} />}
-            onPress={handleTakePhoto}
-          >
-            Take photo
-          </Actionsheet.Item>
-        </Actionsheet.Content>
-      </Actionsheet>
     </>
   );
 });

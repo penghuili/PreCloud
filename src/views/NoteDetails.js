@@ -72,6 +72,11 @@ function NoteDetails({
   }, [richTextTitle, notebook]);
 
   async function handleSave() {
+    if (!title.trim()) {
+      showToast('Please add a title', 'error');
+      return;
+    }
+
     nodejs.channel.send({
       type: 'encrypt-rich-text',
       data: { title: title.trim(), content, password },
