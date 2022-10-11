@@ -12,7 +12,7 @@ import NotebookPicker from './NotebookPicker';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function Note({ navigation, note, notebook }) {
+function NoteItem({ navigation, note, notebook }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
   const notes = useStore(state => state.notes);
@@ -165,4 +165,4 @@ function Note({ navigation, note, notebook }) {
   );
 }
 
-export default Note;
+export default NoteItem;

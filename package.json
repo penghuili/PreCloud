@@ -59,7 +59,6 @@
     "test": "jest",
     "lint": "eslint .",
     "clean-android": "cd android && ./gradlew clean && cd ..",
-    "build-android-apk": "npm run bump-build-numbers && cd android && ./gradlew clean && ./gradlew assembleRelease && cd ..",
     "build-android-aab": "npm run bump-build-numbers && cd android && ./gradlew clean && ./gradlew bundleRelease && cd ..",
     "bump-build-numbers": "node ./scripts/bump-build-numbers.js",
     "bump-version": "node ./scripts/bump-version.js"

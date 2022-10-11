@@ -7,7 +7,7 @@ import AppBar from '../components/AppBar';
 import Confirm from '../components/Confirm';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
-import Note from '../components/Note';
+import NoteItem from '../components/NoteItem';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
@@ -122,7 +122,7 @@ function Notebook({
           />
         </HStack>
         {notes.map(note => (
-          <Note key={note.path} navigation={navigation} note={note} notebook={notebook} />
+          <NoteItem key={note.path} navigation={navigation} note={note} notebook={notebook} />
         ))}
       </>
     );

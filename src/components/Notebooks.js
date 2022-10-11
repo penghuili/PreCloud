@@ -6,7 +6,7 @@ import { notesFolder, readNotebooks, readNotes } from '../lib/files';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 import Icon from './Icon';
-import Note from './Note';
+import NoteItem from './NoteItem';
 
 function EncryptDecryptRichText({ navigation }) {
   const colors = useColors();
@@ -93,7 +93,7 @@ function EncryptDecryptRichText({ navigation }) {
           You can move these notes to notebooks:
         </Heading>
         {legacyNotes.map(note => (
-          <Note key={note.path} navigation={navigation} note={note} notebook={null} />
+          <NoteItem key={note.path} navigation={navigation} note={note} notebook={null} />
         ))}
       </>
     );
