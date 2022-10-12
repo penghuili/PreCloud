@@ -55,7 +55,7 @@ function EncryptDecryptRichText({ navigation }) {
         >
           Add new notebook
         </Button>
-        <HStack space="sm" flexWrap="wrap" w="full">
+        <HStack space="2" flexWrap="wrap" w="full">
           {notebooks.map(notebook => (
             <Pressable
               key={notebook.path}
@@ -66,6 +66,7 @@ function EncryptDecryptRichText({ navigation }) {
               p="2"
               w="20"
               h="24"
+              mb="2"
               onPress={() => {
                 if (password) {
                   handleOpen({ name: notebook.name, path: notebook.path });
