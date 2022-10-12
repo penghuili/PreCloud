@@ -23,7 +23,7 @@ function NoteItem({ navigation, note, notebook }) {
           navigation.navigate(routeNames.noteDetails, {
             isNew: false,
             notebook,
-            note: { fileName: note.fileName, size: note.size, path: note.path },
+            note: { name: note.name, fileName: note.fileName, size: note.size, path: note.path },
           });
         } else {
           showToast('Decrypt note failed.', 'error');

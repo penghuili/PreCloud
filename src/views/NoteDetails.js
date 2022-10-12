@@ -102,7 +102,7 @@ function NoteDetails({
   async function handleShare() {
     try {
       await shareFile({
-        fileName: noteTitle,
+        fileName: note.name,
         filePath: note.path,
         saveToFiles: false,
       });
@@ -116,7 +116,7 @@ function NoteDetails({
 
   async function handleDownload() {
     const message = await downloadFile({
-      fileName: noteTitle,
+      fileName: note.name,
       path: note.path,
     });
     if (message) {
