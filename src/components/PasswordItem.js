@@ -82,16 +82,18 @@ function PasswordItem({ navigate, password, index }) {
           >
             Copy
           </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="trash-outline" color={colors.text} />}
-            onPress={() => {
-              setSelectedPassword(password);
-              setShowActions(false);
-              setShowDeleteAlert(true);
-            }}
-          >
-            Delete
-          </Actionsheet.Item>
+          {passwords?.length > 1 && (
+            <Actionsheet.Item
+              startIcon={<Icon name="trash-outline" color={colors.text} />}
+              onPress={() => {
+                setSelectedPassword(password);
+                setShowActions(false);
+                setShowDeleteAlert(true);
+              }}
+            >
+              Delete
+            </Actionsheet.Item>
+          )}
         </Actionsheet.Content>
       </Actionsheet>
 

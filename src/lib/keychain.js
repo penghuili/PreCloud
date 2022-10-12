@@ -17,7 +17,7 @@ export async function getPasswords() {
   try {
     const result = await Keychain.getGenericPassword();
     if (!result?.password) {
-      return []
+      return [];
     }
     const password = result.password;
     return password.split(passwordSeparator).map(p => {
