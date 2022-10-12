@@ -24,14 +24,14 @@ const nodejs = require('nodejs-mobile-react-native');
 function NoteDetails({
   navigation,
   route: {
-    params: { notebook, note },
+    params: { notebook },
   },
 }) {
   const editorRef = useRef();
   const colors = useColors();
 
   const password = useStore(state => state.activePassword);
-  const noteTitle = useStore(state => state.noteTitle);
+  const activeNote = useStore(state => state.activeNote);
   const noteContent = useStore(state => state.noteContent);
   const notes = useStore(state => state.notes);
   const legacyNotes = useStore(state => state.legacyNotes);
@@ -45,8 +45,8 @@ function NoteDetails({
   const [showNotebookPicker, setShowNotebookPicker] = useState(false);
 
   useEffect(() => {
-    setTitle(noteTitle);
-  }, [noteTitle]);
+    setTitle(activeNote?.fileName || '');
+  }, [activeNote]);
 
   useEffect(() => {
     const listener = async msg => {
@@ -59,14 +59,14 @@ function NoteDetails({
             'base64'
           );
 
-          if (msg.payload.title !== noteTitle && noteTitle) {
-            await deleteFile(note.path);
+          if (activeNote?.fileName && msg.payload.title !== activeNote?.fileName) {
+            await deleteFile(activeNote.path);
           }
 
           const notes = await readNotes(notebook.path);
           setNotes(notes);
 
-          if (note) {
+          if (activeNote) {
             setIsEditing(false);
           } else {
             navigation.goBack();
@@ -85,7 +85,7 @@ function NoteDetails({
       nodejs.channel.removeListener('message', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [noteTitle, notebook]);
+  }, []);
 
   async function handleSave() {
     if (!title.trim()) {
@@ -102,8 +102,8 @@ function NoteDetails({
   async function handleShare() {
     try {
       await shareFile({
-        fileName: note.name,
-        filePath: note.path,
+        fileName: activeNote.name,
+        filePath: activeNote.path,
         saveToFiles: false,
       });
       showToast('Shared!');
@@ -116,8 +116,8 @@ function NoteDetails({
 
   async function handleDownload() {
     const message = await downloadFile({
-      fileName: note.name,
-      path: note.path,
+      fileName: activeNote.name,
+      path: activeNote.path,
     });
     if (message) {
       showToast(message);
@@ -127,24 +127,24 @@ function NoteDetails({
   }
 
   async function handleMove(newNotebook) {
-    await FS.moveFile(note.path, `${newNotebook.path}/${noteTitle}.precloudnote`);
-    setNotes(notes.filter(n => n.path !== note.path));
-    setLegacyNotes(legacyNotes.filter(n => n.path !== note.path));
+    await FS.moveFile(activeNote.path, `${newNotebook.path}/${activeNote.name}`);
+    setNotes(notes.filter(n => n.path !== activeNote.path));
+    setLegacyNotes(legacyNotes.filter(n => n.path !== activeNote.path));
     setShowNotebookPicker(false);
     navigation.goBack();
     showToast('Moved!');
   }
 
   async function handleDelete() {
-    await deleteFile(note.path);
-    setNotes(notes.filter(n => n.path !== note.path));
-    setLegacyNotes(legacyNotes.filter(n => n.path !== note.path));
+    await deleteFile(activeNote.path);
+    setNotes(notes.filter(n => n.path !== activeNote.path));
+    setLegacyNotes(legacyNotes.filter(n => n.path !== activeNote.path));
     setShowActions(false);
     navigation.goBack();
     showToast('Deleted!');
   }
 
-  const editable = !note || isEditing;
+  const editable = !activeNote || isEditing;
 
   return (
     <ScreenWrapper>
@@ -162,7 +162,11 @@ function NoteDetails({
       />
       <KeyboardAvoidingView>
         <VStack px={2} py={4} space="sm" keyboardShouldPersistTaps="handled">
-          {editable ? <Input value={title} onChangeText={setTitle} /> : <Heading numberOfLines={1}>{title}</Heading>}
+          {editable ? (
+            <Input value={title} onChangeText={setTitle} />
+          ) : (
+            <Heading numberOfLines={1}>{title}</Heading>
+          )}
 
           <Editor
             ref={editorRef}
@@ -223,9 +227,9 @@ function NoteDetails({
             Delete
           </Actionsheet.Item>
 
-          {!!note?.size && (
+          {!!activeNote?.size && (
             <Text fontSize="xs" color="gray.400">
-              {getSizeText(note.size)}
+              {getSizeText(activeNote.size)}
             </Text>
           )}
         </Actionsheet.Content>

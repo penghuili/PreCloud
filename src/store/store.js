@@ -115,9 +115,9 @@ export const useStore = create((set, get) => ({
     })),
 
   // notes
-  activeNotebook: null,
   notebooks: [],
   setNotebooks: value => set({ notebooks: value }),
+  activeNotebook: null,
   setActiveNotebook: value => set({ activeNotebook: value }),
   createNotebook: async label => {
     await makeNotebook(label);
@@ -144,8 +144,8 @@ export const useStore = create((set, get) => ({
   setNotes: value => set({ notes: value }),
   legacyNotes: [],
   setLegacyNotes: value => set({ legacyNotes: value }),
-  noteTitle: '',
-  setNoteTitle: title => set({ noteTitle: title }),
+  activeNote: null,
+  setActiveNote: value => set({ activeNote: value }),
   noteContent: '',
   setNoteContent: content => set({ noteContent: content }),
 }));

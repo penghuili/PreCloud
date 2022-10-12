@@ -16,17 +16,19 @@ import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
+const nodejs = require('nodejs-mobile-react-native');
+
 function Notebook({ navigation }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
   const notebook = useStore(state => state.activeNotebook);
   const notes = useStore(state => state.notes);
   const setNotes = useStore(state => state.setNotes);
-  const setNoteTitle = useStore(state => state.setNoteTitle);
   const setNoteContent = useStore(state => state.setNoteContent);
   const notebooks = useStore(state => state.notebooks);
   const setNotebooks = useStore(state => state.setNotebooks);
   const setActiveNotebook = useStore(state => state.setActiveNotebook);
+  const setActiveNote = useStore(state => state.setActiveNote);
 
   const [showActions, setShowActions] = useState(false);
   const [showPickConfirm, setShowPickConfirm] = useState(false);
@@ -39,10 +41,35 @@ function Notebook({ navigation }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notebook]);
 
+  useEffect(() => {
+    const listener = async msg => {
+      if (msg.type === 'decrypted-rich-text') {
+        if (!msg.payload.error) {
+          setNoteContent(msg.payload.data || '');
+          showToast('Note is decrypted.');
+
+          navigation.navigate(routeNames.noteDetails, {
+            isNew: false,
+            notebook,
+          });
+        } else {
+          showToast('Decrypt note failed.', 'error');
+        }
+      }
+    };
+
+    nodejs.channel.addListener('message', listener);
+
+    return () => {
+      nodejs.channel.removeListener('message', listener);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function handleAddNote() {
-    setNoteTitle('');
+    setActiveNote(null);
     setNoteContent('');
-    navigation.navigate(routeNames.noteDetails, { isNew: true, notebook, note: null });
+    navigation.navigate(routeNames.noteDetails, { isNew: true, notebook });
   }
 
   async function handlePickNotes() {
@@ -77,6 +104,16 @@ function Notebook({ navigation }) {
     } catch (e) {
       console.log('Pick notes failed', e);
     }
+  }
+
+  async function handleOpenNote(note) {
+    setActiveNote(note);
+    const base64 = await FS.readFile(note.path, 'base64');
+
+    nodejs.channel.send({
+      type: 'decrypt-rich-text',
+      data: { fileBase64: base64, password },
+    });
   }
 
   function renderNotes() {
@@ -123,7 +160,7 @@ function Notebook({ navigation }) {
           />
         </HStack>
         {notes.map(note => (
-          <NoteItem key={note.path} navigation={navigation} note={note} notebook={notebook} />
+          <NoteItem key={note.path} note={note} onOpen={handleOpenNote} />
         ))}
       </>
     );
