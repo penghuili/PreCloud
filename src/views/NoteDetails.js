@@ -162,7 +162,7 @@ function NoteDetails({
       />
       <KeyboardAvoidingView>
         <VStack px={2} py={4} space="sm" keyboardShouldPersistTaps="handled">
-          {editable ? <Input value={title} onChangeText={setTitle} /> : <Heading>{title}</Heading>}
+          {editable ? <Input value={title} onChangeText={setTitle} /> : <Heading numberOfLines={1}>{title}</Heading>}
 
           <Editor
             ref={editorRef}
