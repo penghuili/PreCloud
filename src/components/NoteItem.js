@@ -1,29 +1,17 @@
-import { Actionsheet, HStack, IconButton, Text } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import { Pressable, Text } from 'native-base';
+import React, { useEffect } from 'react';
 import FS from 'react-native-fs';
 
-import useColors from '../hooks/useColors';
-import { deleteFile, downloadFile, getSizeText, shareFile } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
-import Icon from './Icon';
-import NotebookPicker from './NotebookPicker';
 
 const nodejs = require('nodejs-mobile-react-native');
 
 function NoteItem({ navigation, note, notebook }) {
-  const colors = useColors();
   const password = useStore(state => state.activePassword);
-  const notes = useStore(state => state.notes);
-  const legacyNotes = useStore(state => state.legacyNotes);
-  const setNotes = useStore(state => state.setNotes);
-  const setLegacyNotes = useStore(state => state.setLegacyNotes);
   const setRichTextTitle = useStore(state => state.setRichTextTitle);
   const setRichTextContent = useStore(state => state.setRichTextContent);
-
-  const [showPicker, setShowPicker] = useState(false);
-  const [showActions, setShowActions] = useState(false);
 
   useEffect(() => {
     const listener = async msg => {
@@ -32,7 +20,11 @@ function NoteItem({ navigation, note, notebook }) {
           setRichTextTitle(msg.payload.fileName);
           setRichTextContent(msg.payload.data || '');
           showToast('Note is decrypted.');
-          navigation.navigate(routeNames.noteDetails, { isNew: false, notebook });
+          navigation.navigate(routeNames.noteDetails, {
+            isNew: false,
+            notebook,
+            note: { fileName: note.fileName, size: note.size, path: note.path },
+          });
         } else {
           showToast('Decrypt note failed.', 'error');
         }
@@ -52,117 +44,22 @@ function NoteItem({ navigation, note, notebook }) {
 
     nodejs.channel.send({
       type: 'decrypt-rich-text',
-      data: { fileBase64: base64, fileName: note.fileName, password },
+      data: { fileBase64: base64, fileName: note.fileName, size: note.size, password },
     });
   }
 
-  async function handleDownload() {
-    const message = await downloadFile({ path: note.path, fileName: note.name });
-    if (message) {
-      showToast(message);
-    }
-
-    setShowActions(false);
-  }
-
-  async function handleMove(notebook) {
-    await FS.moveFile(note.path, `${notebook.path}/${note.name}`);
-    setNotes(notes.filter(n => n.path !== note.path));
-    setLegacyNotes(notes.filter(n => n.path !== note.path));
-    setShowPicker(false);
-    showToast('Moved!');
-  }
-
-  async function handleShare() {
-    try {
-      await shareFile({
-        fileName: note.fileName,
-        filePath: note.path,
-        saveToFiles: false,
-      });
-      showToast('Shared!');
-    } catch (error) {
-      console.log('Share file failed:', error);
-    } finally {
-      setShowActions(false);
-    }
-  }
-
-  async function handleDelete() {
-    await deleteFile(note.path);
-    setNotes(notes.filter(n => n.path !== note.path));
-    setLegacyNotes(legacyNotes.filter(n => n.path !== note.path));
-    setShowActions(false);
-    showToast('Deleted!');
-  }
-
   return (
-    <>
-      <HStack key={note.path} alignItems="center" justifyContent="space-between">
-        <Text
-          onPress={() => {
-            if (password) {
-              handleOpen();
-            }
-          }}
-        >
-          {note.fileName}
-        </Text>
-        <IconButton
-          icon={<Icon name="ellipsis-vertical-outline" size={20} color={colors.text} />}
-          size="sm"
-          onPress={() => {
-            if (password) {
-              setShowActions(true);
-            }
-          }}
-        />
-      </HStack>
-
-      <NotebookPicker
-        isOpen={showPicker}
-        onClose={() => setShowPicker(false)}
-        onSave={handleMove}
-        navigate={navigation.navigate}
-        notebook={notebook}
-      />
-
-      <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
-        <Actionsheet.Content>
-          <Actionsheet.Item
-            startIcon={<Icon name="share-outline" color={colors.text} />}
-            onPress={handleShare}
-          >
-            Share
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="download-outline" color={colors.text} />}
-            onPress={handleDownload}
-          >
-            Download
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
-            onPress={() => {
-              setShowActions(false);
-              setShowPicker(true);
-            }}
-          >
-            Move to ...
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="trash-outline" color={colors.text} />}
-            onPress={handleDelete}
-          >
-            Delete
-          </Actionsheet.Item>
-
-          <Text fontSize="xs" color="gray.400">
-            {getSizeText(note.size)}
-          </Text>
-        </Actionsheet.Content>
-      </Actionsheet>
-    </>
+    <Pressable
+      key={note.path}
+      onPress={() => {
+        if (password) {
+          handleOpen();
+        }
+      }}
+      my="1"
+    >
+      <Text numberOfLines={1}>{note.fileName}</Text>
+    </Pressable>
   );
 }
 

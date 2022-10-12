@@ -42,7 +42,7 @@ function Notebook({ navigation }) {
   function handleAddNote() {
     setRichTextTitle('');
     setRichTextContent('');
-    navigation.navigate(routeNames.noteDetails, { isNew: true, notebook });
+    navigation.navigate(routeNames.noteDetails, { isNew: true, notebook, note: null });
   }
 
   async function handlePickNotes() {
