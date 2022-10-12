@@ -13,10 +13,12 @@ import {
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
+import ActivePasswordAlert from '../components/ActivePasswordAlert';
 
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import Icon from '../components/Icon';
+import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { showToast } from '../lib/toast';
@@ -24,7 +26,7 @@ import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function PlainText() {
+function PlainText({ navigation }) {
   const password = useStore(state => state.activePassword);
   const colors = useColors();
   const [text, setText] = useState('');
@@ -231,6 +233,9 @@ function PlainText() {
     <ScreenWrapper>
       <AppBar title="Encrypt plain text" hasBack />
       <ContentWrapper>
+        <PasswordAlert navigate={navigation.navigate} />
+        <ActivePasswordAlert navigate={navigation.navigate} />
+
         <VStack space="sm">
           {renderEncryption()}
 
