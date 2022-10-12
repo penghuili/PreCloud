@@ -1,6 +1,6 @@
-import { Box, Button, ScrollView, Text } from 'native-base';
+import { AlertDialog, Box, Button, ScrollView, Text } from 'native-base';
 import React, { forwardRef, useState } from 'react';
-import { Keyboard, useWindowDimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
 import { Image } from 'react-native-compressor';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
@@ -42,6 +42,8 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
   }
 
   async function hanldePickPhoto() {
+    setShowImageActions(false);
+
     try {
       const result = await launchImageLibrary({
         selectionLimit: 0,
@@ -55,27 +57,25 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
       });
     } catch (e) {
       console.log(e, 'pick image failed');
-    } finally {
-      handleCloseImageActions();
     }
   }
 
   async function handleTakePhoto() {
-    const result = await launchCamera({
-      mediaType: 'photo',
-      selectionLimit: 1,
-    });
-    const file = result.assets[0];
-
-    const resized = await compressImage(file.uri);
-
-    ref.current.insertImage(`data:${file.type};base64,${resized}`);
-
-    handleCloseImageActions();
-  }
-
-  function handleCloseImageActions() {
     setShowImageActions(false);
+
+    try {
+      const result = await launchCamera({
+        mediaType: 'photo',
+        selectionLimit: 1,
+      });
+      const file = result.assets[0];
+
+      const resized = await compressImage(file.uri);
+
+      ref.current.insertImage(`data:${file.type};base64,${resized}`);
+    } catch (e) {
+      console.log(e, 'take photo failed');
+    }
   }
 
   const editorHeight =
@@ -118,8 +118,63 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
         </ScrollView>
 
         {!disabled && (
-          <>
-            {showImageActions && (
+          <RichToolbar
+            editor={ref}
+            actions={[
+              actions.undo,
+              actions.redo,
+              'clear',
+              actions.keyboard,
+              'separator',
+              actions.insertBulletsList,
+              actions.insertOrderedList,
+              actions.indent,
+              actions.outdent,
+              'separator',
+              actions.insertImage,
+              actions.setBold,
+              actions.setItalic,
+              actions.setUnderline,
+              actions.setStrikethrough,
+              actions.removeFormat,
+              'separator',
+              actions.line,
+            ]}
+            iconMap={{
+              separator: () => (
+                <Text color="gray.400" fontSize="xl">
+                  |
+                </Text>
+              ),
+              clear: () => (
+                <Text color={colors.text} fontSize="xl">
+                  X
+                </Text>
+              ),
+            }}
+            separator={() => {}}
+            clear={() => {
+              ref.current.setContentHTML('');
+              ref.current.blurContentEditor();
+            }}
+            onPressAddImage={() => {
+              if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length >= imageLimit) {
+                showToast(`You can only insert ${imageLimit} images.`, 'error');
+                return;
+              }
+
+              setShowImageActions(true);
+            }}
+            iconTint={colors.text}
+            selectedIconTint={colors.primary}
+          />
+        )}
+
+        <AlertDialog isOpen={showImageActions} onClose={() => setShowImageActions(false)}>
+          <AlertDialog.Content>
+            <AlertDialog.CloseButton />
+            <AlertDialog.Header>Insert photos</AlertDialog.Header>
+            <AlertDialog.Body>
               <Button.Group isAttached>
                 <Button
                   variant="outline"
@@ -138,61 +193,9 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
                   Take photo
                 </Button>
               </Button.Group>
-            )}
-            <RichToolbar
-              editor={ref}
-              actions={[
-                actions.undo,
-                actions.redo,
-                'clear',
-                actions.keyboard,
-                'separator',
-                actions.insertBulletsList,
-                actions.insertOrderedList,
-                actions.indent,
-                actions.outdent,
-                'separator',
-                actions.insertImage,
-                actions.setBold,
-                actions.setItalic,
-                actions.setUnderline,
-                actions.setStrikethrough,
-                actions.removeFormat,
-                'separator',
-                actions.line,
-              ]}
-              iconMap={{
-                separator: () => (
-                  <Text color="gray.400" fontSize="xl">
-                    |
-                  </Text>
-                ),
-                clear: () => (
-                  <Text color={colors.text} fontSize="xl">
-                    X
-                  </Text>
-                ),
-              }}
-              separator={() => {}}
-              clear={() => {
-                ref.current.setContentHTML('');
-                ref.current.blurContentEditor();
-              }}
-              onPressAddImage={() => {
-                if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length >= imageLimit) {
-                  showToast(`You can only insert ${imageLimit} images.`, 'error');
-                  return;
-                }
-
-                setShowImageActions(true);
-                Keyboard.dismiss();
-                console.log('keyboard dismiss');
-              }}
-              iconTint={colors.text}
-              selectedIconTint={colors.primary}
-            />
-          </>
-        )}
+            </AlertDialog.Body>
+          </AlertDialog.Content>
+        </AlertDialog>
       </Box>
     </>
   );
