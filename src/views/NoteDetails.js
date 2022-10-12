@@ -31,8 +31,8 @@ function NoteDetails({
   const colors = useColors();
 
   const password = useStore(state => state.activePassword);
-  const richTextTitle = useStore(state => state.richTextTitle);
-  const richTextContent = useStore(state => state.richTextContent);
+  const noteTitle = useStore(state => state.noteTitle);
+  const noteContent = useStore(state => state.noteContent);
   const notes = useStore(state => state.notes);
   const legacyNotes = useStore(state => state.legacyNotes);
   const setNotes = useStore(state => state.setNotes);
@@ -45,8 +45,8 @@ function NoteDetails({
   const [showNotebookPicker, setShowNotebookPicker] = useState(false);
 
   useEffect(() => {
-    setTitle(richTextTitle);
-  }, [richTextTitle]);
+    setTitle(noteTitle);
+  }, [noteTitle]);
 
   useEffect(() => {
     const listener = async msg => {
@@ -59,7 +59,7 @@ function NoteDetails({
             'base64'
           );
 
-          if (msg.payload.title !== richTextTitle && richTextTitle) {
+          if (msg.payload.title !== noteTitle && noteTitle) {
             await deleteFile(note.path);
           }
 
@@ -85,7 +85,7 @@ function NoteDetails({
       nodejs.channel.removeListener('message', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [richTextTitle, notebook]);
+  }, [noteTitle, notebook]);
 
   async function handleSave() {
     if (!title.trim()) {
@@ -102,7 +102,7 @@ function NoteDetails({
   async function handleShare() {
     try {
       await shareFile({
-        fileName: richTextTitle,
+        fileName: noteTitle,
         filePath: note.path,
         saveToFiles: false,
       });
@@ -116,7 +116,7 @@ function NoteDetails({
 
   async function handleDownload() {
     const message = await downloadFile({
-      fileName: richTextTitle,
+      fileName: noteTitle,
       path: note.path,
     });
     if (message) {
@@ -127,7 +127,7 @@ function NoteDetails({
   }
 
   async function handleMove(newNotebook) {
-    await FS.moveFile(note.path, `${newNotebook.path}/${richTextTitle}.precloudnote`);
+    await FS.moveFile(note.path, `${newNotebook.path}/${noteTitle}.precloudnote`);
     setNotes(notes.filter(n => n.path !== note.path));
     setLegacyNotes(legacyNotes.filter(n => n.path !== note.path));
     setShowNotebookPicker(false);
@@ -168,8 +168,8 @@ function NoteDetails({
             ref={editorRef}
             disabled={!password || !editable}
             onInitialized={() => {
-              setContent(richTextContent);
-              editorRef.current.setContentHTML(richTextContent);
+              setContent(noteContent);
+              editorRef.current.setContentHTML(noteContent);
             }}
             onChange={setContent}
           />

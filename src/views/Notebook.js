@@ -22,8 +22,8 @@ function Notebook({ navigation }) {
   const notebook = useStore(state => state.activeNotebook);
   const notes = useStore(state => state.notes);
   const setNotes = useStore(state => state.setNotes);
-  const setRichTextTitle = useStore(state => state.setRichTextTitle);
-  const setRichTextContent = useStore(state => state.setRichTextContent);
+  const setNoteTitle = useStore(state => state.setNoteTitle);
+  const setNoteContent = useStore(state => state.setNoteContent);
   const notebooks = useStore(state => state.notebooks);
   const setNotebooks = useStore(state => state.setNotebooks);
   const setActiveNotebook = useStore(state => state.setActiveNotebook);
@@ -40,8 +40,8 @@ function Notebook({ navigation }) {
   }, [notebook]);
 
   function handleAddNote() {
-    setRichTextTitle('');
-    setRichTextContent('');
+    setNoteTitle('');
+    setNoteContent('');
     navigation.navigate(routeNames.noteDetails, { isNew: true, notebook, note: null });
   }
 

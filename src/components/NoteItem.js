@@ -10,15 +10,15 @@ const nodejs = require('nodejs-mobile-react-native');
 
 function NoteItem({ navigation, note, notebook }) {
   const password = useStore(state => state.activePassword);
-  const setRichTextTitle = useStore(state => state.setRichTextTitle);
-  const setRichTextContent = useStore(state => state.setRichTextContent);
+  const setNoteTitle = useStore(state => state.setNoteTitle);
+  const setNoteContent = useStore(state => state.setNoteContent);
 
   useEffect(() => {
     const listener = async msg => {
       if (msg.type === 'decrypted-rich-text') {
         if (!msg.payload.error) {
-          setRichTextTitle(msg.payload.fileName);
-          setRichTextContent(msg.payload.data || '');
+          setNoteTitle(msg.payload.fileName);
+          setNoteContent(msg.payload.data || '');
           showToast('Note is decrypted.');
           navigation.navigate(routeNames.noteDetails, {
             isNew: false,
