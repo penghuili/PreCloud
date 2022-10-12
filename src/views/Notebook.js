@@ -160,7 +160,13 @@ function Notebook({ navigation }) {
           />
         </HStack>
         {notes.map(note => (
-          <NoteItem key={note.path} note={note} onOpen={handleOpenNote} />
+          <NoteItem
+            key={note.path}
+            note={note}
+            onOpen={handleOpenNote}
+            navigation={navigation}
+            notebook={notebook}
+          />
         ))}
       </>
     );

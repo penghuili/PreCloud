@@ -1,21 +1,12 @@
-import { Actionsheet, Heading, Input, KeyboardAvoidingView, Text, VStack } from 'native-base';
+import { Heading, Input, KeyboardAvoidingView, VStack } from 'native-base';
 import React, { useEffect, useRef, useState } from 'react';
 import FS from 'react-native-fs';
 
 import AppBar from '../components/AppBar';
 import Editor from '../components/Editor';
-import Icon from '../components/Icon';
-import NotebookPicker from '../components/NotebookPicker';
+import NoteItemActions from '../components/NoteItemActions';
 import ScreenWrapper from '../components/ScreenWrapper';
-import useColors from '../hooks/useColors';
-import {
-  deleteFile,
-  downloadFile,
-  getSizeText,
-  makeNotesFolders,
-  readNotes,
-  shareFile,
-} from '../lib/files';
+import { deleteFile, makeNotesFolders, readNotes } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 
@@ -28,21 +19,16 @@ function NoteDetails({
   },
 }) {
   const editorRef = useRef();
-  const colors = useColors();
 
   const password = useStore(state => state.activePassword);
   const activeNote = useStore(state => state.activeNote);
   const noteContent = useStore(state => state.noteContent);
-  const notes = useStore(state => state.notes);
-  const legacyNotes = useStore(state => state.legacyNotes);
   const setNotes = useStore(state => state.setNotes);
-  const setLegacyNotes = useStore(state => state.setLegacyNotes);
 
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [showActions, setShowActions] = useState(false);
-  const [showNotebookPicker, setShowNotebookPicker] = useState(false);
 
   useEffect(() => {
     setTitle(activeNote?.fileName || '');
@@ -99,51 +85,6 @@ function NoteDetails({
     });
   }
 
-  async function handleShare() {
-    try {
-      await shareFile({
-        fileName: activeNote.name,
-        filePath: activeNote.path,
-        saveToFiles: false,
-      });
-      showToast('Shared!');
-    } catch (error) {
-      console.log('Share file failed:', error);
-    } finally {
-      setShowActions(false);
-    }
-  }
-
-  async function handleDownload() {
-    const message = await downloadFile({
-      fileName: activeNote.name,
-      path: activeNote.path,
-    });
-    if (message) {
-      showToast(message);
-    }
-
-    setShowActions(false);
-  }
-
-  async function handleMove(newNotebook) {
-    await FS.moveFile(activeNote.path, `${newNotebook.path}/${activeNote.name}`);
-    setNotes(notes.filter(n => n.path !== activeNote.path));
-    setLegacyNotes(legacyNotes.filter(n => n.path !== activeNote.path));
-    setShowNotebookPicker(false);
-    navigation.goBack();
-    showToast('Moved!');
-  }
-
-  async function handleDelete() {
-    await deleteFile(activeNote.path);
-    setNotes(notes.filter(n => n.path !== activeNote.path));
-    setLegacyNotes(legacyNotes.filter(n => n.path !== activeNote.path));
-    setShowActions(false);
-    navigation.goBack();
-    showToast('Deleted!');
-  }
-
   const editable = !activeNote || isEditing;
 
   return (
@@ -180,60 +121,18 @@ function NoteDetails({
         </VStack>
       </KeyboardAvoidingView>
 
-      <NotebookPicker
-        isOpen={showNotebookPicker}
-        onClose={() => setShowNotebookPicker(false)}
-        onSave={handleMove}
-        navigate={navigation.navigate}
+      <NoteItemActions
+        note={activeNote}
+        isOpen={showActions}
+        onClose={() => setShowActions(false)}
+        isNoteDetails
+        onEdit={() => {
+          setShowActions(false);
+          setIsEditing(true);
+        }}
+        navigation={navigation}
         notebook={notebook}
       />
-
-      <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
-        <Actionsheet.Content>
-          <Actionsheet.Item
-            startIcon={<Icon name="create-outline" color={colors.text} />}
-            onPress={() => {
-              setShowActions(false);
-              setIsEditing(true);
-            }}
-          >
-            Edit
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="share-outline" color={colors.text} />}
-            onPress={handleShare}
-          >
-            Share
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="download-outline" color={colors.text} />}
-            onPress={handleDownload}
-          >
-            Download
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
-            onPress={() => {
-              setShowActions(false);
-              setShowNotebookPicker(true);
-            }}
-          >
-            Move to ...
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="trash-outline" color={colors.text} />}
-            onPress={handleDelete}
-          >
-            Delete
-          </Actionsheet.Item>
-
-          {!!activeNote?.size && (
-            <Text fontSize="xs" color="gray.400">
-              {getSizeText(activeNote.size)}
-            </Text>
-          )}
-        </Actionsheet.Content>
-      </Actionsheet>
     </ScreenWrapper>
   );
 }

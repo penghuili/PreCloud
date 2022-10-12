@@ -142,8 +142,6 @@ export const useStore = create((set, get) => ({
   },
   notes: [],
   setNotes: value => set({ notes: value }),
-  legacyNotes: [],
-  setLegacyNotes: value => set({ legacyNotes: value }),
   activeNote: null,
   setActiveNote: value => set({ activeNote: value }),
   noteContent: '',
