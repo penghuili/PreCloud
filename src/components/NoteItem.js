@@ -21,7 +21,6 @@ function NoteItem({ note, onOpen, navigation, notebook }) {
             onOpen(note);
           }
         }}
-        my="1"
       >
         <HStack w="full" justifyContent="space-between" alignItems="center">
           <Text numberOfLines={1} flex={1}>

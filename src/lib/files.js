@@ -78,7 +78,9 @@ export async function makeNotebook(label) {
 export async function readNotebooks() {
   await makeNotesFolders();
   const notes = await RNFS.readDir(notesFolder);
-  return notes.filter(n => n.isDirectory());
+  return notes
+    .filter(n => n.isDirectory())
+    .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
 }
 
 export async function readNotes(path) {
@@ -90,7 +92,8 @@ export async function readNotes(path) {
   const notes = await RNFS.readDir(path);
   return notes
     .filter(n => n.isFile())
-    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }));
+    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }))
+    .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
 }
 
 export async function getFolderSize(folderPath) {
