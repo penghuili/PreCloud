@@ -1,13 +1,12 @@
 import { Box, Divider, VStack } from 'native-base';
 import React from 'react';
 
-import ActivePasswordAlert from '../components/ActivePasswordAlert';
 import AppBar from '../components/AppBar';
-import ScreenWrapper from '../components/ScreenWrapper';
 import ContentWrapper from '../components/ContentWrapper';
 import DecryptFile from '../components/DecryptFile';
 import EncryptFile from '../components/EncryptFile';
 import PasswordAlert from '../components/PasswordAlert';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 function EncryptDecryptFile({ navigation }) {
   return (
@@ -15,7 +14,6 @@ function EncryptDecryptFile({ navigation }) {
       <AppBar title="Encrypt files" />
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
-        <ActivePasswordAlert navigate={navigation.navigate} />
         <VStack space="sm" alignItems="center">
           <EncryptFile />
 

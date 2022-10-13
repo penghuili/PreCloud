@@ -13,7 +13,6 @@ import {
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
-import ActivePasswordAlert from '../components/ActivePasswordAlert';
 
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
@@ -234,7 +233,6 @@ function PlainText({ navigation }) {
       <AppBar title="Encrypt plain text" hasBack />
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
-        <ActivePasswordAlert navigate={navigation.navigate} />
 
         <VStack space="sm">
           {renderEncryption()}

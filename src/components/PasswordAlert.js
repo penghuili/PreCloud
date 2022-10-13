@@ -1,18 +1,18 @@
-import { Alert, Button, Text, VStack } from 'native-base';
+import { Alert, Box, Button, Text, VStack } from 'native-base';
 import React from 'react';
 
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
 function PasswordAlert({ navigate }) {
-  const password = useStore(state => state.activePassword);
   const isLoadingPasswords = useStore(state => state.isLoadingPasswords);
+  const activePasswordLabel = useStore(state => state.activePasswordLabel);
 
   if (isLoadingPasswords) {
     return null;
   }
 
-  if (!password) {
+  if (!activePasswordLabel) {
     return (
       <Alert w="100%" status="info" mb={8}>
         <VStack space={2} flexShrink={1} w="100%" alignItems="center">
@@ -25,7 +25,21 @@ function PasswordAlert({ navigate }) {
     );
   }
 
-  return null;
+  return (
+    <Box w="full" borderBottomWidth={1} borderColor="gray.200" pb="2" mb="8">
+      <Text>
+        Active password: <Text highlight> {activePasswordLabel} </Text>{' '}
+        <Text
+          underline
+          onPress={() => {
+            navigate(routeNames.passwords);
+          }}
+        >
+          Change
+        </Text>
+      </Text>
+    </Box>
+  );
 }
 
 export default PasswordAlert;
