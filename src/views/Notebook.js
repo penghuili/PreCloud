@@ -190,10 +190,10 @@ function Notebook({ navigation }) {
           <Actionsheet.Item
             startIcon={<Icon name="create-outline" color={colors.text} />}
             onPress={() => {
+              setShowActions(false);
               navigation.navigate(routeNames.notebookForm, {
                 notebook,
               });
-              setShowActions(false);
             }}
           >
             Rename

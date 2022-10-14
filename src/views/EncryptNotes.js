@@ -6,7 +6,7 @@ import Notebooks from '../components/Notebooks';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 
-function EncryptDecryptText({ navigation }) {
+function EncryptNotes({ navigation }) {
   return (
     <ScreenWrapper>
       <AppBar title="Encrypt notes" />
@@ -19,4 +19,4 @@ function EncryptDecryptText({ navigation }) {
   );
 }
 
-export default EncryptDecryptText;
+export default EncryptNotes;

@@ -2,43 +2,43 @@ import { Button, HStack, Pressable, Text, VStack } from 'native-base';
 import React, { useEffect } from 'react';
 
 import useColors from '../hooks/useColors';
-import { readNotebooks } from '../lib/files';
+import { readFilesFolders } from '../lib/files';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 import Icon from './Icon';
 
-function Notebooks({ navigation }) {
+function Folders({ navigation }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
-  const notebooks = useStore(state => state.notebooks);
-  const setNotebooks = useStore(state => state.setNotebooks);
-  const setActiveNotebook = useStore(state => state.setActiveNotebook);
-  const setNotes = useStore(state => state.setNotes);
+  const folders = useStore(state => state.folders);
+  const setFolders = useStore(state => state.setFolders);
+  const setActiveFolder = useStore(state => state.setActiveFolder);
+  const setFiles = useStore(state => state.setFiles);
 
   useEffect(() => {
-    readNotebooks().then(value => {
-      setNotebooks(value);
+    readFilesFolders().then(value => {
+      setFolders(value);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handleOpenNotebook(notebook) {
-    setActiveNotebook(notebook);
-    setNotes([]);
-    navigation.navigate(routeNames.notebook);
+  async function handleOpenFolder(folder) {
+    setActiveFolder(folder);
+    setFiles([]);
+    navigation.navigate(routeNames.folder);
   }
 
-  function handleAddNotebook() {
-    navigation.navigate(routeNames.notebookForm, { notebook: null });
+  function handleAddFolder() {
+    navigation.navigate(routeNames.folderForm, { folder: null });
   }
 
-  function renderNotebooks() {
-    if (!notebooks.length) {
+  function renderFolders() {
+    if (!folders.length) {
       return (
         <VStack space="sm" alignItems="center">
-          <Text>Create your first notebook.</Text>
-          <Button onPress={handleAddNotebook} isDisabled={!password} size="sm">
-            Create notebook
+          <Text>Create your folder, then you can encrypt files.</Text>
+          <Button onPress={handleAddFolder} isDisabled={!password} size="sm">
+            Create folder
           </Button>
         </VStack>
       );
@@ -47,33 +47,32 @@ function Notebooks({ navigation }) {
     return (
       <VStack space="sm" alignItems="flex-start">
         <Button
-          onPress={handleAddNotebook}
+          onPress={handleAddFolder}
           isDisabled={!password}
           startIcon={<Icon name="add-outline" color={colors.white} size={16} />}
           variant="solid"
           size="xs"
         >
-          Add new notebook
+          Add new folder
         </Button>
         <HStack space="2" flexWrap="wrap" w="full">
-          {notebooks.map(notebook => (
+          {folders.map(folder => (
             <Pressable
-              key={notebook.path}
+              key={folder.path}
               borderWidth="2"
-              borderColor="yellow.400"
-              borderBottomRightRadius="md"
+              borderColor="blue.400"
               borderTopRightRadius="md"
               p="2"
               w="20"
-              h="24"
+              h="20"
               mb="2"
               onPress={() => {
                 if (password) {
-                  handleOpenNotebook(notebook);
+                  handleOpenFolder(folder);
                 }
               }}
             >
-              <Text numberOfLines={3}>{notebook.name}</Text>
+              <Text numberOfLines={3}>{folder.name}</Text>
             </Pressable>
           ))}
         </HStack>
@@ -83,9 +82,9 @@ function Notebooks({ navigation }) {
 
   return (
     <VStack space="sm">
-      {renderNotebooks()}
+      {renderFolders()}
     </VStack>
   );
 }
 
-export default Notebooks;
+export default Folders;

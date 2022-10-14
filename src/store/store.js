@@ -1,7 +1,15 @@
 import create from 'zustand';
-import FS from 'react-native-fs';
 
-import { deleteFile, makeNotebook, notesFolder, readNotebooks } from '../lib/files';
+import {
+  deleteFile as deleteFileFromPhone,
+  filesFolder,
+  makeFilesFolder,
+  makeNotebook,
+  moveFile,
+  notesFolder,
+  readFilesFolders,
+  readNotebooks,
+} from '../lib/files';
 import { getPasswords, savePasswords } from '../lib/keychain';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
@@ -90,30 +98,6 @@ export const useStore = create((set, get) => ({
     await setActivePassword(get, set, passwordId);
   },
 
-  // encryptedFiles
-  encryptedFiles: [],
-  setEncryptedFiles: files => set({ encryptedFiles: files }),
-  renameEncryptedFile: (originalFileName, file) =>
-    set(state => ({
-      encryptedFiles: state.encryptedFiles.map(f => (f.fileName === originalFileName ? file : f)),
-    })),
-  deleteEncryptedFile: file =>
-    set(state => ({
-      encryptedFiles: state.encryptedFiles.filter(f => f.fileName !== file.fileName),
-    })),
-
-  // decryptedFiles
-  decryptedFiles: [],
-  setDecryptedFiles: files => set({ decryptedFiles: files }),
-  renameDecryptedFile: (originalFileName, file) =>
-    set(state => ({
-      decryptedFiles: state.decryptedFiles.map(f => (f.fileName === originalFileName ? file : f)),
-    })),
-  deleteDecryptedFile: file =>
-    set(state => ({
-      decryptedFiles: state.decryptedFiles.filter(f => f.fileName !== file.fileName),
-    })),
-
   // notes
   notebooks: [],
   setNotebooks: value => set({ notebooks: value }),
@@ -129,12 +113,12 @@ export const useStore = create((set, get) => ({
   },
   renameNotebook: async ({ notebook, label }) => {
     const newNotebook = { path: `${notesFolder}/${label.trim()}`, name: label.trim() };
-    await FS.moveFile(notebook.path, newNotebook.path);
+    await moveFile(notebook.path, newNotebook.path);
     const newNotebooks = await readNotebooks();
     set({ notebooks: newNotebooks, activeNotebook: newNotebook });
   },
   deleteNotebook: async notebook => {
-    await deleteFile(notebook.path);
+    await deleteFileFromPhone(notebook.path);
     set({
       notebooks: get().notebooks.filter(n => n.path !== notebook.path),
       activeNotebook: null,
@@ -146,4 +130,47 @@ export const useStore = create((set, get) => ({
   setActiveNote: value => set({ activeNote: value }),
   noteContent: '',
   setNoteContent: content => set({ noteContent: content }),
+
+  // files
+  folders: [],
+  setFolders: value => set({ folders: value }),
+  activeFolder: null,
+  setActiveFolder: value => set({ activeFolder: value }),
+  createFolder: async label => {
+    await makeFilesFolder(label);
+    const newFolders = await readFilesFolders();
+    set({
+      folders: newFolders,
+      activeFolder: newFolders.find(n => n.name === label.trim()),
+    });
+  },
+  renameFolder: async ({ folder, label }) => {
+    const newFolder = { path: `${filesFolder}/${label.trim()}`, name: label.trim() };
+    await moveFile(folder.path, newFolder.path);
+    const newFolders = await readFilesFolders();
+    set({ folders: newFolders, activeFolder: newFolder });
+  },
+  deleteFolder: async folder => {
+    await deleteFileFromPhone(folder.path);
+    set({
+      folders: get().folders.filter(n => n.path !== folder.path),
+      activeFolder: null,
+    });
+  },
+  files: [],
+  setFiles: value => set({ files: value }),
+  addFile: value => {
+    const currentFiles = get().files;
+    if (currentFiles.find(f => f.name === value.name)) {
+      set({ files: currentFiles.map(f => (f.name === value.name ? value : f)) });
+    } else {
+      set({ files: [value, ...currentFiles] });
+    }
+  },
+  deleteFile: async file => {
+    await deleteFileFromPhone(file.path);
+    set({
+      files: get().files.filter(f => f.path !== file.path),
+    });
+  },
 }));

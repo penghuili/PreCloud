@@ -7,6 +7,7 @@ import DeviceInfoModule from 'react-native-device-info';
 
 import xiangcai from '../assets/xiangcai.jpeg';
 import AppBar from '../components/AppBar';
+import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
 import DonateMessage from '../components/DonateMessage';
 import Icon from '../components/Icon';
@@ -21,7 +22,7 @@ import { routeNames } from '../router/routes';
 const { buildDate } = require('../lib/app-settings.json');
 const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.ios}\n\nAndroid: ${appStoreLink.android}`;
 
-function Settings({ navigation }) {
+function Settings({ navigation, route: { name: routeName } }) {
   const colors = useColors();
 
   function renderSupport() {
@@ -59,7 +60,7 @@ function Settings({ navigation }) {
             Generate password
           </Link>
 
-          <Link onPress={() => navigation.navigate(routeNames.caches)}>Caches</Link>
+          <Caches route={routeName} />
 
           <Divider />
 

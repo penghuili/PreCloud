@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
-import EncryptDecryptFile from '../views/EncryptDecryptFile';
-import EncryptDecryptNote from '../views/EncryptDecryptNote';
+import EncryptFiles from '../views/EncryptFiles';
+import EncryptNotes from '../views/EncryptNotes';
 import Passwords from '../views/Passwords';
 import Settings from '../views/Settings';
 import { routeNames } from './routes';
@@ -17,9 +17,9 @@ function BottomTab() {
     const { bottom } = useSafeAreaInsets();
 
   function getIconName(routeName, focused) {
-    if (routeName === routeNames.encryptNote) {
+    if (routeName === routeNames.encryptNotes) {
       return focused ? 'text' : 'text-outline';
-    } else if (routeName === routeNames.encryptFile) {
+    } else if (routeName === routeNames.encryptFiles) {
       return focused ? 'document-attach' : 'document-attach-outline';
     } else if (routeName === routeNames.passwords) {
       return focused ? 'key' : 'key-outline';
@@ -50,8 +50,8 @@ function BottomTab() {
           },
       })}
     >
-      <Tab.Screen name={routeNames.encryptNote} component={EncryptDecryptNote} />
-      <Tab.Screen name={routeNames.encryptFile} component={EncryptDecryptFile} />
+      <Tab.Screen name={routeNames.encryptNotes} component={EncryptNotes} />
+      <Tab.Screen name={routeNames.encryptFiles} component={EncryptFiles} />
       <Tab.Screen name={routeNames.passwords} component={Passwords} />
       <Tab.Screen name={routeNames.settings} component={Settings} />
     </Tab.Navigator>

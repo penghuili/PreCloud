@@ -1,29 +1,32 @@
-import { Alert, Button, Heading, HStack, Text, VStack } from 'native-base';
+import { Button, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
+import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
 import { platforms } from '../lib/constants';
 import {
   deleteFile,
   encryptionStatus,
   extractFilePath,
-  fileCachePaths,
-  makeFileCacheFolders,
   MAX_FILE_SIZE_BYTES,
   MAX_FILE_SIZE_MEGA_BYTES,
+  moveFile,
+  writeFile,
 } from '../lib/files';
+import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
+import DecryptFileModal from './DecryptFileModal';
 import FileItem from './FileItem';
+import Icon from './Icon';
 import PlatformToggle from './PlatformToggle';
 
 const nodejs = require('nodejs-mobile-react-native');
 
 let pickedFiles = [];
 let currentIndex = 0;
-let processedFiles = [];
 
 async function deleteFiles(paths) {
   await asyncForEach(paths, async path => {
@@ -38,14 +41,18 @@ async function resetPickedFile() {
   }
 }
 
-function EncryptFile() {
+function EncryptFile({ folder, navigate }) {
   const password = useStore(state => state.activePassword);
-  const encryptedFiles = useStore(state => state.encryptedFiles);
-  const setEncryptedFiles = useStore(state => state.setEncryptedFiles);
+  const colors = useColors();
+  const files = useStore(state => state.files);
+  const addFile = useStore(state => state.addFile);
 
   const [isEncryptingFiles, setIsEncryptingFiles] = useState(false);
   const [isEncryptingImages, setIsEncryptingImages] = useState(false);
   const [isEncryptingNewImage, setIsEncryptingNewImage] = useState(false);
+  const [showDecryptModal, setShowDecryptModal] = useState(false);
+  const [activeFile, setActiveFile] = useState(null);
+  const [activeFileIndex, setActiveFileIndex] = useState(null);
 
   function resetLoading() {
     setIsEncryptingFiles(false);
@@ -66,18 +73,21 @@ function EncryptFile() {
     } else {
       resetLoading();
       await resetPickedFile();
+      showToast('Encrypted all files!');
     }
   }
 
   async function handleTrigger({ name, size, path }) {
+    if (name.endsWith('.precloud')) {
+      await moveFile(path, `${folder.path}/${name}`);
+      addFile({ name, path, size });
+      await triggerNext();
+      return;
+    }
+
     if (size > MAX_FILE_SIZE_BYTES) {
       await deleteFile(path);
-      processedFiles = [
-        ...processedFiles,
-        { fileName: name, path, status: encryptionStatus.tooLarge },
-      ];
-      setEncryptedFiles(processedFiles);
-
+      addFile({ name, path, size, status: encryptionStatus.tooLarge });
       await triggerNext();
       return;
     }
@@ -90,25 +100,25 @@ function EncryptFile() {
   }
 
   async function handleEncrypted(payload) {
-    await makeFileCacheFolders();
-
     let processedFile;
     try {
       if (payload.data) {
         const fileName = `${payload.name}.precloud`;
-        const newPath = `${fileCachePaths.encrypted}/${fileName}`;
-        await RNFS.writeFile(newPath, payload.data, 'base64');
+        const newPath = `${folder.path}/${fileName}`;
+        await writeFile(newPath, payload.data);
+        const { size } = await RNFS.stat(newPath);
 
         processedFile = {
-          fileName,
+          name: fileName,
           path: newPath,
+          size,
           originalPath: payload.path,
           status: encryptionStatus.encrypted,
         };
       } else {
         console.log(`Encrypt file failed for ${payload.name}`, payload.error);
         processedFile = {
-          fileName: payload.name,
+          name: payload.name,
           path: payload.path,
           status: encryptionStatus.error,
         };
@@ -116,14 +126,13 @@ function EncryptFile() {
     } catch (e) {
       console.log(`Save encrypted file failed for ${payload.name}`, e);
       processedFile = {
-        fileName: payload.name,
+        name: payload.name,
         path: payload.path,
         status: encryptionStatus.error,
       };
     }
 
-    processedFiles = [...processedFiles, processedFile];
-    setEncryptedFiles(processedFiles);
+    addFile(processedFile);
   }
 
   useEffect(() => {
@@ -144,7 +153,6 @@ function EncryptFile() {
 
   function handleBeforePick() {
     pickedFiles = [];
-    processedFiles = [];
     currentIndex = 0;
   }
 
@@ -233,20 +241,16 @@ function EncryptFile() {
 
   const isLoading = isEncryptingFiles || isEncryptingImages || isEncryptingNewImage;
   return (
-    <VStack space="sm" alignItems="center">
-      <Heading>Encrypt files</Heading>
-      <Alert w="100%" status="info">
-        <Text>
-          Pick one or multiple files to encrypt. Currently each file size can&lsquo;t be bigger than{' '}
-          {MAX_FILE_SIZE_MEGA_BYTES}MB.
-        </Text>
-      </Alert>
-      <HStack space="2">
+    <VStack space="sm">
+      <HStack flexWrap="wrap" w="full">
         <PlatformToggle for={platforms.ios}>
           <Button
             isDisabled={!password || isLoading}
             isLoading={isEncryptingImages}
             onPress={pickImages}
+            startIcon={<Icon name="image-outline" size={16} color={colors.white} />}
+            size="xs"
+            mr="2"
           >
             Pick images
           </Button>
@@ -256,27 +260,68 @@ function EncryptFile() {
           isDisabled={!password || isLoading}
           isLoading={isEncryptingFiles}
           onPress={pickFiles}
+          startIcon={<Icon name="documents-outline" size={16} color={colors.white} />}
+          size="xs"
+          mr="2"
         >
           Pick files
         </Button>
+        <Button
+          isDisabled={!password || isLoading}
+          isLoading={isEncryptingNewImage}
+          onPress={takePhoto}
+          startIcon={<Icon name="camera-outline" size={16} color={colors.white} />}
+          size="xs"
+        >
+          Take photo
+        </Button>
       </HStack>
 
-      <Button
-        isDisabled={!password || isLoading}
-        isLoading={isEncryptingNewImage}
-        onPress={takePhoto}
-      >
-        Take photo and encrypt
-      </Button>
+      {!files.length && (
+        <Text>
+          Pick one or multiple files to encrypt. Currently each file size can&lsquo;t be bigger than{' '}
+          {MAX_FILE_SIZE_MEGA_BYTES}MB.
+        </Text>
+      )}
 
-      {!!encryptedFiles.length && (
-        <VStack space="sm" alignItems="center" px={4} py={4}>
-          <Text bold>Encrypted {encryptedFiles.length > 1 ? 'files' : 'file'}:</Text>
-          {encryptedFiles.map(file => (
-            <FileItem key={file.fileName} file={file} forEncrypt />
+      {!!files.length && (
+        <VStack space="sm" alignItems="center" py={4}>
+          {files.map((file, index) => (
+            <FileItem
+              key={file.name}
+              file={file}
+              folder={folder}
+              navigate={navigate}
+              onDecrypt={() => {
+                setShowDecryptModal(true);
+                setActiveFile(file);
+                setActiveFileIndex(index);
+              }}
+            />
           ))}
         </VStack>
       )}
+
+      <DecryptFileModal
+        isOpen={showDecryptModal}
+        file={activeFile}
+        hasPrevious={activeFileIndex > 0}
+        onPrevious={() => {
+          const newIndex = activeFileIndex - 1;
+          setActiveFile(files[newIndex]);
+          setActiveFileIndex(newIndex);
+        }}
+        hasNext={activeFileIndex < files.length - 1}
+        onNext={() => {
+          const newIndex = activeFileIndex + 1;
+          setActiveFile(files[newIndex]);
+          setActiveFileIndex(newIndex);
+        }}
+        onClose={() => {
+          setShowDecryptModal(false);
+          setActiveFile(null);
+        }}
+      />
     </VStack>
   );
 }

@@ -1,9 +1,8 @@
 import { Actionsheet, Text } from 'native-base';
 import React, { useState } from 'react';
-import FS from 'react-native-fs';
 
 import useColors from '../hooks/useColors';
-import { deleteFile, downloadFile, getSizeText, shareFile } from '../lib/files';
+import { deleteFile, downloadFile, getSizeText, moveFile, shareFile } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import Icon from './Icon';
@@ -42,7 +41,7 @@ function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onEdit, navigat
   }
 
   async function handleMove(newNotebook) {
-    await FS.moveFile(note.path, `${newNotebook.path}/${note.name}`);
+    await moveFile(note.path, `${newNotebook.path}/${note.name}`);
     setNotes(notes.filter(n => n.path !== note.path));
     setShowNotebookPicker(false);
     if (isNoteDetails) {

@@ -1,31 +1,22 @@
-import { Box, Divider, VStack } from 'native-base';
 import React from 'react';
 
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
-import DecryptFile from '../components/DecryptFile';
-import EncryptFile from '../components/EncryptFile';
+import Folders from '../components/Folders';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 
-function EncryptDecryptFile({ navigation }) {
+function EncryptFiles({ navigation }) {
   return (
     <ScreenWrapper>
       <AppBar title="Encrypt files" />
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
-        <VStack space="sm" alignItems="center">
-          <EncryptFile />
 
-          <Divider my={8} />
-
-          <DecryptFile />
-
-          <Box h="8" />
-        </VStack>
+        <Folders navigation={navigation} />
       </ContentWrapper>
     </ScreenWrapper>
   );
 }
 
-export default EncryptDecryptFile;
+export default EncryptFiles;

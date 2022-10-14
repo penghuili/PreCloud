@@ -1,35 +1,33 @@
 import { Button, Modal, Text, VStack } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import useColors from '../hooks/useColors';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function NotebookPicker({ isOpen, onClose, onSave, navigate, notebook }) {
+function FolderPicker({ isOpen, onClose, onSave, navigate, folder }) {
   const colors = useColors();
-  const notebooks = useStore(state => state.notebooks);
+  const folders = useStore(state => state.folders);
+  const innerFolders = useMemo(() => {
+    return folders?.filter(f => f.name !== folder?.name);
+  }, [folders, folder]);
 
-  const [innerNotebooks, setInnerNotebooks] = useState([]);
-  const [selectedNotebook, setSelectedNotebook] = useState(null);
-
-  useEffect(() => {
-    setInnerNotebooks(notebooks?.filter(n => n.name !== notebook?.name));
-  }, [notebooks, notebook]);
+  const [selectedFolder, setSelectedFolder] = useState(null);
 
   function handleClose() {
     onClose();
   }
 
-  function renderNotebooks() {
-    if (!innerNotebooks?.length) {
+  function renderFolders() {
+    if (!innerFolders?.length) {
       return (
         <Text>
-          You don&lsquo;t have other notebook yet,{' '}
+          You don&lsquo;t have other folder yet,{' '}
           <Text
             underline
             onPress={() => {
               handleClose();
-              navigate(routeNames.notebookForm, { notebook: null });
+              navigate(routeNames.folderForm, { folder: null });
             }}
           >
             Create one
@@ -40,14 +38,14 @@ function NotebookPicker({ isOpen, onClose, onSave, navigate, notebook }) {
 
     return (
       <VStack>
-        {innerNotebooks.map(notebook => (
+        {innerFolders.map(f => (
           <Text
-            key={notebook.name}
+            key={f.name}
             my="1"
-            color={notebook.name === selectedNotebook?.name ? colors.primary : colors.text}
-            onPress={() => setSelectedNotebook(notebook)}
+            color={f.name === selectedFolder?.name ? colors.primary : colors.text}
+            onPress={() => setSelectedFolder(f)}
           >
-            {notebook.name}
+            {f.name}
           </Text>
         ))}
       </VStack>
@@ -58,16 +56,16 @@ function NotebookPicker({ isOpen, onClose, onSave, navigate, notebook }) {
     <Modal isOpen={isOpen} onClose={handleClose}>
       <Modal.Content maxWidth="400px">
         <Modal.Header>Move to ...</Modal.Header>
-        <Modal.Body>{renderNotebooks()}</Modal.Body>
+        <Modal.Body>{renderFolders()}</Modal.Body>
         <Modal.Footer>
           <Button.Group space={2}>
             <Button variant="ghost" onPress={handleClose}>
               Cancel
             </Button>
             <Button
-              isDisabled={!selectedNotebook}
+              isDisabled={!selectedFolder}
               onPress={() => {
-                onSave(selectedNotebook);
+                onSave(selectedFolder);
                 handleClose();
               }}
             >
@@ -80,4 +78,4 @@ function NotebookPicker({ isOpen, onClose, onSave, navigate, notebook }) {
   );
 }
 
-export default NotebookPicker;
+export default FolderPicker;

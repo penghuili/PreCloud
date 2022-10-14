@@ -1,12 +1,11 @@
 import { Heading, Input, KeyboardAvoidingView, VStack } from 'native-base';
 import React, { useEffect, useRef, useState } from 'react';
-import FS from 'react-native-fs';
 
 import AppBar from '../components/AppBar';
 import Editor from '../components/Editor';
 import NoteItemActions from '../components/NoteItemActions';
 import ScreenWrapper from '../components/ScreenWrapper';
-import { deleteFile, makeNotesFolders, readNotes } from '../lib/files';
+import { deleteFile, makeNotesFolders, readNotes, writeFile } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 
@@ -39,11 +38,7 @@ function NoteDetails({
       if (msg.type === 'encrypted-rich-text') {
         if (msg.payload.data) {
           await makeNotesFolders();
-          await FS.writeFile(
-            `${notebook.path}/${msg.payload.title}.precloudnote`,
-            msg.payload.data,
-            'base64'
-          );
+          await writeFile(`${notebook.path}/${msg.payload.title}.precloudnote`, msg.payload.data);
 
           if (activeNote?.fileName && msg.payload.title !== activeNote?.fileName) {
             await deleteFile(activeNote.path);

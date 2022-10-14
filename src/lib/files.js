@@ -52,6 +52,7 @@ export async function makeFileCacheFolders() {
 }
 
 export const notesFolder = `${RNFS.DocumentDirectoryPath}/notes`;
+export const filesFolder = `${RNFS.DocumentDirectoryPath}/files`;
 
 export async function makeNotesFolders() {
   const exists = await RNFS.exists(notesFolder);
@@ -91,6 +92,49 @@ export async function readNotes(path) {
 
   const notes = await RNFS.readDir(path);
   return notes
+    .filter(n => n.isFile())
+    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }))
+    .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
+}
+
+export async function makeFilesFolder(label) {
+  const trimed = label?.trim();
+  if (!trimed) {
+    return;
+  }
+
+  await makeFilesFolders();
+
+  const path = `${filesFolder}/${trimed}`;
+  const exists = await RNFS.exists(path);
+  if (!exists) {
+    await RNFS.mkdir(path);
+  }
+}
+
+export async function makeFilesFolders() {
+  const exists = await RNFS.exists(filesFolder);
+  if (!exists) {
+    await RNFS.mkdir(filesFolder);
+  }
+}
+
+export async function readFilesFolders() {
+  await makeFilesFolders();
+  const folders = await RNFS.readDir(filesFolder);
+  return folders
+    .filter(n => n.isDirectory())
+    .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
+}
+
+export async function readFiles(path) {
+  const exists = await RNFS.exists(path);
+  if (!exists) {
+    return [];
+  }
+
+  const files = await RNFS.readDir(path);
+  return files
     .filter(n => n.isFile())
     .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }))
     .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
@@ -138,10 +182,6 @@ export async function emptyFolder(folderPath) {
       } catch (e) {}
     }
   } catch (e) {}
-}
-
-export function bytesToMB(bytes) {
-  return Math.round((bytes / 1024 / 1024) * 100) / 100;
 }
 
 export function extractFilePath(path) {
@@ -210,6 +250,22 @@ export async function copyFile(src, dest) {
     await RNFS.unlink(dest);
   }
   await RNFS.copyFile(src, dest);
+}
+
+export async function moveFile(src, dest) {
+  const exists = await RNFS.exists(dest);
+  if (exists) {
+    await RNFS.unlink(dest);
+  }
+  await RNFS.moveFile(src, dest);
+}
+
+export async function writeFile(path, content, encoding = 'base64') {
+  const exists = await RNFS.exists(path);
+  if (exists) {
+    await RNFS.unlink(path);
+  }
+  await RNFS.writeFile(path, content, encoding);
 }
 
 export async function downloadFile({ path, fileName }) {

@@ -8,51 +8,51 @@ import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function NotebookForm({
+function FolderForm({
   navigation,
   route: {
-    params: { notebook },
+    params: { folder },
   },
 }) {
-  const notebooks = useStore(state => state.notebooks);
-  const notebookLabels = useMemo(() => notebooks.map(n => n.name), [notebooks]);
-  const createNotebook = useStore(state => state.createNotebook);
-  const renameNotebook = useStore(state => state.renameNotebook);
+  const folders = useStore(state => state.folders);
+  const folderLabels = useMemo(() => folders.map(n => n.name), [folders]);
+  const createFolder = useStore(state => state.createFolder);
+  const renameFolder = useStore(state => state.renameFolder);
 
   const [label, setLabel] = useState('');
 
   useEffect(() => {
-    setLabel(notebook?.name || '');
-  }, [notebook]);
+    setLabel(folder?.name || '');
+  }, [folder]);
 
   async function handleSave() {
-    const trimed = label.trim();
-    if (notebookLabels.includes(trimed)) {
+    const trimed = label.trim()
+    if (folderLabels.includes(trimed)) {
       showToast('This name is used, please choose another one.', 'error');
       return;
     }
 
     try {
-      if (notebook) {
-        await renameNotebook({ notebook, label: trimed });
+      if (folder) {
+        await renameFolder({ folder, label: trimed });
         navigation.goBack();
-        showToast(`Notebook "${notebook.name}" is renamed to "${trimed}"!`);
+        showToast(`Folder "${folder.name}" is renamed to "${trimed}"!`);
       } else {
-        await createNotebook(trimed);
-        navigation.replace(routeNames.notebook);
-        showToast(`Notebook ${trimed} is created!`);
+        await createFolder(trimed);
+        navigation.replace(routeNames.folder);
+        showToast(`Folder ${trimed} is created!`);
       }
     } catch (e) {
-      showToast(`Notebook creation failed, please try again`, 'error');
+      showToast(`Folder creation failed, please try again`, 'error');
     }
   }
 
   return (
     <ScreenWrapper>
-      <AppBar title={'Add new notebook'} hasBack />
+      <AppBar title={'Add new folder'} hasBack />
       <ContentWrapper>
         <FormControl space={2}>
-          <FormControl.Label>Notebook name</FormControl.Label>
+          <FormControl.Label>Folder name</FormControl.Label>
           <Input value={label} onChangeText={setLabel} />
         </FormControl>
         <Button mt="4" isDisabled={!label || !label.trim()} onPress={handleSave}>
@@ -63,4 +63,4 @@ function NotebookForm({
   );
 }
 
-export default NotebookForm;
+export default FolderForm;

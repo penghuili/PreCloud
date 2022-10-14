@@ -1,69 +1,39 @@
-import { HStack, IconButton, Text, VStack } from 'native-base';
-import React, { useMemo, useState } from 'react';
-import FileViewer from 'react-native-file-viewer';
-import RNFS from 'react-native-fs';
+import { Actionsheet, Box, HStack, IconButton, Text, VStack } from 'native-base';
+import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
 import {
-  copyFile,
-  decryptionStatus,
-  deleteFile,
   downloadFile,
   encryptionStatus,
-  extractFileExtensionFromPath,
-  extractFileNameAndExtension,
   getSizeText,
   MAX_FILE_SIZE_MEGA_BYTES,
+  moveFile,
   shareFile,
-  viewableFileTypes,
 } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
+import FolderPicker from './FolderPicker';
 import Icon from './Icon';
-import RenameFileModal from './RenameFileModal';
 
-function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
+function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
   const colors = useColors();
-  const renameEncryptedFile = useStore(state => state.renameEncryptedFile);
-  const deleteEncryptedFile = useStore(state => state.deleteEncryptedFile);
-  const renameDecryptedFile = useStore(state => state.renameDecryptedFile);
-  const deleteDecryptedFile = useStore(state => state.deleteDecryptedFile);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
-  const { extension } = extractFileNameAndExtension(file?.fileName || '');
+  const files = useStore(store => store.files);
+  const setFiles = useStore(store => store.setFiles);
+  const deleteFile = useStore(store => store.deleteFile);
 
-  const canBeOpened = useMemo(() => {
-    if (!file?.fileName) {
-      return false;
-    }
+  const [showActions, setShowActions] = useState(false);
+  const [showFolderPicker, setShowFolderPicker] = useState(false);
 
-    const extension = extractFileExtensionFromPath(file.fileName);
-    return viewableFileTypes.includes(extension);
-  }, [file]);
-
-  async function handleOpenFile() {
-    try {
-      await FileViewer.open(file.path);
-    } catch (e) {
-      console.log('open file failed', e);
-    }
+  function handleDecrypt() {
+    setShowActions(false);
+    onDecrypt();
   }
-
-  const handleDownloadFile = async () => {
-    setIsDownloading(true);
-
-    const message = await downloadFile({ path: file.path, fileName: file.fileName });
-    if (message) {
-      showToast(message);
-    }
-
-    setIsDownloading(false);
-  };
 
   const handleShareFile = async () => {
     try {
+      setShowActions(false);
       await shareFile({
-        fileName: file.fileName,
+        fileName: file.name,
         filePath: file.path,
         saveToFiles: false,
       });
@@ -73,15 +43,26 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
     }
   };
 
+  const handleDownloadFile = async () => {
+    setShowActions(false);
+    const message = await downloadFile({ path: file.path, fileName: file.name });
+    if (message) {
+      showToast(message);
+    }
+  };
+
+  async function handleMove(newFolder) {
+    await moveFile(file.path, `${newFolder.path}/${file.name}`);
+    setFiles(files.filter(n => n.path !== file.path));
+    setShowFolderPicker(false);
+    showToast('Moved!');
+  }
+
   const handleDeleteFile = async () => {
     try {
-      await RNFS.unlink(file.path);
-      showToast('Deleted from cache.');
-      if (forEncrypt) {
-        deleteEncryptedFile(file);
-      } else {
-        deleteDecryptedFile(file);
-      }
+      setShowActions(false);
+      await deleteFile(file);
+      showToast('Deleted!');
 
       if (onDelete) {
         onDelete();
@@ -91,7 +72,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
     }
   };
 
-  function renderActions() {
+  function renderErrorMessage() {
     if (file.status === encryptionStatus.tooLarge) {
       return <Text highlight>File size can not be bigger than {MAX_FILE_SIZE_MEGA_BYTES}MB.</Text>;
     }
@@ -100,60 +81,7 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
       return <Text highlight>Encryption of this file failed.</Text>;
     }
 
-    if (file.status === decryptionStatus.wrongExtension) {
-      return <Text highlight>Please only pick file ending with .precloud</Text>;
-    }
-
-    if (file.status === decryptionStatus.error) {
-      return <Text highlight>Decryption of this file failed.</Text>;
-    }
-
-    return (
-      <HStack alignItems="center">
-        {canRename && (
-          <IconButton
-            icon={<Icon name="create-outline" size={20} color={colors.text} />}
-            size="sm"
-            variant="subtle"
-            mr="2"
-            isDisabled={isDownloading}
-            onPress={() => setShowRenameModal(true)}
-          />
-        )}
-
-        {canBeOpened && (
-          <IconButton
-            icon={<Icon name="eye-outline" size={20} color={colors.text} />}
-            size="sm"
-            variant="subtle"
-            mr="2"
-            onPress={() => handleOpenFile()}
-          />
-        )}
-
-        <IconButton
-          icon={<Icon name="download-outline" size={20} color={colors.text} />}
-          size="sm"
-          variant="subtle"
-          mr="2"
-          isDisabled={isDownloading}
-          onPress={() => handleDownloadFile()}
-        />
-        <IconButton
-          icon={<Icon name="share-outline" size={20} color={colors.text} />}
-          size="sm"
-          variant="subtle"
-          mr="2"
-          onPress={() => handleShareFile()}
-        />
-        <IconButton
-          icon={<Icon name="trash-outline" size={20} color={colors.text} />}
-          size="sm"
-          variant="subtle"
-          onPress={() => handleDeleteFile()}
-        />
-      </HStack>
-    );
+    return null;
   }
 
   if (!file) {
@@ -161,43 +89,75 @@ function FileItem({ file, forEncrypt, canRename = true, onDelete }) {
   }
 
   return (
-    <VStack space="xs" alignItems="flex-start">
-      <Text w="xs">{file.fileName}</Text>
+    <>
+      <VStack space="xs" alignItems="flex-start">
+        <HStack justifyContent="flex-start">
+          <Box flexDirection="row" flex="1">
+            <Text flex="1" flexWrap="wrap">
+              {file.name}
+            </Text>
+          </Box>
 
-      {renderActions()}
+          <IconButton
+            icon={<Icon name="ellipsis-vertical-outline" size={16} color={colors.text} />}
+            onPress={() => setShowActions(true)}
+          />
+        </HStack>
 
-      {!!file.size && (
-        <Text fontSize="xs" color="gray.400">
-          {getSizeText(file.size)}
-        </Text>
-      )}
+        {renderErrorMessage()}
+      </VStack>
 
-      <RenameFileModal
-        fileName={file.fileName}
-        extension={extension}
-        isOpen={showRenameModal}
-        onClose={() => setShowRenameModal(false)}
-        onSave={async newName => {
-          const newFullName = `${newName}${extension}`;
-          const parts = file.path.split('/');
-          parts.pop();
-          const newPath = `${parts.join('/')}/${newFullName}`;
-          await copyFile(file.path, newPath);
-          await deleteFile(file.path);
-
-          const newFile = {
-            fileName: newFullName,
-            path: newPath,
-            size: file.size,
-          };
-          if (forEncrypt) {
-            renameEncryptedFile(file.fileName, newFile);
-          } else {
-            renameDecryptedFile(file.fileName, newFile);
-          }
-        }}
+      <FolderPicker
+        isOpen={showFolderPicker}
+        onClose={() => setShowFolderPicker(false)}
+        onSave={handleMove}
+        navigate={navigate}
+        folder={folder}
       />
-    </VStack>
+      <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
+        <Actionsheet.Content>
+          <Actionsheet.Item
+            startIcon={<Icon name="lock-open-outline" color={colors.text} />}
+            onPress={handleDecrypt}
+          >
+            Decrypt
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="share-outline" color={colors.text} />}
+            onPress={handleShareFile}
+          >
+            Share
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="download-outline" color={colors.text} />}
+            onPress={handleDownloadFile}
+          >
+            Download
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
+            onPress={() => {
+              setShowActions(false)
+              setShowFolderPicker(true);
+            }}
+          >
+            Move to ...
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="trash-outline" color={colors.text} />}
+            onPress={handleDeleteFile}
+          >
+            Delete
+          </Actionsheet.Item>
+
+          {!!file.size && (
+            <Text fontSize="xs" color="gray.400">
+              {getSizeText(file.size)}
+            </Text>
+          )}
+        </Actionsheet.Content>
+      </Actionsheet>
+    </>
   );
 }
 
