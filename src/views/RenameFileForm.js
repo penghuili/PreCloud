@@ -30,7 +30,7 @@ function RenameFileForm({
       <ContentWrapper>
         <FormControl>
           <FormControl.Label>Current name:</FormControl.Label>
-          <Text>{fileName}</Text>
+          <Text selectable>{fileName}</Text>
           <FormControl.Label>New name:</FormControl.Label>
           <Input
             value={innerFileName}
