@@ -1,4 +1,4 @@
-import { Actionsheet, Box, HStack, IconButton, Text, VStack } from 'native-base';
+import { Actionsheet, HStack, IconButton, Pressable, Text, VStack } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
@@ -92,11 +92,11 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
     <>
       <VStack space="xs" alignItems="flex-start">
         <HStack justifyContent="flex-start">
-          <Box flexDirection="row" flex="1">
+          <Pressable flexDirection="row" flex="1" onPress={handleDecrypt}>
             <Text flex="1" flexWrap="wrap">
               {file.name}
             </Text>
-          </Box>
+          </Pressable>
 
           <IconButton
             icon={<Icon name="ellipsis-vertical-outline" size={16} color={colors.text} />}

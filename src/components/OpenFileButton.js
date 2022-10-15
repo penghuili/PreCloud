@@ -1,7 +1,6 @@
 import { IconButton } from 'native-base';
 import React, { useMemo } from 'react';
 import FileViewer from 'react-native-file-viewer';
-import { stat } from 'react-native-fs';
 
 import useColors from '../hooks/useColors';
 import { extractFileExtensionFromPath, viewableFileTypes } from '../lib/files';
@@ -20,10 +19,7 @@ function OpenFileButton({ file }) {
   }, [file]);
 
   async function handlePress() {
-    console.log(file)
     try {
-      const data = await stat(file.path)
-      console.log(data)
       await FileViewer.open(file.path);
     } catch (e) {
       console.log('open file failed', e);

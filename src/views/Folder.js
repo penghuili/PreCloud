@@ -41,7 +41,7 @@ function Folder({ navigation }) {
       />
 
       <ContentWrapper>
-      <PasswordAlert navigate={navigation.navigate} />
+        <PasswordAlert navigate={navigation.navigate} />
 
         <EncryptFile folder={folder} navigate={navigation.navigate} />
       </ContentWrapper>
