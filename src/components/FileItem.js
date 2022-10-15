@@ -11,6 +11,7 @@ import {
   shareFile,
 } from '../lib/files';
 import { showToast } from '../lib/toast';
+import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 import FolderPicker from './FolderPicker';
 import Icon from './Icon';
@@ -27,6 +28,14 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
   function handleDecrypt() {
     setShowActions(false);
     onDecrypt();
+  }
+
+  function handleRename() {
+    setShowActions(false);
+    navigate(routeNames.renameFileForm, {
+      file: { name: file.name, path: file.path },
+      folder: { name: folder.name, path: folder.path },
+    });
   }
 
   const handleShareFile = async () => {
@@ -123,6 +132,12 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
             Decrypt
           </Actionsheet.Item>
           <Actionsheet.Item
+            startIcon={<Icon name="create-outline" color={colors.text} />}
+            onPress={handleRename}
+          >
+            Rename
+          </Actionsheet.Item>
+          <Actionsheet.Item
             startIcon={<Icon name="share-outline" color={colors.text} />}
             onPress={handleShareFile}
           >
@@ -137,7 +152,7 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
           <Actionsheet.Item
             startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
             onPress={() => {
-              setShowActions(false)
+              setShowActions(false);
               setShowFolderPicker(true);
             }}
           >

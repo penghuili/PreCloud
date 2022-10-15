@@ -9,6 +9,7 @@ import NoteDetails from '../views/NoteDetails';
 import PasswordForm from '../views/PasswordForm';
 import PasswordGenerator from '../views/PasswordGenerator';
 import PlainText from '../views/PlainText';
+import RenameFileForm from '../views/RenameFileForm';
 import BottomTab from './BottomTab';
 import { routeNames } from './routes';
 
@@ -25,6 +26,7 @@ function Router() {
         <NavStack.Screen name={routeNames.noteDetails} component={NoteDetails} />
         <NavStack.Screen name={routeNames.folderForm} component={FolderForm} />
         <NavStack.Screen name={routeNames.folder} component={Folder} />
+        <NavStack.Screen name={routeNames.renameFileForm} component={RenameFileForm} />
         <NavStack.Screen name={routeNames.plainText} component={PlainText} />
         <NavStack.Screen name={routeNames.passwordGenerator} component={PasswordGenerator} />
         <NavStack.Screen name={routeNames.passwordForm} component={PasswordForm} />

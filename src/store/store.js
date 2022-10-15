@@ -2,6 +2,7 @@ import create from 'zustand';
 
 import {
   deleteFile as deleteFileFromPhone,
+  extractFileNameAndExtension,
   filesFolder,
   makeFilesFolder,
   makeNotebook,
@@ -166,6 +167,14 @@ export const useStore = create((set, get) => ({
     } else {
       set({ files: [value, ...currentFiles] });
     }
+  },
+  renameFile: async ({ file, folder, label }) => {
+    const { extension } = extractFileNameAndExtension(file.name);
+    const newName = `${label.trim()}${extension}`;
+    const newFile = { ...file, path: `${folder.path}/${newName}`, name: newName };
+    await moveFile(file.path, newFile.path);
+    const newFiles = get().files.map(f => (f.path === file.path ? newFile : f));
+    set({ files: newFiles });
   },
   deleteFile: async file => {
     await deleteFileFromPhone(file.path);

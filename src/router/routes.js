@@ -6,6 +6,7 @@ export const routeNames = {
   encryptFiles: 'encryptFiles',
   folder: 'folder',
   folderForm: 'folderForm',
+  renameFileForm: 'renameFileForm',
   passwords: 'passwords',
   passwordForm: 'passwordForm',
   settings: 'settings',
