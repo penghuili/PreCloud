@@ -73,7 +73,7 @@ function EncryptFile({ folder, navigate }) {
     } else {
       resetLoading();
       await resetPickedFile();
-      showToast('Encrypted all files!');
+      showToast('Your files are encrypted and saved on your phone!');
     }
   }
 

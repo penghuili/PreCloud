@@ -36,7 +36,7 @@ function Folders({ navigation }) {
     if (!folders.length) {
       return (
         <VStack space="sm" alignItems="center">
-          <Text>Create your folder, then you can encrypt files.</Text>
+          <Text>Create your first folder, then you can encrypt and save files to it.</Text>
           <Button onPress={handleAddFolder} isDisabled={!password} size="sm">
             Create folder
           </Button>
@@ -53,7 +53,7 @@ function Folders({ navigation }) {
           variant="solid"
           size="xs"
         >
-          Add new folder
+          Create new folder
         </Button>
         <HStack space="2" flexWrap="wrap" w="full">
           {folders.map(folder => (
