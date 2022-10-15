@@ -18,6 +18,7 @@ export const viewableFileTypes = [
   'pdf',
   'txt',
   'webp',
+  'mp4',
 ];
 
 export const fileCachePaths = {
