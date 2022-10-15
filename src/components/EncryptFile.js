@@ -79,8 +79,9 @@ function EncryptFile({ folder, navigate }) {
 
   async function handleTrigger({ name, size, path }) {
     if (name.endsWith('.precloud')) {
-      await moveFile(path, `${folder.path}/${name}`);
-      addFile({ name, path, size });
+      const newPath = `${folder.path}/${name}`
+      await moveFile(path, newPath);
+      addFile({ name, path: newPath, size });
       await triggerNext();
       return;
     }
