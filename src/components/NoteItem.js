@@ -12,16 +12,15 @@ function NoteItem({ note, onOpen, navigation, notebook }) {
 
   const [showActions, setShowActions] = useState(false);
 
+  function handleOpen() {
+    if (password) {
+      onOpen(note);
+    }
+  }
+
   return (
     <>
-      <Pressable
-        key={note.path}
-        onPress={() => {
-          if (password) {
-            onOpen(note);
-          }
-        }}
-      >
+      <Pressable key={note.path} onPress={handleOpen}>
         <HStack w="full" justifyContent="space-between" alignItems="center">
           <Text numberOfLines={1} flex={1}>
             {note.fileName}
@@ -37,6 +36,7 @@ function NoteItem({ note, onOpen, navigation, notebook }) {
         isOpen={showActions}
         onClose={() => setShowActions(false)}
         isNoteDetails={false}
+        onView={handleOpen}
         navigation={navigation}
         notebook={notebook}
       />

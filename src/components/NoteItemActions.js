@@ -8,7 +8,7 @@ import { useStore } from '../store/store';
 import Icon from './Icon';
 import NotebookPicker from './NotebookPicker';
 
-function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onEdit, navigation, notebook }) {
+function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onView, onEdit, navigation, notebook }) {
   const colors = useColors();
   const notes = useStore(state => state.notes);
   const setNotes = useStore(state => state.setNotes);
@@ -71,13 +71,20 @@ function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onEdit, navigat
       />
       <Actionsheet isOpen={isOpen} onClose={onClose}>
         <Actionsheet.Content>
-          {isNoteDetails && (
+          {isNoteDetails ? (
             <Actionsheet.Item
               startIcon={<Icon name="create-outline" color={colors.text} />}
               onPress={onEdit}
             >
               Edit
             </Actionsheet.Item>
+          ) : (
+            <Actionsheet.Item
+            startIcon={<Icon name="eye-outline" color={colors.text} />}
+            onPress={onView}
+          >
+            Open
+          </Actionsheet.Item>
           )}
           <Actionsheet.Item
             startIcon={<Icon name="share-outline" color={colors.text} />}
