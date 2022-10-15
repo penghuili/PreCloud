@@ -64,7 +64,7 @@ function Passwords({ navigation }) {
               navigation.navigate(routeNames.passwordForm, { selectedPassword: null });
             }}
           >
-            {passwords?.length ? 'Add new password' : 'Add your first password'}
+            {passwords?.length ? 'Create new password' : 'Create your first password'}
           </Button>
         </VStack>
       </ContentWrapper>

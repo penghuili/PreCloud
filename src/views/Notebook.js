@@ -122,7 +122,7 @@ function Notebook({ navigation }) {
         <VStack space="sm" alignItems="center">
           <Text>Create your first note.</Text>
           <Button onPress={handleAddNote} isDisabled={!password} size="sm">
-            Add note
+            Create note
           </Button>
 
           <Button

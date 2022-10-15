@@ -48,7 +48,7 @@ function PasswordItem({ navigate, password, index }) {
               setShowActions(false);
             }}
           >
-            Edit
+            Rename
           </Actionsheet.Item>
           {index !== 0 && passwords.length > 1 && (
             <Actionsheet.Item

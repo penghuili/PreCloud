@@ -26,7 +26,7 @@ function FolderForm({
   }, [folder]);
 
   async function handleSave() {
-    const trimed = label.trim()
+    const trimed = label.trim();
     if (folderLabels.includes(trimed)) {
       showToast('This name is used, please choose another one.', 'error');
       return;
@@ -49,7 +49,7 @@ function FolderForm({
 
   return (
     <ScreenWrapper>
-      <AppBar title={'Add new folder'} hasBack />
+      <AppBar title={folder ? 'Rename folder' : 'Create new folder'} hasBack />
       <ContentWrapper>
         <FormControl space={2}>
           <FormControl.Label>Folder name</FormControl.Label>

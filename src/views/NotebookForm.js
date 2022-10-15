@@ -49,7 +49,7 @@ function NotebookForm({
 
   return (
     <ScreenWrapper>
-      <AppBar title={'Add new notebook'} hasBack />
+      <AppBar title={notebook ? 'Rename notebook' : 'Create new notebook'} hasBack />
       <ContentWrapper>
         <FormControl space={2}>
           <FormControl.Label>Notebook name</FormControl.Label>

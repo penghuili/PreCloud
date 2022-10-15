@@ -19,7 +19,7 @@ function PasswordAlert({ navigate }) {
           <Text fontSize="md" fontWeight="medium">
             Setup your password first
           </Text>
-          <Button onPress={() => navigate(routeNames.passwords)}>Add now</Button>
+          <Button onPress={() => navigate(routeNames.passwords)}>Create now</Button>
         </VStack>
       </Alert>
     );

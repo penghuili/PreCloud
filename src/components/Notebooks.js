@@ -53,7 +53,7 @@ function Notebooks({ navigation }) {
           variant="solid"
           size="xs"
         >
-          Add new notebook
+          Create new notebook
         </Button>
         <HStack space="2" flexWrap="wrap" w="full">
           {notebooks.map(notebook => (

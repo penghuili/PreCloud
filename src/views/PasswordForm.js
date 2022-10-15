@@ -49,7 +49,7 @@ function PasswordForm({
 
   return (
     <ScreenWrapper>
-      <AppBar title={selectedPassword ? 'Update password' : 'Add new password'} hasBack />
+      <AppBar title={selectedPassword ? 'Rename password' : 'Create new password'} hasBack />
       <ContentWrapper>
         <FormControl isInvalid={!!error} space={2}>
           <FormControl.Label>Name</FormControl.Label>
