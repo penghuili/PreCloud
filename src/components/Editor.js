@@ -67,6 +67,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
       const result = await launchCamera({
         mediaType: 'photo',
         selectionLimit: 1,
+        quality: 0.95,
       });
       const file = result.assets[0];
 

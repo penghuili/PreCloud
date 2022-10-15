@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Button, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
@@ -10,6 +11,7 @@ import { platforms } from '../lib/constants';
 import {
   deleteFile,
   encryptionStatus,
+  extractFileNameAndExtension,
   extractFilePath,
   MAX_FILE_SIZE_BYTES,
   MAX_FILE_SIZE_MEGA_BYTES,
@@ -79,7 +81,7 @@ function EncryptFile({ folder, navigate }) {
 
   async function handleTrigger({ name, size, path }) {
     if (name.endsWith('.precloud')) {
-      const newPath = `${folder.path}/${name}`
+      const newPath = `${folder.path}/${name}`;
       await moveFile(path, newPath);
       addFile({ name, path: newPath, size });
       await triggerNext();
@@ -201,12 +203,16 @@ function EncryptFile({ folder, navigate }) {
       const result = await launchCamera({
         mediaType: 'photo',
         selectionLimit: 0,
+        quality: 0.95,
       });
-      const files = result?.assets?.map(f => ({
-        name: f.fileName,
-        size: f.fileSize,
-        path: extractFilePath(f.uri),
-      }));
+      const files = result?.assets?.map(f => {
+        const { extension } = extractFileNameAndExtension(f.fileName);
+        return {
+          name: `${format(new Date(), 'yyyyMMdd_HHmmss')}${extension}`,
+          size: f.fileSize,
+          path: extractFilePath(f.uri),
+        };
+      });
 
       await handleAfterPick(files, setIsEncryptingNewImage);
     } catch (e) {
