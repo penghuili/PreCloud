@@ -61,10 +61,10 @@ function Folders({ navigation }) {
               key={folder.path}
               borderWidth="2"
               borderColor="blue.400"
-              borderTopRightRadius="md"
+              borderTopRightRadius="xl"
               p="2"
               w="20"
-              h="20"
+              h="24"
               mb="2"
               onPress={() => {
                 if (password) {
