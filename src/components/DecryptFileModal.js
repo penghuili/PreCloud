@@ -110,12 +110,20 @@ function DecryptFileModal({ isOpen, file, onPrevious, onNext, hasPrevious, hasNe
               <HStack mt="1" justifyContent="space-between" alignItems="center">
                 <IconButton
                   icon={<Icon name="chevron-back-outline" color={colors.text} />}
-                  onPress={onPrevious}
+                  onPress={() => {
+                    if (hasPrevious) {
+                      onPrevious();
+                    }
+                  }}
                   isDisabled={!hasPrevious}
                 />
                 <IconButton
                   icon={<Icon name="chevron-forward-outline" color={colors.text} />}
-                  onPress={onNext}
+                  onPress={() => {
+                    if (hasNext) {
+                      onNext();
+                    }
+                  }}
                   isDisabled={!hasNext}
                 />
               </HStack>
