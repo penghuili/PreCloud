@@ -1,9 +1,8 @@
-import { format } from 'date-fns';
 import { Button, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
@@ -11,11 +10,11 @@ import { platforms } from '../lib/constants';
 import {
   deleteFile,
   encryptionStatus,
-  extractFileNameAndExtension,
   extractFilePath,
   MAX_FILE_SIZE_BYTES,
   MAX_FILE_SIZE_MEGA_BYTES,
   moveFile,
+  takePhoto,
   writeFile,
 } from '../lib/files';
 import { showToast } from '../lib/toast';
@@ -174,7 +173,7 @@ function EncryptFile({ folder, navigate }) {
     });
   }
 
-  async function pickImages() {
+  async function handlePickImages() {
     try {
       handleBeforePick();
 
@@ -196,25 +195,17 @@ function EncryptFile({ folder, navigate }) {
     }
   }
 
-  async function takePhoto() {
+  async function handleTakePhoto() {
     try {
       handleBeforePick();
 
-      const result = await launchCamera({
-        mediaType: 'photo',
-        selectionLimit: 0,
-        quality: 0.95,
-      });
-      const files = result?.assets?.map(f => {
-        const { extension } = extractFileNameAndExtension(f.fileName);
-        return {
-          name: `${format(new Date(), 'yyyyMMdd_HHmmss')}${extension}`,
-          size: f.fileSize,
-          path: extractFilePath(f.uri),
-        };
-      });
+      const photo = await takePhoto();
+      console.log(photo);
+      if (photo) {
+        const files = [photo];
 
-      await handleAfterPick(files, setIsEncryptingNewImage);
+        await handleAfterPick(files, setIsEncryptingNewImage);
+      }
     } catch (e) {
       await resetPickedFile();
       setIsEncryptingNewImage(false);
@@ -222,7 +213,7 @@ function EncryptFile({ folder, navigate }) {
     }
   }
 
-  async function pickFiles() {
+  async function handlePickFiles() {
     try {
       handleBeforePick();
 
@@ -254,7 +245,7 @@ function EncryptFile({ folder, navigate }) {
           <Button
             isDisabled={!password || isLoading}
             isLoading={isEncryptingImages}
-            onPress={pickImages}
+            onPress={handlePickImages}
             startIcon={<Icon name="image-outline" size={16} color={colors.white} />}
             size="xs"
             mr="2"
@@ -266,7 +257,7 @@ function EncryptFile({ folder, navigate }) {
         <Button
           isDisabled={!password || isLoading}
           isLoading={isEncryptingFiles}
-          onPress={pickFiles}
+          onPress={handlePickFiles}
           startIcon={<Icon name="documents-outline" size={16} color={colors.white} />}
           size="xs"
           mr="2"
@@ -276,7 +267,7 @@ function EncryptFile({ folder, navigate }) {
         <Button
           isDisabled={!password || isLoading}
           isLoading={isEncryptingNewImage}
-          onPress={takePhoto}
+          onPress={handleTakePhoto}
           startIcon={<Icon name="camera-outline" size={16} color={colors.white} />}
           size="xs"
         >

@@ -2,7 +2,7 @@ import { AlertDialog, Box, Button, ScrollView, Text } from 'native-base';
 import React, { forwardRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Image } from 'react-native-compressor';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
@@ -11,6 +11,7 @@ import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
 import { heights, imageLimit } from '../lib/constants';
 import { isAndroid } from '../lib/device';
+import { takePhoto } from '../lib/files';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
@@ -64,16 +65,10 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
     setShowImageActions(false);
 
     try {
-      const result = await launchCamera({
-        mediaType: 'photo',
-        selectionLimit: 1,
-        quality: 0.95,
-      });
-      const file = result.assets[0];
+      const photo = await takePhoto();
+      const resized = await compressImage(photo.path);
 
-      const resized = await compressImage(file.uri);
-
-      ref.current.insertImage(`data:${file.type};base64,${resized}`);
+      ref.current.insertImage(`data:${photo.type};base64,${resized}`);
     } catch (e) {
       console.log(e, 'take photo failed');
     }

@@ -1,4 +1,6 @@
+import { format } from 'date-fns';
 import RNFS from 'react-native-fs';
+import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
 import { isAndroid } from './device';
 
@@ -149,7 +151,7 @@ export async function getFolderSize(folderPath) {
   try {
     const info = await RNFS.stat(folderPath);
     if (info.isFile()) {
-      console.log(info.name, info.size)
+      console.log(info.name, info.size);
       return info.size;
     }
 
@@ -295,7 +297,35 @@ export async function downloadFile({ path, fileName }) {
   }
 }
 
-export function toFixed2(number) {
+export async function takePhoto() {
+  try {
+    const result = await launchCamera({
+      mediaType: 'photo',
+      selectionLimit: 1,
+      saveToPhotos: false,
+      maxWidth: 10000,
+      maxHeight: 10000,
+    });
+
+    const raw = result?.assets?.[0];
+    if (raw) {
+      const { extension } = extractFileNameAndExtension(raw.fileName);
+      return {
+        type: raw.type,
+        name: `${format(new Date(), 'yyyyMMdd_HHmmss')}${extension}`,
+        size: raw.fileSize,
+        path: extractFilePath(raw.uri),
+      };
+    }
+
+    return null;
+  } catch (e) {
+    console.log('take photo failed', e);
+    return null;
+  }
+}
+
+function toFixed2(number) {
   return +number.toFixed(2);
 }
 

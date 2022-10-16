@@ -50,7 +50,6 @@ function Notebook({ navigation }) {
 
           navigation.navigate(routeNames.noteDetails, {
             isNew: false,
-            notebook,
           });
         } else {
           showToast('Decrypt note failed.', 'error');

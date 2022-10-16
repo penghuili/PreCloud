@@ -11,15 +11,11 @@ import { useStore } from '../store/store';
 
 const nodejs = require('nodejs-mobile-react-native');
 
-function NoteDetails({
-  navigation,
-  route: {
-    params: { notebook },
-  },
-}) {
+function NoteDetails({ navigation }) {
   const editorRef = useRef();
 
   const password = useStore(state => state.activePassword);
+  const activeNotebook = useStore(state => state.activeNotebook);
   const activeNote = useStore(state => state.activeNote);
   const noteContent = useStore(state => state.noteContent);
   const setNotes = useStore(state => state.setNotes);
@@ -38,13 +34,13 @@ function NoteDetails({
       if (msg.type === 'encrypted-rich-text') {
         if (msg.payload.data) {
           await makeNotesFolders();
-          await writeFile(`${notebook.path}/${msg.payload.title}.precloudnote`, msg.payload.data);
+          await writeFile(`${activeNotebook.path}/${msg.payload.title}.precloudnote`, msg.payload.data);
 
           if (activeNote?.fileName && msg.payload.title !== activeNote?.fileName) {
             await deleteFile(activeNote.path);
           }
 
-          const notes = await readNotes(notebook.path);
+          const notes = await readNotes(activeNotebook.path);
           setNotes(notes);
 
           if (activeNote) {
@@ -126,7 +122,7 @@ function NoteDetails({
           setIsEditing(true);
         }}
         navigation={navigation}
-        notebook={notebook}
+        notebook={activeNotebook}
       />
     </ScreenWrapper>
   );
