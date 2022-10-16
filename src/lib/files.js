@@ -142,9 +142,14 @@ export async function readFiles(path) {
 }
 
 export async function getFolderSize(folderPath) {
+  if (!folderPath) {
+    return 0;
+  }
+
   try {
     const info = await RNFS.stat(folderPath);
     if (info.isFile()) {
+      console.log(info.name, info.size)
       return info.size;
     }
 

@@ -1,4 +1,4 @@
-import { Actionsheet } from 'native-base';
+import { Actionsheet, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 
 import AppBar from '../components/AppBar';
@@ -9,7 +9,7 @@ import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
-import { deleteFile, readFiles } from '../lib/files';
+import { deleteFile, getFolderSize, getSizeText, readFiles } from '../lib/files';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
@@ -23,10 +23,15 @@ function Folder({ navigation }) {
 
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [folderSize, setFolderSize] = useState(0);
 
   useEffect(() => {
     readFiles(folder.path).then(result => {
       setFiles(result);
+    });
+
+    getFolderSize(folder?.path).then(size => {
+      setFolderSize(size);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folder]);
@@ -68,6 +73,10 @@ function Folder({ navigation }) {
           >
             Delete
           </Actionsheet.Item>
+
+          <Text fontSize="xs" color="gray.400">
+            {getSizeText(folderSize)}
+          </Text>
         </Actionsheet.Content>
       </Actionsheet>
 
