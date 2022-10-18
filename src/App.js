@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import Toast from 'react-native-toast-message';
 import DonateBanner from './components/DonateBanner';
+import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 
 import { getTheme } from './lib/style';
 import { navigationRef } from './router/navigationRef';
@@ -21,6 +22,21 @@ function App() {
     SplashScreen.hide();
     getPasswords();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // To get All Recived Urls
+    ReceiveSharingIntent.getReceivedFiles(
+      files => {
+        console.log(files);
+      },
+      error => {
+        console.log('share file', error);
+      },
+      'com.precloud'
+    );
+
+    return ReceiveSharingIntent.clearReceivedFiles;
   }, []);
 
   return (

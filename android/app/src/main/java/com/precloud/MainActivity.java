@@ -6,6 +6,8 @@ import com.facebook.react.ReactRootView;
 import android.os.Bundle;
 // react-native-splash-screen
 import org.devio.rn.splashscreen.SplashScreen;
+// react-native-receive-sharing-intent
+import android.content.Intent;
 
 public class MainActivity extends ReactActivity {
 
@@ -23,6 +25,13 @@ public class MainActivity extends ReactActivity {
   protected void onCreate(Bundle savedInstanceState) {
       SplashScreen.show(this);
       super.onCreate(savedInstanceState);
+  }
+
+  // react-native-receive-sharing-intent
+  @Override
+  public void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    setIntent(intent);
   }
 
   /**

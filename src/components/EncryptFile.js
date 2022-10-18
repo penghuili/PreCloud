@@ -200,7 +200,6 @@ function EncryptFile({ folder, navigate }) {
       handleBeforePick();
 
       const photo = await takePhoto();
-      console.log(photo);
       if (photo) {
         const files = [photo];
 
