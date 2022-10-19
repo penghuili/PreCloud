@@ -7,6 +7,8 @@
 #import <React/RCTAppSetupUtils.h>
 // react-native-splash-screen
 #import <RNSplashScreen.h>
+// react-native-receive-sharing-intent
+#import <React/RCTLinkingManager.h>
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -109,5 +111,13 @@
 }
 
 #endif
+
+// react-native-receive-sharing-intent
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
 
 @end

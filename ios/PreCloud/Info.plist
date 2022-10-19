@@ -59,5 +59,17 @@
 	<string>PreCloud needs access to the photo library, so you can encrypt your photos.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>PreCloud needs access to take photos, so you can take photo and encrypt it right away.</string>
+	<key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>precloud</string>
+            </array>
+        </dict>
+        <dict/>
+    </array>
 </dict>
 </plist>
