@@ -7,7 +7,7 @@ import Photos
 class ShareViewController: SLComposeServiceViewController {
  let hostAppBundleIdentifier = "com.precloud"
  let shareProtocol = "precloud"
- let sharedKey = "precloud"
+ let sharedKey = "ShareKey"
  var sharedMedia: [SharedMediaFile] = []
  var sharedText: [String] = []
  let imageContentType = kUTTypeImage as String
