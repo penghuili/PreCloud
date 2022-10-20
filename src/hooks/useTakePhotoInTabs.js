@@ -16,13 +16,14 @@ function useTakePhotoInTabs() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log(defaultFolder)
   function handleTakePhoto() {
     const folder = folders.find(f => f.name === defaultFolder);
     if (folder) {
       setActiveFolder(folder);
       takePhoto().then(photo => {
         if (photo) {
-          navigationRef.navigate(routeNames.folder, { pickedFiles: [photo] });
+          navigationRef.navigate(routeNames.folder, { selectedFiles: [photo] });
         }
       });
     }

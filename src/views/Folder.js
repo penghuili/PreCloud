@@ -17,6 +17,7 @@ import { useStore } from '../store/store';
 function Folder({ navigation, route: { params } }) {
   const colors = useColors();
   const folder = useStore(state => state.activeFolder);
+  const files = useStore(state => state.files);
   const defaultFolder = useStore(state => state.defaultFolder);
   const setFiles = useStore(state => state.setFiles);
   const folders = useStore(state => state.folders);
@@ -60,7 +61,7 @@ function Folder({ navigation, route: { params } }) {
           <EncryptFile
             folder={folder}
             navigate={navigation.navigate}
-            pickedFiles={params?.pickedFiles}
+            selectedFiles={params?.selectedFiles}
           />
         )}
       </ContentWrapper>
@@ -94,24 +95,28 @@ function Folder({ navigation, route: { params } }) {
           >
             Rename
           </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="trash-outline" color={colors.text} />}
-            onPress={() => {
-              setShowActions(false);
-              setShowEmptyConfirm(true);
-            }}
-          >
-            Empty folder
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="trash" color={colors.text} />}
-            onPress={() => {
-              setShowDeleteConfirm(true);
-              setShowActions(false);
-            }}
-          >
-            Delete
-          </Actionsheet.Item>
+          {files?.length > 0 && (
+            <Actionsheet.Item
+              startIcon={<Icon name="trash-outline" color={colors.text} />}
+              onPress={() => {
+                setShowActions(false);
+                setShowEmptyConfirm(true);
+              }}
+            >
+              Empty folder
+            </Actionsheet.Item>
+          )}
+          {folder?.name !== defaultFolder && (
+            <Actionsheet.Item
+              startIcon={<Icon name="trash" color={colors.text} />}
+              onPress={() => {
+                setShowDeleteConfirm(true);
+                setShowActions(false);
+              }}
+            >
+              Delete
+            </Actionsheet.Item>
+          )}
 
           <Text fontSize="xs" color="gray.400">
             {getSizeText(folderSize)}
