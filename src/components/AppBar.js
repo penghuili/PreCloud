@@ -5,11 +5,20 @@ import { useWindowDimensions } from 'react-native';
 import logo from '../assets/logo.png';
 import useColors from '../hooks/useColors';
 import { navigationRef } from '../router/navigationRef';
+import { routeNames } from '../router/routes';
 import Icon from './Icon';
 
 function AppBar({ title, hasBack, rightIconName, onRightIconPress }) {
   const colors = useColors();
   const { width } = useWindowDimensions();
+
+  function handleGoBack() {
+    if (navigationRef.canGoBack()) {
+      navigationRef.goBack();
+    } else {
+      navigationRef.navigate('BottomTab', { screen: routeNames.encryptFiles });
+    }
+  }
 
   return (
     <HStack
@@ -25,13 +34,19 @@ function AppBar({ title, hasBack, rightIconName, onRightIconPress }) {
           <IconButton
             size="10"
             icon={<Icon name="chevron-back-outline" size={24} color={colors.text} />}
-            onPress={navigationRef.goBack}
+            onPress={handleGoBack}
           />
         ) : (
           <Avatar source={logo} size="9" mr="2" />
         )}
 
-        <Text color={colors.text} fontSize="md" fontWeight="bold" isTruncated width={width - 16 - 40 - 40}>
+        <Text
+          color={colors.text}
+          fontSize="md"
+          fontWeight="bold"
+          isTruncated
+          width={width - 16 - 40 - 40}
+        >
           {title}
         </Text>
       </HStack>

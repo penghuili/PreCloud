@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
+import useTakePhotoInTabs from '../hooks/useTakePhotoInTabs';
 import EncryptFiles from '../views/EncryptFiles';
 import EncryptNotes from '../views/EncryptNotes';
 import Passwords from '../views/Passwords';
@@ -16,6 +17,7 @@ const Tab = createBottomTabNavigator();
 function BottomTab() {
   const colors = useColors();
   const { bottom } = useSafeAreaInsets();
+  const handleTakePhoto = useTakePhotoInTabs();
 
   function getIconName(routeName, focused) {
     if (routeName === routeNames.encryptNotes) {
@@ -39,6 +41,7 @@ function BottomTab() {
         name={getIconName(routeName, focused)}
         color={color}
         size={routeName === routeNames.takePhoto ? 32 : 20}
+        onPress={routeName === routeNames.takePhoto ? handleTakePhoto : undefined}
       />
     );
   }

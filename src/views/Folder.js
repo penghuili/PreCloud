@@ -29,6 +29,10 @@ function Folder({ navigation, route: { params } }) {
   const [folderSize, setFolderSize] = useState(0);
 
   useEffect(() => {
+    if (!folder) {
+      return;
+    }
+
     readFiles(folder.path).then(result => {
       setFiles(result);
     });
@@ -42,7 +46,7 @@ function Folder({ navigation, route: { params } }) {
   return (
     <ScreenWrapper>
       <AppBar
-        title={folder.name}
+        title={folder?.name}
         hasBack
         rightIconName="ellipsis-vertical-outline"
         onRightIconPress={() => setShowActions(true)}
@@ -51,7 +55,13 @@ function Folder({ navigation, route: { params } }) {
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
 
-        <EncryptFile folder={folder} navigate={navigation.navigate} pickedFiles={params?.pickedFiles} />
+        {!!folder && (
+          <EncryptFile
+            folder={folder}
+            navigate={navigation.navigate}
+            pickedFiles={params?.pickedFiles}
+          />
+        )}
       </ContentWrapper>
 
       <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
@@ -108,9 +118,9 @@ function Folder({ navigation, route: { params } }) {
         onConfirm={async () => {
           setShowDeleteConfirm(false);
           await deleteFile(folder.path);
-          navigation.goBack();
           setFolders(folders.filter(f => f.path !== folder.path));
           setActiveFolder(null);
+          navigation.goBack();
         }}
         isDanger
       />

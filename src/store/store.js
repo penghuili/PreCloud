@@ -136,7 +136,12 @@ export const useStore = create((set, get) => ({
   folders: [],
   setFolders: value => set({ folders: value }),
   getFolders: async () => {
-    const newFolders = await readFilesFolders();
+    let newFolders = await readFilesFolders();
+    if (!newFolders?.length) {
+      await makeFilesFolder('Default');
+      newFolders = await readFilesFolders();
+    }
+  
     let defaultFolder = await LocalStorage.get(LocalStorageKeys.defaultFileFolder);
     if (!defaultFolder) {
       defaultFolder = newFolders[0]?.name || null;
