@@ -134,6 +134,7 @@ function Folder({ navigation, route: { params } }) {
           setShowEmptyConfirm(false);
           await emptyFolder(folder.path);
           setFiles([]);
+          showToast('All files in this folder are deleted.');
         }}
         isDanger
       />
