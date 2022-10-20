@@ -224,7 +224,7 @@ PODS:
   - react-native-compressor (1.6.1):
     - NextLevelSessionExporter
     - React-Core
-  - react-native-document-picker (8.1.1):
+  - react-native-document-picker (8.1.2):
     - React-Core
   - react-native-image-picker (4.10.0):
     - React-Core
@@ -514,7 +514,7 @@ SPEC CHECKSUMS:
   React-jsinspector: c5989c77cb89ae6a69561095a61cce56a44ae8e8
   React-logger: a0833912d93b36b791b7a521672d8ee89107aff1
   react-native-compressor: ebcf8bc36f8e44581a8f831583caee8a27e55a01
-  react-native-document-picker: f68191637788994baed5f57d12994aa32cf8bf88
+  react-native-document-picker: f5ec1a712ca2a975c233117f044817bb8393cad4
   react-native-image-picker: 4bc9ed38c8be255b515d8c88babbaf74973f91a8
   react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e
   react-native-receive-sharing-intent: 62ab28c50e6ae56d32b9e841d7452091312a0bc7

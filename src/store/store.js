@@ -24,6 +24,24 @@ async function setActivePassword(get, set, passwordId) {
   await LocalStorage.set(LocalStorageKeys.activePassword, passwordId || '');
 }
 
+async function makeDefaultFolders(get, set, folders) {
+  let innerFolders = folders;
+  let defaultFolder;
+  if (!innerFolders?.length) {
+    defaultFolder = 'Default';
+    await makeFilesFolder(defaultFolder);
+    innerFolders = await readFilesFolders();
+  } else {
+    defaultFolder = await LocalStorage.get(LocalStorageKeys.defaultFileFolder);
+    if (!defaultFolder || !innerFolders.find(f => f.name === defaultFolder)) {
+      defaultFolder = innerFolders[0].name;
+      await LocalStorage.set(LocalStorageKeys.defaultFileFolder, defaultFolder);
+    }
+  }
+
+  return { defaultFolder, folders: innerFolders };
+}
+
 export const useStore = create((set, get) => ({
   // passwords
   passwords: [],
@@ -135,14 +153,30 @@ export const useStore = create((set, get) => ({
   // files
   folders: [],
   setFolders: value => set({ folders: value }),
+  getFolders: async () => {
+    const currentFolders = await readFilesFolders();
+    const { defaultFolder, folders } = await makeDefaultFolders(get, set, currentFolders);
+
+    set({
+      folders,
+      defaultFolder,
+    });
+  },
+  defaultFolder: null,
   activeFolder: null,
   setActiveFolder: value => set({ activeFolder: value }),
   createFolder: async label => {
     await makeFilesFolder(label);
     const newFolders = await readFilesFolders();
+    const isFirst = newFolders.length === 1;
+    if (isFirst) {
+      await LocalStorage.set(LocalStorageKeys.defaultFileFolder, newFolders[0].name);
+    }
+
     set({
       folders: newFolders,
-      activeFolder: newFolders.find(n => n.name === label.trim()),
+      activeFolder: newFolders.find(n => n.name === label),
+      defaultFolder: isFirst ? label : get().defaultFolder,
     });
   },
   renameFolder: async ({ folder, label }) => {
@@ -151,10 +185,20 @@ export const useStore = create((set, get) => ({
     const newFolders = await readFilesFolders();
     set({ folders: newFolders, activeFolder: newFolder });
   },
+  updateDefaultFolder: async label => {
+    await LocalStorage.set(LocalStorageKeys.defaultFileFolder, label);
+    set({
+      defaultFolder: label,
+    });
+  },
   deleteFolder: async folder => {
     await deleteFileFromPhone(folder.path);
+    const newFolders = get().folders.filter(n => n.path !== folder.path)
+    await LocalStorage.remove(LocalStorageKeys.defaultFileFolder);
+    const { defaultFolder, folders } = await makeDefaultFolders(get, set, newFolders);
     set({
-      folders: get().folders.filter(n => n.path !== folder.path),
+      folders,
+      defaultFolder,
       activeFolder: null,
     });
   },

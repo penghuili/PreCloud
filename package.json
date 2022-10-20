@@ -15,7 +15,7 @@
     "react-native": "0.68.2",
     "react-native-compressor": "1.6.1",
     "react-native-device-info": "10.0.2",
-    "react-native-document-picker": "8.1.1",
+    "react-native-document-picker": "8.1.2",
     "react-native-file-viewer": "2.1.5",
     "react-native-fs": "2.20.0",
     "react-native-image-picker": "4.10.0",
@@ -55,7 +55,7 @@
   },
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "ios": "react-native run-ios --simulator \"iPhone 14\"",
     "postinstall": "patch-package",
     "start": "react-native start",
     "test": "jest",

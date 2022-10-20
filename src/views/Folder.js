@@ -9,23 +9,32 @@ import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
-import { deleteFile, getFolderSize, getSizeText, readFiles } from '../lib/files';
+import { deleteFile, emptyFolder, getFolderSize, getSizeText, readFiles } from '../lib/files';
+import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function Folder({ navigation }) {
+function Folder({ navigation, route: { params } }) {
   const colors = useColors();
   const folder = useStore(state => state.activeFolder);
+  const files = useStore(state => state.files);
+  const defaultFolder = useStore(state => state.defaultFolder);
   const setFiles = useStore(state => state.setFiles);
   const folders = useStore(state => state.folders);
   const setFolders = useStore(state => state.setFolders);
   const setActiveFolder = useStore(state => state.setActiveFolder);
+  const updateDefaultFolder = useStore(state => state.updateDefaultFolder);
 
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
   const [folderSize, setFolderSize] = useState(0);
 
   useEffect(() => {
+    if (!folder) {
+      return;
+    }
+
     readFiles(folder.path).then(result => {
       setFiles(result);
     });
@@ -39,7 +48,7 @@ function Folder({ navigation }) {
   return (
     <ScreenWrapper>
       <AppBar
-        title={folder.name}
+        title={folder?.name}
         hasBack
         rightIconName="ellipsis-vertical-outline"
         onRightIconPress={() => setShowActions(true)}
@@ -48,11 +57,33 @@ function Folder({ navigation }) {
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
 
-        <EncryptFile folder={folder} navigate={navigation.navigate} />
+        {!!folder && (
+          <EncryptFile
+            folder={folder}
+            navigate={navigation.navigate}
+            selectedFiles={params?.selectedFiles}
+          />
+        )}
       </ContentWrapper>
 
       <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
         <Actionsheet.Content>
+          {defaultFolder === folder?.name ? (
+            <Actionsheet.Item startIcon={<Icon name="star" color={colors.text} />}>
+              This is the default folder
+            </Actionsheet.Item>
+          ) : (
+            <Actionsheet.Item
+              startIcon={<Icon name="star-outline" color={colors.text} />}
+              onPress={() => {
+                setShowActions(false);
+                updateDefaultFolder(folder.name);
+                showToast(`Default folder is now ${folder.name}`);
+              }}
+            >
+              Set as default folder
+            </Actionsheet.Item>
+          )}
           <Actionsheet.Item
             startIcon={<Icon name="create-outline" color={colors.text} />}
             onPress={() => {
@@ -64,15 +95,28 @@ function Folder({ navigation }) {
           >
             Rename
           </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="trash-outline" color={colors.text} />}
-            onPress={() => {
-              setShowDeleteConfirm(true);
-              setShowActions(false);
-            }}
-          >
-            Delete
-          </Actionsheet.Item>
+          {files?.length > 0 && (
+            <Actionsheet.Item
+              startIcon={<Icon name="trash-outline" color={colors.text} />}
+              onPress={() => {
+                setShowActions(false);
+                setShowEmptyConfirm(true);
+              }}
+            >
+              Empty folder
+            </Actionsheet.Item>
+          )}
+          {folder?.name !== defaultFolder && (
+            <Actionsheet.Item
+              startIcon={<Icon name="trash" color={colors.text} />}
+              onPress={() => {
+                setShowDeleteConfirm(true);
+                setShowActions(false);
+              }}
+            >
+              Delete
+            </Actionsheet.Item>
+          )}
 
           <Text fontSize="xs" color="gray.400">
             {getSizeText(folderSize)}
@@ -81,17 +125,31 @@ function Folder({ navigation }) {
       </Actionsheet>
 
       <Confirm
-        isOpen={showDeleteConfirm}
+        isOpen={showEmptyConfirm}
         message="All files in this folder will be deleted. Are you sure?"
+        onClose={() => {
+          setShowEmptyConfirm(false);
+        }}
+        onConfirm={async () => {
+          setShowEmptyConfirm(false);
+          await emptyFolder(folder.path);
+          setFiles([]);
+          showToast('All files in this folder are deleted.');
+        }}
+        isDanger
+      />
+      <Confirm
+        isOpen={showDeleteConfirm}
+        message="This folder and all files within will be deleted. Are you sure?"
         onClose={() => {
           setShowDeleteConfirm(false);
         }}
         onConfirm={async () => {
           setShowDeleteConfirm(false);
           await deleteFile(folder.path);
-          navigation.goBack();
           setFolders(folders.filter(f => f.path !== folder.path));
           setActiveFolder(null);
+          navigation.goBack();
         }}
         isDanger
       />

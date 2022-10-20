@@ -7,6 +7,7 @@ export const routeNames = {
   folder: 'folder',
   folderForm: 'folderForm',
   renameFileForm: 'renameFileForm',
+  takePhoto: 'takePhoto',
   passwords: 'passwords',
   passwordForm: 'passwordForm',
   settings: 'settings',
