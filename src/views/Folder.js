@@ -9,7 +9,7 @@ import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
-import { deleteFile, getFolderSize, getSizeText, readFiles } from '../lib/files';
+import { deleteFile, emptyFolder, getFolderSize, getSizeText, readFiles } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
@@ -26,6 +26,7 @@ function Folder({ navigation, route: { params } }) {
 
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
   const [folderSize, setFolderSize] = useState(0);
 
   useEffect(() => {
@@ -96,6 +97,15 @@ function Folder({ navigation, route: { params } }) {
           <Actionsheet.Item
             startIcon={<Icon name="trash-outline" color={colors.text} />}
             onPress={() => {
+              setShowActions(false);
+              setShowEmptyConfirm(true);
+            }}
+          >
+            Empty folder
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="trash" color={colors.text} />}
+            onPress={() => {
               setShowDeleteConfirm(true);
               setShowActions(false);
             }}
@@ -110,8 +120,21 @@ function Folder({ navigation, route: { params } }) {
       </Actionsheet>
 
       <Confirm
-        isOpen={showDeleteConfirm}
+        isOpen={showEmptyConfirm}
         message="All files in this folder will be deleted. Are you sure?"
+        onClose={() => {
+          setShowEmptyConfirm(false);
+        }}
+        onConfirm={async () => {
+          setShowEmptyConfirm(false);
+          await emptyFolder(folder.path);
+          setFiles([]);
+        }}
+        isDanger
+      />
+      <Confirm
+        isOpen={showDeleteConfirm}
+        message="This folder and all files within will be deleted. Are you sure?"
         onClose={() => {
           setShowDeleteConfirm(false);
         }}
