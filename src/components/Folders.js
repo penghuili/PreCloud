@@ -33,7 +33,7 @@ function Folders({ navigation }) {
 
   function renderFolders() {
     if (!folders.length) {
-      return <FoldersEmptyState navigate={navigation.navigate} />
+      return <FoldersEmptyState navigate={navigation.navigate} />;
     }
 
     return (
@@ -64,7 +64,14 @@ function Folders({ navigation }) {
                 }
               }}
             >
-              <Text numberOfLines={3}>{folder.name}</Text>
+              <Text numberOfLines={3} flex="1">
+                {folder.name}
+              </Text>
+              {folder.name === defaultFolder && (
+                <Text fontSize="8" color="gray.400">
+                  Default
+                </Text>
+              )}
             </Pressable>
           ))}
         </HStack>

@@ -16,7 +16,6 @@ function useTakePhotoInTabs() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(defaultFolder)
   function handleTakePhoto() {
     const folder = folders.find(f => f.name === defaultFolder);
     if (folder) {
