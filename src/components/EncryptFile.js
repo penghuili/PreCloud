@@ -42,7 +42,7 @@ async function resetPickedFile() {
   }
 }
 
-function EncryptFile({ folder, navigate }) {
+function EncryptFile({ folder, navigate, pickedFiles }) {
   const password = useStore(state => state.activePassword);
   const colors = useColors();
   const files = useStore(state => state.files);
@@ -153,6 +153,13 @@ function EncryptFile({ folder, navigate }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (pickedFiles) {
+      handleAfterPick(pickedFiles, setIsEncryptingNewImage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickedFiles]);
+
   function handleBeforePick() {
     pickedFiles = [];
     currentIndex = 0;
@@ -200,7 +207,6 @@ function EncryptFile({ folder, navigate }) {
       handleBeforePick();
 
       const photo = await takePhoto();
-      console.log(photo);
       if (photo) {
         const files = [photo];
 
@@ -223,6 +229,7 @@ function EncryptFile({ folder, navigate }) {
         presentationStyle: 'fullScreen',
         copyTo: 'cachesDirectory',
       });
+      console.log(result);
       const files = result.map(f => ({
         name: f.name,
         size: f.size,

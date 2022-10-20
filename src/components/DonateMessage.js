@@ -9,7 +9,7 @@ function DonateMessage({ onDonate, color }) {
 
   return (
     <Text color={color} bold>
-      ❤️ Consider donating $1 to this free and open source app:{' '}
+      🫶 Consider donating $1 to this free and open source app:{' '}
       <Text
         bold
         underline

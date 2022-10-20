@@ -4,6 +4,7 @@ export const LocalStorageKeys = {
   activePassword: 'activePassword',
   donateBannerCheckDate: 'donateBannerCheckDate',
   donateBannerDonateDate: 'donateBannerDonateDate',
+  defaultFileFolder: 'defaultFileFolder',
 };
 
 export const LocalStorage = {
@@ -14,7 +15,8 @@ export const LocalStorage = {
   },
   async get(key) {
     try {
-      return AsyncStorage.getItem(key);
+      const value = await AsyncStorage.getItem(key);
+      return JSON.parse(value);
     } catch (e) {
       return null;
     }

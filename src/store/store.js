@@ -135,14 +135,36 @@ export const useStore = create((set, get) => ({
   // files
   folders: [],
   setFolders: value => set({ folders: value }),
+  getFolders: async () => {
+    const newFolders = await readFilesFolders();
+    let defaultFolder = await LocalStorage.get(LocalStorageKeys.defaultFileFolder);
+    if (!defaultFolder) {
+      defaultFolder = newFolders[0]?.name || null;
+      if (defaultFolder) {
+        await LocalStorage.set(LocalStorageKeys.defaultFileFolder, defaultFolder);
+      }
+    }
+
+    set({
+      folders: newFolders,
+      defaultFolder,
+    });
+  },
+  defaultFolder: null,
   activeFolder: null,
   setActiveFolder: value => set({ activeFolder: value }),
   createFolder: async label => {
     await makeFilesFolder(label);
     const newFolders = await readFilesFolders();
+    const isFirst = newFolders.length === 1
+    if (isFirst) {
+      await LocalStorage.set(LocalStorageKeys.defaultFileFolder, newFolders[0].name);
+    }
+  
     set({
       folders: newFolders,
-      activeFolder: newFolders.find(n => n.name === label.trim()),
+      activeFolder: newFolders.find(n => n.name === label),
+      defaultFolder: isFirst ? label : get().defaultFolder,
     });
   },
   renameFolder: async ({ folder, label }) => {
@@ -150,6 +172,12 @@ export const useStore = create((set, get) => ({
     await moveFile(folder.path, newFolder.path);
     const newFolders = await readFilesFolders();
     set({ folders: newFolders, activeFolder: newFolder });
+  },
+  updateDefaultFolder: async label => {
+    await LocalStorage.set(LocalStorageKeys.defaultFileFolder, label);
+    set({
+      defaultFolder: label,
+    });
   },
   deleteFolder: async folder => {
     await deleteFileFromPhone(folder.path);

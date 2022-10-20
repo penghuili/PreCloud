@@ -10,16 +10,19 @@ import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { deleteFile, getFolderSize, getSizeText, readFiles } from '../lib/files';
+import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function Folder({ navigation }) {
+function Folder({ navigation, route: { params } }) {
   const colors = useColors();
   const folder = useStore(state => state.activeFolder);
+  const defaultFolder = useStore(state => state.defaultFolder);
   const setFiles = useStore(state => state.setFiles);
   const folders = useStore(state => state.folders);
   const setFolders = useStore(state => state.setFolders);
   const setActiveFolder = useStore(state => state.setActiveFolder);
+  const updateDefaultFolder = useStore(state => state.updateDefaultFolder);
 
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -48,11 +51,27 @@ function Folder({ navigation }) {
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
 
-        <EncryptFile folder={folder} navigate={navigation.navigate} />
+        <EncryptFile folder={folder} navigate={navigation.navigate} pickedFiles={params?.pickedFiles} />
       </ContentWrapper>
 
       <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
         <Actionsheet.Content>
+          {defaultFolder === folder?.name ? (
+            <Actionsheet.Item startIcon={<Icon name="star" color={colors.text} />}>
+              This is the default folder
+            </Actionsheet.Item>
+          ) : (
+            <Actionsheet.Item
+              startIcon={<Icon name="star-outline" color={colors.text} />}
+              onPress={() => {
+                setShowActions(false);
+                updateDefaultFolder(folder.name);
+                showToast(`Default folder is now ${folder.name}`);
+              }}
+            >
+              Set as default folder
+            </Actionsheet.Item>
+          )}
           <Actionsheet.Item
             startIcon={<Icon name="create-outline" color={colors.text} />}
             onPress={() => {
