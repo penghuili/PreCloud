@@ -6,8 +6,6 @@ import com.facebook.react.ReactRootView;
 import android.os.Bundle;
 // react-native-splash-screen
 import org.devio.rn.splashscreen.SplashScreen;
-// react-native-receive-sharing-intent
-import android.content.Intent;
 
 public class MainActivity extends ReactActivity {
 
@@ -27,16 +25,9 @@ public class MainActivity extends ReactActivity {
       super.onCreate(savedInstanceState);
   }
 
-  // react-native-receive-sharing-intent
-  @Override
-  public void onNewIntent(Intent intent) {
-    super.onNewIntent(intent);
-    setIntent(intent);
-  }
-
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
-   * you can specify the rendered you wish to use (Fabric or the older renderer).
+   * you can specify the renderer you wish to use - the new renderer (Fabric) or the old renderer
    */
   @Override
   protected ReactActivityDelegate createReactActivityDelegate() {
@@ -54,6 +45,13 @@ public class MainActivity extends ReactActivity {
       // If you opted-in for the New Architecture, we enable the Fabric Renderer.
       reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
       return reactRootView;
+    }
+
+    @Override
+    protected boolean isConcurrentRootEnabled() {
+      // If you opted-in for the New Architecture, we enable Concurrent Root (i.e. React 18).
+      // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
+      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     }
   }
 }

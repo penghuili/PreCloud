@@ -1,7 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useEffect } from 'react';
-import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import SplashScreen from 'react-native-splash-screen';
 import Toast from 'react-native-toast-message';
 
@@ -16,20 +15,6 @@ const nodejs = require('nodejs-mobile-react-native');
 function App() {
   const theme = getTheme();
   const getPasswords = useStore(state => state.getPasswords);
-
-  useEffect(() => {
-    ReceiveSharingIntent.getReceivedFiles(
-      files => {
-        console.log('files', files);
-      },
-      error => {
-        console.log('error', error);
-      },
-      'precloud'
-    );
-
-    return ReceiveSharingIntent.clearReceivedFiles;
-  }, []);
 
   useEffect(() => {
     nodejs.start('main.js');

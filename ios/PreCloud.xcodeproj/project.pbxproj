@@ -14,9 +14,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-PreCloud-PreCloudTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-PreCloud-PreCloudTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		B835B95F29004A72008ACB8A /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B835B95E29004A72008ACB8A /* ShareViewController.swift */; };
-		B835B96229004A72008ACB8A /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B835B96029004A72008ACB8A /* MainInterface.storyboard */; };
-		B835B96629004A72008ACB8A /* PreCloudShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B835B95C29004A71008ACB8A /* PreCloudShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E2F9E7A2289B0EED0071DC84 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = E2F9E7A1289B0EED0071DC84 /* fonts */; };
 /* End PBXBuildFile section */
 
@@ -28,13 +25,6 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = PreCloud;
 		};
-		B835B96429004A72008ACB8A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B835B95B29004A71008ACB8A;
-			remoteInfo = PreCloudShare;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,7 +34,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B835B96629004A72008ACB8A /* PreCloudShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,11 +57,6 @@
 		5DCACB8F33CDC322A6C60F78 /* libPods-PreCloud.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PreCloud.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = PreCloud/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-PreCloud-PreCloudTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PreCloud-PreCloudTests.release.xcconfig"; path = "Target Support Files/Pods-PreCloud-PreCloudTests/Pods-PreCloud-PreCloudTests.release.xcconfig"; sourceTree = "<group>"; };
-		B835B95C29004A71008ACB8A /* PreCloudShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PreCloudShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		B835B95E29004A72008ACB8A /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		B835B96129004A72008ACB8A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		B835B96329004A72008ACB8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B835B96A29004BA0008ACB8A /* PreCloudShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PreCloudShare.entitlements; sourceTree = "<group>"; };
 		B8A904CD28FF34FB003CA0E5 /* PreCloud.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PreCloud.entitlements; path = PreCloud/PreCloud.entitlements; sourceTree = "<group>"; };
 		E2F9E7A1289B0EED0071DC84 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -92,13 +76,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-PreCloud.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B835B95929004A71008ACB8A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,7 +137,6 @@
 				13B07FAE1A68108700A75B9A /* PreCloud */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* PreCloudTests */,
-				B835B95D29004A72008ACB8A /* PreCloudShare */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -175,20 +151,8 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* PreCloud.app */,
 				00E356EE1AD99517003FC87E /* PreCloudTests.xctest */,
-				B835B95C29004A71008ACB8A /* PreCloudShare.appex */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		B835B95D29004A72008ACB8A /* PreCloudShare */ = {
-			isa = PBXGroup;
-			children = (
-				B835B96A29004BA0008ACB8A /* PreCloudShare.entitlements */,
-				B835B95E29004A72008ACB8A /* ShareViewController.swift */,
-				B835B96029004A72008ACB8A /* MainInterface.storyboard */,
-				B835B96329004A72008ACB8A /* Info.plist */,
-			);
-			path = PreCloudShare;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -247,29 +211,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				B835B96529004A72008ACB8A /* PBXTargetDependency */,
 			);
 			name = PreCloud;
 			productName = PreCloud;
 			productReference = 13B07F961A680F5B00A75B9A /* PreCloud.app */;
 			productType = "com.apple.product-type.application";
-		};
-		B835B95B29004A71008ACB8A /* PreCloudShare */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B835B96729004A72008ACB8A /* Build configuration list for PBXNativeTarget "PreCloudShare" */;
-			buildPhases = (
-				B835B95829004A71008ACB8A /* Sources */,
-				B835B95929004A71008ACB8A /* Frameworks */,
-				B835B95A29004A71008ACB8A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = PreCloudShare;
-			productName = PreCloudShare;
-			productReference = B835B95C29004A71008ACB8A /* PreCloudShare.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -286,9 +232,6 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
-					};
-					B835B95B29004A71008ACB8A = {
-						CreatedOnToolsVersion = 14.0.1;
 					};
 				};
 			};
@@ -307,7 +250,6 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* PreCloud */,
 				00E356ED1AD99517003FC87E /* PreCloudTests */,
-				B835B95B29004A71008ACB8A /* PreCloudShare */,
 			);
 		};
 /* End PBXProject section */
@@ -327,14 +269,6 @@
 				E2F9E7A2289B0EED0071DC84 /* fonts in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B835B95A29004A71008ACB8A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B835B96229004A72008ACB8A /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,14 +480,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B835B95829004A71008ACB8A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B835B95F29004A72008ACB8A /* ShareViewController.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -562,23 +488,7 @@
 			target = 13B07F861A680F5B00A75B9A /* PreCloud */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
-		B835B96529004A72008ACB8A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B835B95B29004A71008ACB8A /* PreCloudShare */;
-			targetProxy = B835B96429004A72008ACB8A /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		B835B96029004A72008ACB8A /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B835B96129004A72008ACB8A /* Base */,
-			);
-			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
@@ -636,7 +546,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-PreCloud.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PreCloud/PreCloud.entitlements;
@@ -665,7 +574,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-PreCloud.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PreCloud/PreCloud.entitlements;
@@ -721,7 +629,8 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				EXCLUDED_ARCHS = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -755,6 +664,7 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -792,7 +702,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -818,86 +728,9 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		B835B96829004A72008ACB8A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = PreCloudShare/PreCloudShare.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = J6WAWW2FK9;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PreCloudShare/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = PreCloudShare;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.precloud.PreCloudShare;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		B835B96929004A72008ACB8A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = PreCloudShare/PreCloudShare.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = J6WAWW2FK9;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PreCloudShare/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = PreCloudShare;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.precloud.PreCloudShare;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -927,15 +760,6 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B835B96729004A72008ACB8A /* Build configuration list for PBXNativeTarget "PreCloudShare" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B835B96829004A72008ACB8A /* Debug */,
-				B835B96929004A72008ACB8A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
