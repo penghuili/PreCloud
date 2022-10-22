@@ -35,6 +35,6 @@ const appSettingsContent = JSON.stringify({ ...appSettings, buildDate: Date.now(
 writeFileSync(appSettingsPath, `${appSettingsContent}\n`);
 console.log(`Build date written to ${appSettingsContent}`);
 
-execSync(`git cc -am "chore: Android ${newAndroidNumber}, iOS ${newIOSNumber}"`, {
+execSync(`git cc -am "build-number: Android ${newAndroidNumber}, iOS ${newIOSNumber}"`, {
   stdio: 'inherit',
 });
