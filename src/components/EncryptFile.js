@@ -272,6 +272,7 @@ function EncryptFile({ folder, navigate, selectedFiles }) {
       <DecryptFileModal
         isOpen={showDecryptModal}
         file={activeFile}
+        folder={folder}
         hasPrevious={activeFileIndex > 0}
         onPrevious={() => {
           const newIndex = activeFileIndex - 1;
@@ -288,6 +289,7 @@ function EncryptFile({ folder, navigate, selectedFiles }) {
           setShowDecryptModal(false);
           setActiveFile(null);
         }}
+        navigate={navigate}
       />
     </VStack>
   );

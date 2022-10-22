@@ -4,10 +4,13 @@ import React, { useState } from 'react';
 import useColors from '../hooks/useColors';
 import { deleteFile } from '../lib/files';
 import { showToast } from '../lib/toast';
+import { useStore } from '../store/store';
 import Icon from './Icon';
 
 function DeleteButton({ file, onDelete }) {
   const colors = useColors();
+  const files = useStore(store => store.files);
+  const setFiles = useStore(store => store.setFiles);
 
   const [isPending, setIsPending] = useState(false);
 
@@ -15,7 +18,8 @@ function DeleteButton({ file, onDelete }) {
     setIsPending(true);
 
     try {
-      await deleteFile(file);
+      await deleteFile(file.path);
+      setFiles(files.filter(n => n.path !== file.path));
       showToast('Deleted!');
 
       if (onDelete) {

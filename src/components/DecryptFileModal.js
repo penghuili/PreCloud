@@ -11,12 +11,14 @@ import {
 import { decryptFile } from '../lib/openpgp';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
+import DeleteButton from './DeleteButton';
 import DownloadButton from './DownloadButton';
 import Icon from './Icon';
+import MoveToButton from './MoveToButton';
 import OpenFileButton from './OpenFileButton';
 import ShareButton from './ShareButton';
 
-function DecryptFileModal({ isOpen, file, onPrevious, onNext, hasPrevious, hasNext, onClose }) {
+function DecryptFileModal({ isOpen, file, folder, onPrevious, onNext, hasPrevious, hasNext, onClose, navigate }) {
   const password = useStore(state => state.activePassword);
   const colors = useColors();
 
@@ -78,6 +80,8 @@ function DecryptFileModal({ isOpen, file, onPrevious, onNext, hasPrevious, hasNe
                   <OpenFileButton file={decryptedFile} />
                   <ShareButton file={decryptedFile} />
                   <DownloadButton file={decryptedFile} />
+                  <MoveToButton file={file} folder={folder} onMove={handleClose} navigate={navigate} />
+                  <DeleteButton file={file} onDelete={handleClose} />
                 </HStack>
               </VStack>
 
