@@ -27,7 +27,7 @@ You can safely upload the encrypted texts or files to wherever you want, making 
 - [x] Release iOS version;
 - [ ] Buy the precloud.me domain, if there are 1000 app downloads;
 - [ ] Create web version, if there are 1000 app downloads;
-- [ ] Encrypt large files. Currently you can encrypt files that are smaller than 20MB;
+- [x] Encrypt large files. Now you can encrypt files that are up to 200MB;
 
 ---
 
