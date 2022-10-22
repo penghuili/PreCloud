@@ -21,6 +21,7 @@ export const viewableFileTypes = [
   'txt',
   'webp',
   'mp4',
+  'mov',
 ];
 
 export const fileCachePaths = {
