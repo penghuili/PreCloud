@@ -1,6 +1,5 @@
 import { Button, HStack, IconButton, Modal, Spinner, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import RNFS from 'react-native-fs';
 
 import useColors from '../hooks/useColors';
 import {
@@ -8,16 +7,14 @@ import {
   extractFileNameFromPath,
   fileCachePaths,
   makeFileCacheFolders,
-  writeFile,
 } from '../lib/files';
+import { decryptFile } from '../lib/openpgp';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import DownloadButton from './DownloadButton';
 import Icon from './Icon';
 import OpenFileButton from './OpenFileButton';
 import ShareButton from './ShareButton';
-
-const nodejs = require('nodejs-mobile-react-native');
 
 function DecryptFileModal({ isOpen, file, onPrevious, onNext, hasPrevious, hasNext, onClose }) {
   const password = useStore(state => state.activePassword);
@@ -26,62 +23,39 @@ function DecryptFileModal({ isOpen, file, onPrevious, onNext, hasPrevious, hasNe
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [decryptedFile, setDecryptedFile] = useState(null);
 
-  async function handleTrigger() {
+  useEffect(() => {
+    setDecryptedFile(null);
+    if (file && password) {
+      triggerDecrypt();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file, password]);
+
+  async function triggerDecrypt() {
     if (!file.name.endsWith('precloud')) {
       await deleteFile(file.path);
       showToast('Only select files ending with .precloud', 'error');
     }
 
     setIsDecrypting(true);
-    const fileBase64 = await RNFS.readFile(file.path, 'base64');
-    nodejs.channel.send({
-      type: 'decrypt-file',
-      data: { fileBase64, password, name: file.name, path: file.path },
-    });
-  }
 
-  useEffect(() => {
-    setDecryptedFile(null);
-    if (file && password) {
-      handleTrigger();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file, password]);
-
-  async function handleDecrypted(payload) {
     await makeFileCacheFolders();
+    const name = extractFileNameFromPath(file.path);
+    const paths = name.split('.');
+    paths.pop();
+    const fileName = paths.join('.');
+    const newPath = `${fileCachePaths.decrypted}/${fileName}`;
+    const success = await decryptFile(file.path, newPath, password);
 
-    if (payload.data) {
-      const name = extractFileNameFromPath(payload.path);
-      const paths = name.split('.');
-      paths.pop();
-      const fileName = paths.join('.');
-      const newPath = `${fileCachePaths.decrypted}/${fileName}`;
-      await writeFile(newPath, payload.data);
-
+    if (success) {
       setDecryptedFile({ path: newPath, name: fileName });
     } else {
-      console.log('Decrypt file failed.', payload.error);
       showToast('Decrypt file failed.', 'error');
       handleClose();
     }
 
     setIsDecrypting(false);
   }
-
-  useEffect(() => {
-    const listener = async msg => {
-      if (msg.type === 'decrypted-file') {
-        await handleDecrypted(msg.payload);
-      }
-    };
-    nodejs.channel.addListener('message', listener);
-
-    return () => {
-      nodejs.channel.removeListener('message', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   function handleClose() {
     setIsDecrypting(false);

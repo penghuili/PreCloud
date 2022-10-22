@@ -1,3 +1,6 @@
+// react-native-fast-openpgp
+import 'fast-text-encoding';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useEffect } from 'react';
@@ -10,14 +13,11 @@ import { navigationRef } from './router/navigationRef';
 import Router from './router/Router';
 import { useStore } from './store/store';
 
-const nodejs = require('nodejs-mobile-react-native');
-
 function App() {
   const theme = getTheme();
   const getPasswords = useStore(state => state.getPasswords);
 
   useEffect(() => {
-    nodejs.start('main.js');
     SplashScreen.hide();
     getPasswords();
     // eslint-disable-next-line react-hooks/exhaustive-deps

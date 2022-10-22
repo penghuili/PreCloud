@@ -1,5 +1,3 @@
-const blacklist = require('metro-config/src/defaults/exclusionList');
-
 module.exports = {
   transformer: {
     getTransformOptions: async () => ({
@@ -8,12 +6,5 @@ module.exports = {
         inlineRequires: true,
       },
     }),
-  },
-  resolver: {
-    blacklistRE: blacklist([
-      /\/nodejs-assets\/.*/,
-      /\/android\/.*/,
-      /\/ios\/.*/
-    ])
   },
 };

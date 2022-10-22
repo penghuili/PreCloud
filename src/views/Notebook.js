@@ -11,12 +11,17 @@ import NoteItem from '../components/NoteItem';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
-import { deleteFile, extractFilePath, readNotes } from '../lib/files';
+import {
+  deleteFile,
+  extractFilePath,
+  fileCachePaths,
+  makeFileCacheFolders,
+  readNotes,
+} from '../lib/files';
+import { decryptFile } from '../lib/openpgp';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
-
-const nodejs = require('nodejs-mobile-react-native');
 
 function Notebook({ navigation }) {
   const colors = useColors();
@@ -40,30 +45,6 @@ function Notebook({ navigation }) {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notebook]);
-
-  useEffect(() => {
-    const listener = async msg => {
-      if (msg.type === 'decrypted-rich-text') {
-        if (!msg.payload.error) {
-          setNoteContent(msg.payload.data || '');
-          showToast('Note is decrypted.');
-
-          navigation.navigate(routeNames.noteDetails, {
-            isNew: false,
-          });
-        } else {
-          showToast('Decrypt note failed.', 'error');
-        }
-      }
-    };
-
-    nodejs.channel.addListener('message', listener);
-
-    return () => {
-      nodejs.channel.removeListener('message', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   function handleAddNote() {
     setActiveNote(null);
@@ -107,12 +88,22 @@ function Notebook({ navigation }) {
 
   async function handleOpenNote(note) {
     setActiveNote(note);
-    const base64 = await FS.readFile(note.path, 'base64');
+    await makeFileCacheFolders();
+    const outputPath = `${fileCachePaths.decrypted}/${note.fileName}.txt`;
+    const success = await decryptFile(note.path, outputPath, password);
 
-    nodejs.channel.send({
-      type: 'decrypt-rich-text',
-      data: { fileBase64: base64, password },
-    });
+    if (success) {
+      const decryptedNote = await FS.readFile(outputPath, 'utf8');
+      await deleteFile(outputPath);
+      setNoteContent(decryptedNote || '');
+      showToast('Note is decrypted.');
+
+      navigation.navigate(routeNames.noteDetails, {
+        isNew: false,
+      });
+    } else {
+      showToast('Decrypt note failed.', 'error');
+    }
   }
 
   function renderNotes() {

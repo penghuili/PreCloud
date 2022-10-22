@@ -27,7 +27,7 @@ export async function getPasswords() {
         : { id: defaultId, label: 'Primary password', password: arr[0] };
     });
   } catch (e) {
-    console.log(e);
+    console.log('read keychain failed', e);
     return [];
   }
 }

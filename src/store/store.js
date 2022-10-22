@@ -28,7 +28,7 @@ async function makeDefaultFolders(get, set, folders) {
   let innerFolders = folders;
   let defaultFolder;
   if (!innerFolders?.length) {
-    defaultFolder = 'Default';
+    defaultFolder = 'Inbox';
     await makeFilesFolder(defaultFolder);
     innerFolders = await readFilesFolders();
   } else {

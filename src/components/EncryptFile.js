@@ -15,16 +15,14 @@ import {
   MAX_FILE_SIZE_MEGA_BYTES,
   moveFile,
   takePhoto,
-  writeFile,
 } from '../lib/files';
+import { encryptFile } from '../lib/openpgp';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import DecryptFileModal from './DecryptFileModal';
 import FileItem from './FileItem';
 import Icon from './Icon';
 import PlatformToggle from './PlatformToggle';
-
-const nodejs = require('nodejs-mobile-react-native');
 
 let pickedFiles = [];
 let currentIndex = 0;
@@ -55,30 +53,20 @@ function EncryptFile({ folder, navigate, selectedFiles }) {
   const [activeFile, setActiveFile] = useState(null);
   const [activeFileIndex, setActiveFileIndex] = useState(null);
 
+  useEffect(() => {
+    if (selectedFiles?.length) {
+      handleAfterPick(selectedFiles, setIsEncryptingNewImage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFiles]);
+
   function resetLoading() {
     setIsEncryptingFiles(false);
     setIsEncryptingImages(false);
     setIsEncryptingNewImage(false);
   }
 
-  async function triggerNext() {
-    if (currentIndex + 1 < pickedFiles.length) {
-      currentIndex = currentIndex + 1;
-      const nextFile = pickedFiles[currentIndex];
-
-      await handleTrigger({
-        name: nextFile.name,
-        size: nextFile.size,
-        path: nextFile.path,
-      });
-    } else {
-      resetLoading();
-      await resetPickedFile();
-      showToast('Your files are encrypted and saved on your phone!');
-    }
-  }
-
-  async function handleTrigger({ name, size, path }) {
+  async function triggerEncrypt({ name, size, path }) {
     if (name.endsWith('.precloud')) {
       const newPath = `${folder.path}/${name}`;
       await moveFile(path, newPath);
@@ -94,71 +82,47 @@ function EncryptFile({ folder, navigate, selectedFiles }) {
       return;
     }
 
-    const fileBase64 = await RNFS.readFile(path, 'base64');
-    nodejs.channel.send({
-      type: 'encrypt-file',
-      data: { fileBase64, name, path, password },
-    });
-  }
+    const fileName = `${name}.precloud`;
+    const outputPath = `${folder.path}/${fileName}`;
+    const success = await encryptFile(path, outputPath, password);
 
-  async function handleEncrypted(payload) {
     let processedFile;
-    try {
-      if (payload.data) {
-        const fileName = `${payload.name}.precloud`;
-        const newPath = `${folder.path}/${fileName}`;
-        await writeFile(newPath, payload.data);
-        const { size } = await RNFS.stat(newPath);
-
-        processedFile = {
-          name: fileName,
-          path: newPath,
-          size,
-          originalPath: payload.path,
-          status: encryptionStatus.encrypted,
-        };
-      } else {
-        console.log(`Encrypt file failed for ${payload.name}`, payload.error);
-        processedFile = {
-          name: payload.name,
-          path: payload.path,
-          status: encryptionStatus.error,
-        };
-      }
-    } catch (e) {
-      console.log(`Save encrypted file failed for ${payload.name}`, e);
+    if (success) {
+      const { size: newSize } = await RNFS.stat(outputPath);
       processedFile = {
-        name: payload.name,
-        path: payload.path,
+        name: fileName,
+        path: outputPath,
+        size: newSize,
+        status: encryptionStatus.encrypted,
+      };
+    } else {
+      processedFile = {
+        name,
+        path,
         status: encryptionStatus.error,
       };
     }
-
     addFile(processedFile);
+
+    await triggerNext();
   }
 
-  useEffect(() => {
-    const listener = async msg => {
-      if (msg.type === 'encrypted-file') {
-        await handleEncrypted(msg.payload);
-        await triggerNext();
-      }
-    };
+  async function triggerNext() {
+    if (currentIndex + 1 < pickedFiles.length) {
+      currentIndex = currentIndex + 1;
+      const nextFile = pickedFiles[currentIndex];
 
-    nodejs.channel.addListener('message', listener);
-
-    return () => {
-      nodejs.channel.removeListener('message', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (selectedFiles?.length) {
-      handleAfterPick(selectedFiles, setIsEncryptingNewImage);
+      await triggerEncrypt({
+        name: nextFile.name,
+        size: nextFile.size,
+        path: nextFile.path,
+      });
+    } else {
+      resetLoading();
+      await resetPickedFile();
+      showToast('Your files are encrypted and saved on your phone!');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFiles]);
+  }
 
   function handleBeforePick() {
     pickedFiles = [];
@@ -173,7 +137,7 @@ function EncryptFile({ folder, navigate, selectedFiles }) {
 
     setIsEncrypting(true);
     const firstFile = files[0];
-    await handleTrigger({
+    await triggerEncrypt({
       name: firstFile.name,
       size: firstFile.size,
       path: firstFile.path,

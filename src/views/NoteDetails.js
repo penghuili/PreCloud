@@ -5,11 +5,17 @@ import AppBar from '../components/AppBar';
 import Editor from '../components/Editor';
 import NoteItemActions from '../components/NoteItemActions';
 import ScreenWrapper from '../components/ScreenWrapper';
-import { deleteFile, makeNotesFolders, readNotes, writeFile } from '../lib/files';
+import {
+  deleteFile,
+  fileCachePaths,
+  makeFileCacheFolders,
+  makeNotesFolders,
+  readNotes,
+  writeFile,
+} from '../lib/files';
+import { encryptFile } from '../lib/openpgp';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
-
-const nodejs = require('nodejs-mobile-react-native');
 
 function NoteDetails({ navigation }) {
   const editorRef = useRef();
@@ -29,51 +35,38 @@ function NoteDetails({ navigation }) {
     setTitle(activeNote?.fileName || '');
   }, [activeNote]);
 
-  useEffect(() => {
-    const listener = async msg => {
-      if (msg.type === 'encrypted-rich-text') {
-        if (msg.payload.data) {
-          await makeNotesFolders();
-          await writeFile(`${activeNotebook.path}/${msg.payload.title}.precloudnote`, msg.payload.data);
-
-          if (activeNote?.fileName && msg.payload.title !== activeNote?.fileName) {
-            await deleteFile(activeNote.path);
-          }
-
-          const notes = await readNotes(activeNotebook.path);
-          setNotes(notes);
-
-          if (activeNote) {
-            setIsEditing(false);
-          } else {
-            navigation.goBack();
-          }
-
-          showToast('Your note is encrypted and saved on your phone.');
-        } else {
-          showToast('Encryption failed.', 'error');
-        }
-      }
-    };
-
-    nodejs.channel.addListener('message', listener);
-
-    return () => {
-      nodejs.channel.removeListener('message', listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   async function handleSave() {
     if (!title.trim()) {
       showToast('Please add a title', 'error');
       return;
     }
 
-    nodejs.channel.send({
-      type: 'encrypt-rich-text',
-      data: { title: title.trim(), content, password },
-    });
+    await makeFileCacheFolders();
+    await makeNotesFolders();
+    const trimedTitle = title.trim();
+    const inputPath = `${fileCachePaths.decrypted}/${trimedTitle}.txt`;
+    await writeFile(inputPath, content || '', 'utf8');
+    const outputPath = `${activeNotebook.path}/${trimedTitle}.precloudnote`;
+    const success = await encryptFile(inputPath, outputPath, password);
+
+    if (success) {
+      if (activeNote?.fileName && trimedTitle !== activeNote?.fileName) {
+        await deleteFile(activeNote.path);
+      }
+
+      const notes = await readNotes(activeNotebook.path);
+      setNotes(notes);
+
+      if (activeNote) {
+        setIsEditing(false);
+      } else {
+        navigation.goBack();
+      }
+
+      showToast('Your note is encrypted and saved on your phone.');
+    } else {
+      showToast('Encryption failed.', 'error');
+    }
   }
 
   const editable = !activeNote || isEditing;

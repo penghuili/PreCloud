@@ -11,7 +11,7 @@ import {
   TextArea,
   VStack,
 } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Keyboard } from 'react-native';
 
 import AppBar from '../components/AppBar';
@@ -20,10 +20,9 @@ import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
+import { decryptText, encryptText } from '../lib/openpgp';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
-
-const nodejs = require('nodejs-mobile-react-native');
 
 function PlainText({ navigation }) {
   const password = useStore(state => state.activePassword);
@@ -31,57 +30,29 @@ function PlainText({ navigation }) {
   const [text, setText] = useState('');
   const [encryptedText, setEncryptedText] = useState('');
 
-  useEffect(() => {
-    const listner = async msg => {
-      if (msg.type === 'encrypted-text') {
-        if (msg.payload.data) {
-          setEncryptedText(msg.payload.data);
-          Keyboard.dismiss();
-          showToast('Encrypted.');
-        } else {
-          showToast('Encrypt text failed.', 'error');
-        }
-      } else if (msg.type === 'decrypted-text') {
-        if (msg.payload.data) {
-          setText(msg.payload.data);
-          showToast('Decrypted.');
-        } else {
-          showToast(
-            'Decrypt text failed. Please only decrypt texts that are encrypted by this app.',
-            'error'
-          );
-        }
-      }
-    };
-    nodejs.channel.addListener('message', listner);
-
-    return () => {
-      nodejs.channel.removeListener('message', listner);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const encryptText = async message => {
-    try {
-      nodejs.channel.send({
-        type: 'encrypt-text',
-        data: { text: message, password },
-      });
-    } catch (error) {
-      console.log(error);
+  async function handleEncryptText(message) {
+    const encrypted = await encryptText(message, password);
+    if (encrypted) {
+      setEncryptedText(encrypted);
+      Keyboard.dismiss();
+      showToast('Encrypted.');
+    } else {
+      showToast('Encrypt text failed.', 'error');
     }
-  };
+  }
 
-  const decryptText = async message => {
-    try {
-      nodejs.channel.send({
-        type: 'decrypt-text',
-        data: { encryptedText: message, password },
-      });
-    } catch (error) {
-      console.log(error);
+  async function handleDecryptText(message) {
+    const decrypted = await decryptText(message, password);
+    if (decrypted) {
+      setText(decrypted);
+      showToast('Decrypted.');
+    } else {
+      showToast(
+        'Decrypt text failed. Please only decrypt texts that are encrypted by this app.',
+        'error'
+      );
     }
-  };
+  }
 
   function renderEncryption() {
     return (
@@ -112,7 +83,7 @@ function PlainText({ navigation }) {
           <Button
             isDisabled={!password || !text}
             endIcon={<Icon name="chevron-down-outline" color={colors.white} />}
-            onPress={() => encryptText(text)}
+            onPress={() => handleEncryptText(text)}
           >
             Encrypt
           </Button>
@@ -180,7 +151,7 @@ function PlainText({ navigation }) {
           <Button
             isDisabled={!password || !encryptedText}
             endIcon={<Icon name="chevron-up-outline" color={colors.white} />}
-            onPress={() => decryptText(encryptedText)}
+            onPress={() => handleDecryptText(encryptedText)}
           >
             Decrypt
           </Button>

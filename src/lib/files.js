@@ -151,7 +151,6 @@ export async function getFolderSize(folderPath) {
   try {
     const info = await RNFS.stat(folderPath);
     if (info.isFile()) {
-      console.log(info.name, info.size);
       return info.size;
     }
 
