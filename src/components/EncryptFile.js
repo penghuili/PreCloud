@@ -11,6 +11,7 @@ import {
   deleteFile,
   encryptionStatus,
   extractFilePath,
+  MAX_FILE_SIZE_BYTES,
   MAX_FILE_SIZE_MEGA_BYTES,
   moveFile,
   takePhoto,
@@ -74,12 +75,12 @@ function EncryptFile({ folder, navigate, selectedFiles }) {
       return;
     }
 
-    // if (size > MAX_FILE_SIZE_BYTES) {
-    //   await deleteFile(path);
-    //   addFile({ name, path, size, status: encryptionStatus.tooLarge });
-    //   await triggerNext();
-    //   return;
-    // }
+    if (size > MAX_FILE_SIZE_BYTES) {
+      await deleteFile(path);
+      addFile({ name, path, size, status: encryptionStatus.tooLarge });
+      await triggerNext();
+      return;
+    }
 
     const fileName = `${name}.precloud`;
     const outputPath = `${folder.path}/${fileName}`;

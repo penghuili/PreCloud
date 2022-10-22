@@ -4,7 +4,7 @@ import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
 import { isAndroid } from './device';
 
-export const MAX_FILE_SIZE_MEGA_BYTES = 20;
+export const MAX_FILE_SIZE_MEGA_BYTES = 200;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MEGA_BYTES * 1024 * 1024;
 
 export const viewableFileTypes = [
