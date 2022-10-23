@@ -101,18 +101,17 @@ export async function readNotes(path) {
     .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
 }
 
-export async function makeFilesFolder(label) {
-  const trimed = label?.trim();
-  if (!trimed) {
+export async function makeFilesFolder(path) {
+  if (!path) {
     return;
   }
 
   await makeFilesFolders();
 
-  const path = `${filesFolder}/${trimed}`;
-  const exists = await RNFS.exists(path);
+  const fullPath = `${filesFolder}/${path}`;
+  const exists = await RNFS.exists(fullPath);
   if (!exists) {
-    await RNFS.mkdir(path);
+    await RNFS.mkdir(fullPath);
   }
 }
 
@@ -137,11 +136,20 @@ export async function readFiles(path) {
     return [];
   }
 
-  const files = await RNFS.readDir(path);
-  return files
-    .filter(n => n.isFile())
-    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }))
-    .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
+  const result = await RNFS.readDir(path);
+  const files = [];
+  const folders = [];
+  result
+    .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime())
+    .forEach(r => {
+      if (r.isDirectory()) {
+        folders.push(r);
+      } else if (r.isFile()) {
+        files.push({ ...r, fileName: extractFileNameAndExtension(r.name).fileName });
+      }
+    });
+
+  return { files, folders };
 }
 
 export async function getFolderSize(folderPath) {

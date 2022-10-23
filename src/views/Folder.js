@@ -36,7 +36,7 @@ function Folder({ navigation, route: { params } }) {
     }
 
     readFiles(folder.path).then(result => {
-      setFiles(result);
+      setFiles(result.files);
     });
 
     getFolderSize(folder?.path).then(size => {
@@ -86,6 +86,17 @@ function Folder({ navigation, route: { params } }) {
           )}
           <Actionsheet.Item
             startIcon={<Icon name="create-outline" color={colors.text} />}
+            onPress={() => {
+              setShowActions(false);
+              navigation.navigate(routeNames.folderForm, {
+                folder: { name: folder.name, path: folder.path },
+              });
+            }}
+          >
+            Add sub folder
+          </Actionsheet.Item>
+          <Actionsheet.Item
+            startIcon={<Icon name="folder-outline" color={colors.text} />}
             onPress={() => {
               setShowActions(false);
               navigation.navigate(routeNames.folderForm, {

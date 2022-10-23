@@ -8,6 +8,7 @@ import {
   makeNotebook,
   moveFile,
   notesFolder,
+  readFiles,
   readFilesFolders,
   readNotebooks,
 } from '../lib/files';
@@ -179,6 +180,15 @@ export const useStore = create((set, get) => ({
       defaultFolder: isFirst ? label : get().defaultFolder,
     });
   },
+  createSubFolder: async (label, parentFolder) => {
+    const path = `${parentFolder.name}/${label}`;
+    await makeFilesFolder(path);
+    const { folders } = await readFiles(parentFolder.path);
+
+    set({
+      activeFolder: folders.find(n => n.name === label),
+    });
+  },
   renameFolder: async ({ folder, label }) => {
     const newFolder = { path: `${filesFolder}/${label.trim()}`, name: label.trim() };
     await moveFile(folder.path, newFolder.path);
@@ -193,7 +203,7 @@ export const useStore = create((set, get) => ({
   },
   deleteFolder: async folder => {
     await deleteFileFromPhone(folder.path);
-    const newFolders = get().folders.filter(n => n.path !== folder.path)
+    const newFolders = get().folders.filter(n => n.path !== folder.path);
     await LocalStorage.remove(LocalStorageKeys.defaultFileFolder);
     const { defaultFolder, folders } = await makeDefaultFolders(get, set, newFolders);
     set({
