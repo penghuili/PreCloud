@@ -1,4 +1,4 @@
-import { Actionsheet, Text } from 'native-base';
+import { Actionsheet, Spinner, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 
 import AppBar from '../components/AppBar';
@@ -25,6 +25,7 @@ function Folder({ navigation, route: { params } }) {
   const setActiveFolder = useStore(state => state.setActiveFolder);
   const updateDefaultFolder = useStore(state => state.updateDefaultFolder);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
@@ -35,8 +36,10 @@ function Folder({ navigation, route: { params } }) {
       return;
     }
 
+    setIsLoading(true);
     readFiles(folder.path).then(result => {
       setFiles(result.files);
+      setIsLoading(false);
     });
 
     getFolderSize(folder?.path).then(size => {
@@ -57,7 +60,9 @@ function Folder({ navigation, route: { params } }) {
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
 
-        {!!folder && (
+        {isLoading && <Spinner />}
+
+        {!!folder && !isLoading && (
           <EncryptFile
             folder={folder}
             navigate={navigation.navigate}
