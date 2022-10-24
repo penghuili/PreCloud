@@ -9,14 +9,14 @@ import { extractFileNameAndExtension, renameFile } from '../lib/files';
 function RenameFileForm({
   navigation,
   route: {
-    params: { folder, file },
+    params: { file },
   },
 }) {
   const { fileName, extension } = extractFileNameAndExtension(file?.name);
   const [innerFileName, setInnerFileName] = useState('');
 
   async function handleSave() {
-    await renameFile({ file, folder, label: innerFileName });
+    await renameFile(file, innerFileName);
     navigation.goBack();
   }
 

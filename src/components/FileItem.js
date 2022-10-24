@@ -31,7 +31,6 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
     setShowActions(false);
     navigate(routeNames.renameFileForm, {
       file: { name: file.name, path: file.path },
-      folder: { name: folder.name, path: folder.path },
     });
   }
 

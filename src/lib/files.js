@@ -322,9 +322,8 @@ export async function statFile(path) {
 export async function renameFile(file, label) {
   const { extension } = extractFileNameAndExtension(file.name);
   const newName = `${label.trim()}${extension}`;
-  const parts = file.path.split('/');
-  parts.pop();
-  const newPath = `${parts.join('/')}/${newName}`;
+  const parentPath = getParentPath(file.path)
+  const newPath = `${parentPath}/${newName}`;
   await moveFile(file.path, newPath);
 }
 
