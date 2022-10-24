@@ -8,7 +8,7 @@ function FoldersEmptyState({ navigate }) {
   const password = useStore(state => state.activePassword);
 
   function handleAddFolder() {
-    navigate(routeNames.folderForm, { folder: null, goBackAfterCreation: true });
+    navigate(routeNames.folderForm, { folder: null });
   }
 
   return (

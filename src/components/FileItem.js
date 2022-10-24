@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
 import {
+  deleteFile,
   downloadFile,
   encryptionStatus,
   getSizeText,
@@ -12,15 +13,11 @@ import {
 } from '../lib/files';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
-import { useStore } from '../store/store';
 import FolderPicker from './FolderPicker';
 import Icon from './Icon';
 
 function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
   const colors = useColors();
-  const files = useStore(store => store.files);
-  const setFiles = useStore(store => store.setFiles);
-  const deleteFile = useStore(store => store.deleteFile);
 
   const [showActions, setShowActions] = useState(false);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
@@ -62,24 +59,21 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
 
   async function handleMove(newFolder) {
     await moveFile(file.path, `${newFolder.path}/${file.name}`);
-    setFiles(files.filter(n => n.path !== file.path));
+    onDelete(file);
     setShowFolderPicker(false);
     showToast('Moved!');
   }
 
-  const handleDeleteFile = async () => {
+  async function handleDeleteFile() {
     try {
+      await deleteFile(file.path);
+      onDelete(file);
       setShowActions(false);
-      await deleteFile(file);
       showToast('Deleted!');
-
-      if (onDelete) {
-        onDelete();
-      }
     } catch (error) {
       console.log('Delete file failed:', error);
     }
-  };
+  }
 
   function renderErrorMessage() {
     if (file.status === encryptionStatus.tooLarge) {
@@ -121,7 +115,7 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
         onClose={() => setShowFolderPicker(false)}
         onSave={handleMove}
         navigate={navigate}
-        folder={folder}
+        currentFolder={folder}
       />
       <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
         <Actionsheet.Content>

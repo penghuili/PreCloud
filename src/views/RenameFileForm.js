@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import ScreenWrapper from '../components/ScreenWrapper';
-import { extractFileNameAndExtension } from '../lib/files';
-import { useStore } from '../store/store';
+import { extractFileNameAndExtension, renameFile } from '../lib/files';
 
 function RenameFileForm({
   navigation,
@@ -13,8 +12,6 @@ function RenameFileForm({
     params: { folder, file },
   },
 }) {
-  const renameFile = useStore(state => state.renameFile);
-
   const { fileName, extension } = extractFileNameAndExtension(file?.name);
   const [innerFileName, setInnerFileName] = useState('');
 

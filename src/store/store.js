@@ -2,13 +2,12 @@ import create from 'zustand';
 
 import {
   deleteFile as deleteFileFromPhone,
-  extractFileNameAndExtension,
   filesFolder,
+  getParentPath,
   makeFilesFolder,
   makeNotebook,
   moveFile,
   notesFolder,
-  readFiles,
   readFilesFolders,
   readNotebooks,
 } from '../lib/files';
@@ -152,48 +151,54 @@ export const useStore = create((set, get) => ({
   setNoteContent: content => set({ noteContent: content }),
 
   // files
-  folders: [],
-  setFolders: value => set({ folders: value }),
-  getFolders: async () => {
+  rootFolders: [],
+  setRootFolders: value => set({ rootFolders: value }),
+  getRootFolders: async () => {
     const currentFolders = await readFilesFolders();
     const { defaultFolder, folders } = await makeDefaultFolders(get, set, currentFolders);
 
     set({
-      folders,
+      rootFolders: folders,
       defaultFolder,
     });
   },
   defaultFolder: null,
-  activeFolder: null,
-  setActiveFolder: value => set({ activeFolder: value }),
-  createFolder: async label => {
-    await makeFilesFolder(label);
-    const newFolders = await readFilesFolders();
-    const isFirst = newFolders.length === 1;
-    if (isFirst) {
-      await LocalStorage.set(LocalStorageKeys.defaultFileFolder, newFolders[0].name);
+  createFolder: async (label, parentPath) => {
+    const newFolder = await makeFilesFolder(label, parentPath);
+
+    if (!parentPath) {
+      const newFolders = await readFilesFolders();
+      const isFirst = newFolders.length === 1;
+      if (isFirst) {
+        await LocalStorage.set(LocalStorageKeys.defaultFileFolder, newFolders[0].name);
+      }
+
+      set({
+        rootFolders: newFolders,
+        defaultFolder: isFirst ? label : get().defaultFolder,
+      });
     }
 
-    set({
-      folders: newFolders,
-      activeFolder: newFolders.find(n => n.name === label),
-      defaultFolder: isFirst ? label : get().defaultFolder,
-    });
-  },
-  createSubFolder: async (label, parentFolder) => {
-    const path = `${parentFolder.name}/${label}`;
-    await makeFilesFolder(path);
-    const { folders } = await readFiles(parentFolder.path);
-
-    set({
-      activeFolder: folders.find(n => n.name === label),
-    });
+    return newFolder;
   },
   renameFolder: async ({ folder, label }) => {
-    const newFolder = { path: `${filesFolder}/${label.trim()}`, name: label.trim() };
-    await moveFile(folder.path, newFolder.path);
-    const newFolders = await readFilesFolders();
-    set({ folders: newFolders, activeFolder: newFolder });
+    const parentPath = getParentPath(folder.path);
+    const newPath = `${parentPath}/${label}`;
+    await moveFile(folder.path, newPath);
+
+    const isRoot = parentPath === filesFolder;
+    if (isRoot) {
+      const newFolders = await readFilesFolders();
+      const currentDefault = get().defaultFolder;
+      const isDefault = currentDefault === folder.name;
+      if (isDefault) {
+        await LocalStorage.set(LocalStorageKeys.defaultFileFolder, label);
+      }
+      set({
+        rootFolders: newFolders,
+        defaultFolder: isDefault ? label : currentDefault,
+      });
+    }
   },
   updateDefaultFolder: async label => {
     await LocalStorage.set(LocalStorageKeys.defaultFileFolder, label);
@@ -207,33 +212,8 @@ export const useStore = create((set, get) => ({
     await LocalStorage.remove(LocalStorageKeys.defaultFileFolder);
     const { defaultFolder, folders } = await makeDefaultFolders(get, set, newFolders);
     set({
-      folders,
+      rootFolders: folders,
       defaultFolder,
-      activeFolder: null,
-    });
-  },
-  files: [],
-  setFiles: value => set({ files: value }),
-  addFile: value => {
-    const currentFiles = get().files;
-    if (currentFiles.find(f => f.name === value.name)) {
-      set({ files: currentFiles.map(f => (f.name === value.name ? value : f)) });
-    } else {
-      set({ files: [value, ...currentFiles] });
-    }
-  },
-  renameFile: async ({ file, folder, label }) => {
-    const { extension } = extractFileNameAndExtension(file.name);
-    const newName = `${label.trim()}${extension}`;
-    const newFile = { ...file, path: `${folder.path}/${newName}`, name: newName };
-    await moveFile(file.path, newFile.path);
-    const newFiles = get().files.map(f => (f.path === file.path ? newFile : f));
-    set({ files: newFiles });
-  },
-  deleteFile: async file => {
-    await deleteFileFromPhone(file.path);
-    set({
-      files: get().files.filter(f => f.path !== file.path),
     });
   },
 }));

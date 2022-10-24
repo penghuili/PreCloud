@@ -16,10 +16,12 @@ import { useStore } from './store/store';
 function App() {
   const theme = getTheme();
   const getPasswords = useStore(state => state.getPasswords);
+  const getRootFolders = useStore(state => state.getRootFolders);
 
   useEffect(() => {
     SplashScreen.hide();
     getPasswords();
+    getRootFolders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

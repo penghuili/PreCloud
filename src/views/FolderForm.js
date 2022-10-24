@@ -11,11 +11,11 @@ import { useStore } from '../store/store';
 function FolderForm({
   navigation,
   route: {
-    params: { folder },
+    params: { folder, parentPath },
   },
 }) {
-  const folders = useStore(state => state.folders);
-  const folderLabels = useMemo(() => folders.map(n => n.name), [folders]);
+  const rootFolders = useStore(state => state.rootFolders);
+  const folderLabels = useMemo(() => rootFolders.map(n => n.name), [rootFolders]);
   const createFolder = useStore(state => state.createFolder);
   const renameFolder = useStore(state => state.renameFolder);
 
@@ -38,8 +38,8 @@ function FolderForm({
         navigation.goBack();
         showToast(`Folder "${folder.name}" is renamed to "${trimed}"!`);
       } else {
-        await createFolder(trimed);
-        navigation.replace(routeNames.folder);
+        const newFolder = await createFolder(trimed, parentPath);
+        navigation.replace(routeNames.folder, { path: newFolder.path });
         showToast(`Folder ${trimed} is created!`);
       }
     } catch (e) {

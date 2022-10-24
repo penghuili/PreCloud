@@ -1,16 +1,12 @@
 import { Button, Modal, Text, VStack } from 'native-base';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
-import useColors from '../hooks/useColors';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
+import FolderPickerItem from './FolderPickerItem';
 
-function FolderPicker({ isOpen, onClose, onSave, navigate, folder }) {
-  const colors = useColors();
-  const folders = useStore(state => state.folders);
-  const innerFolders = useMemo(() => {
-    return folders?.filter(f => f.name !== folder?.name);
-  }, [folders, folder]);
+function FolderPicker({ isOpen, onClose, onSave, navigate, currentFolder }) {
+  const rootFolders = useStore(state => state.rootFolders);
 
   const [selectedFolder, setSelectedFolder] = useState(null);
 
@@ -19,7 +15,7 @@ function FolderPicker({ isOpen, onClose, onSave, navigate, folder }) {
   }
 
   function renderFolders() {
-    if (!innerFolders?.length) {
+    if (!rootFolders?.length) {
       return (
         <Text>
           You don&lsquo;t have other folder yet,{' '}
@@ -38,15 +34,14 @@ function FolderPicker({ isOpen, onClose, onSave, navigate, folder }) {
 
     return (
       <VStack>
-        {innerFolders.map(f => (
-          <Text
-            key={f.name}
-            my="1"
-            color={f.name === selectedFolder?.name ? colors.primary : colors.text}
-            onPress={() => setSelectedFolder(f)}
-          >
-            {f.name}
-          </Text>
+        {rootFolders.map(f => (
+          <FolderPickerItem
+            key={f.path}
+            folder={f}
+            selectedPath={selectedFolder?.path}
+            currentFolder={currentFolder}
+            onPress={selected => setSelectedFolder(selected)}
+          />
         ))}
       </VStack>
     );
@@ -65,7 +60,9 @@ function FolderPicker({ isOpen, onClose, onSave, navigate, folder }) {
             <Button
               isDisabled={!selectedFolder}
               onPress={() => {
-                onSave(selectedFolder);
+                if (selectedFolder?.path !== currentFolder?.path) {
+                  onSave(selectedFolder);
+                }
                 handleClose();
               }}
             >

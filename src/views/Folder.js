@@ -1,28 +1,47 @@
-import { Actionsheet, Spinner, Text } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { Actionsheet, Spinner, Text, VStack } from 'native-base';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import AppBar from '../components/AppBar';
 import Confirm from '../components/Confirm';
 import ContentWrapper from '../components/ContentWrapper';
-import EncryptFile from '../components/EncryptFile';
+import FolderFiles from '../components/FolderFiles';
+import FoldersList from '../components/FoldersList';
+import FolderTopActions from '../components/FolderTopActions';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
-import { deleteFile, emptyFolder, getFolderSize, getSizeText, readFiles } from '../lib/files';
+import {
+  deleteFile,
+  emptyFolder,
+  getFolderSize,
+  getSizeText,
+  isRootFolder,
+  readFiles,
+  statFile,
+} from '../lib/files';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
-function Folder({ navigation, route: { params } }) {
-  const colors = useColors();
-  const folder = useStore(state => state.activeFolder);
-  const defaultFolder = useStore(state => state.defaultFolder);
-  const folders = useStore(state => state.folders);
-  const setFolders = useStore(state => state.setFolders);
-  const setActiveFolder = useStore(state => state.setActiveFolder);
-  const updateDefaultFolder = useStore(state => state.updateDefaultFolder);
+let tempFiles = [];
 
+function Folder({
+  navigation,
+  route: {
+    params: { path, selectedFiles },
+  },
+}) {
+  const colors = useColors();
+  const isFocused = useIsFocused();
+  const defaultFolder = useStore(state => state.defaultFolder);
+  const rootFolders = useStore(state => state.rootFolders);
+  const setRootFolders = useStore(state => state.setRootFolders);
+  const updateDefaultFolder = useStore(state => state.updateDefaultFolder);
+  const isRoot = useMemo(() => isRootFolder(path), [path]);
+
+  const [folder, setFolder] = useState(null);
   const [innerFolders, setInnerFolders] = useState([]);
   const [innerFiles, setInnerFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,22 +51,30 @@ function Folder({ navigation, route: { params } }) {
   const [folderSize, setFolderSize] = useState(0);
 
   useEffect(() => {
-    if (!folder) {
+    if (!path) {
       return;
     }
 
-    setIsLoading(true);
-    readFiles(folder.path).then(result => {
-      setInnerFolders(result.folders);
-      setInnerFiles(result.files);
-      setIsLoading(false);
-    });
+    if (isFocused) {
+      fetchFiles(path);
+    }
+  }, [path, isFocused]);
 
-    getFolderSize(folder?.path).then(size => {
-      setFolderSize(size);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [folder]);
+  async function fetchFiles(path) {
+    setIsLoading(true);
+
+    const fd = await statFile(path);
+    setFolder(fd);
+
+    const content = await readFiles(path);
+    setInnerFolders(content.folders);
+    setInnerFiles(content.files);
+    tempFiles = content.files;
+    setIsLoading(false);
+
+    const s = await getFolderSize(path);
+    setFolderSize(s);
+  }
 
   return (
     <ScreenWrapper>
@@ -61,87 +88,109 @@ function Folder({ navigation, route: { params } }) {
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
 
-        {isLoading && <Spinner />}
+        <VStack space="sm">
+          {!!folder && (
+            <FolderTopActions
+              folder={folder}
+              onAddFile={file => {
+                tempFiles = [file, ...tempFiles];
+                setInnerFiles(tempFiles);
+              }}
+              selectedFiles={selectedFiles}
+            />
+          )}
 
-        {!!folder && !isLoading && (
-          <EncryptFile
-            folder={folder}
-            files={innerFiles}
-            folders={innerFolders}
-            navigate={navigation.navigate}
-            selectedFiles={params?.selectedFiles}
-          />
-        )}
+          {isLoading && <Spinner />}
+
+          {!!folder && !isLoading && (
+            <FoldersList folders={innerFolders} navigate={navigation.push} />
+          )}
+
+          {!!folder && !isLoading && (
+            <FolderFiles
+              folder={folder}
+              files={innerFiles}
+              navigate={navigation.navigate}
+              onDelete={file => {
+                setInnerFiles(innerFiles.filter(f => f.path !== file.path));
+              }}
+            />
+          )}
+        </VStack>
       </ContentWrapper>
 
-      <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
-        <Actionsheet.Content>
-          {defaultFolder === folder?.name ? (
-            <Actionsheet.Item startIcon={<Icon name="star" color={colors.text} />}>
-              This is the default folder
-            </Actionsheet.Item>
-          ) : (
+      {!!folder && (
+        <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
+          <Actionsheet.Content>
+            {isRoot &&
+              (defaultFolder === folder?.name ? (
+                <Actionsheet.Item startIcon={<Icon name="star" color={colors.text} />}>
+                  This is the default folder
+                </Actionsheet.Item>
+              ) : (
+                <Actionsheet.Item
+                  startIcon={<Icon name="star-outline" color={colors.text} />}
+                  onPress={() => {
+                    setShowActions(false);
+                    updateDefaultFolder(folder.name);
+                    showToast(`Default folder is now ${folder.name}`);
+                  }}
+                >
+                  Set as default folder
+                </Actionsheet.Item>
+              ))}
             <Actionsheet.Item
-              startIcon={<Icon name="star-outline" color={colors.text} />}
+              startIcon={<Icon name="create-outline" color={colors.text} />}
               onPress={() => {
                 setShowActions(false);
-                updateDefaultFolder(folder.name);
-                showToast(`Default folder is now ${folder.name}`);
+                navigation.navigate(routeNames.folderForm, {
+                  folder: null,
+                  parentPath: folder.path,
+                });
               }}
             >
-              Set as default folder
+              Add sub folder
             </Actionsheet.Item>
-          )}
-          <Actionsheet.Item
-            startIcon={<Icon name="create-outline" color={colors.text} />}
-            onPress={() => {
-              setShowActions(false);
-              navigation.navigate(routeNames.folderForm, {
-                folder: { name: folder.name, path: folder.path },
-              });
-            }}
-          >
-            Add sub folder
-          </Actionsheet.Item>
-          <Actionsheet.Item
-            startIcon={<Icon name="folder-outline" color={colors.text} />}
-            onPress={() => {
-              setShowActions(false);
-              navigation.navigate(routeNames.folderForm, {
-                folder: { name: folder.name, path: folder.path },
-              });
-            }}
-          >
-            Rename
-          </Actionsheet.Item>
-          {innerFiles?.length > 0 && (
             <Actionsheet.Item
-              startIcon={<Icon name="trash-outline" color={colors.text} />}
+              startIcon={<Icon name="folder-outline" color={colors.text} />}
               onPress={() => {
                 setShowActions(false);
-                setShowEmptyConfirm(true);
+                navigation.replace(routeNames.folderForm, {
+                  folder: { name: folder.name, path: folder.path },
+                });
               }}
             >
-              Empty folder
+              Rename
             </Actionsheet.Item>
-          )}
-          {folder?.name !== defaultFolder && (
-            <Actionsheet.Item
-              startIcon={<Icon name="trash" color={colors.text} />}
-              onPress={() => {
-                setShowDeleteConfirm(true);
-                setShowActions(false);
-              }}
-            >
-              Delete
-            </Actionsheet.Item>
-          )}
+            {innerFiles?.length > 0 && (
+              <Actionsheet.Item
+                startIcon={<Icon name="trash-outline" color={colors.text} />}
+                onPress={() => {
+                  setShowActions(false);
+                  setShowEmptyConfirm(true);
+                }}
+              >
+                Empty folder
+              </Actionsheet.Item>
+            )}
+            {folder?.name !== defaultFolder && (
+              <Actionsheet.Item
+                startIcon={<Icon name="trash" color={colors.text} />}
+                onPress={() => {
+                  setShowDeleteConfirm(true);
+                  setShowActions(false);
+                }}
+              >
+                Delete
+              </Actionsheet.Item>
+            )}
 
-          <Text fontSize="xs" color="gray.400">
-            {getSizeText(folderSize)}
-          </Text>
-        </Actionsheet.Content>
-      </Actionsheet>
+            <Text fontSize="xs" color="gray.400">
+              {getSizeText(folderSize)}
+            </Text>
+          </Actionsheet.Content>
+        </Actionsheet>
+      )}
 
       <Confirm
         isOpen={showEmptyConfirm}
@@ -153,6 +202,7 @@ function Folder({ navigation, route: { params } }) {
           setShowEmptyConfirm(false);
           await emptyFolder(folder.path);
           setInnerFiles([]);
+          tempFiles = [];
           setInnerFolders([]);
           showToast('All files and folders in this folder are deleted.');
         }}
@@ -160,16 +210,16 @@ function Folder({ navigation, route: { params } }) {
       />
       <Confirm
         isOpen={showDeleteConfirm}
-        message="This folder and all files within will be deleted. Are you sure?"
+        message="This folder and all files and folders within will be deleted. Are you sure?"
         onClose={() => {
           setShowDeleteConfirm(false);
         }}
         onConfirm={async () => {
           setShowDeleteConfirm(false);
           await deleteFile(folder.path);
-          setFolders(folders.filter(f => f.path !== folder.path));
-          setActiveFolder(null);
+          setRootFolders(rootFolders.filter(f => f.path !== folder.path));
           navigation.goBack();
+          showToast('Deleted!');
         }}
         isDanger
       />

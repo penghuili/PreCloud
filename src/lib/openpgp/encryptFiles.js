@@ -1,7 +1,5 @@
-import FS from 'react-native-fs';
-
 import { asyncForEach } from '../array';
-import { deleteFile, encryptionStatus, MAX_FILE_SIZE_BYTES, moveFile } from '../files';
+import { deleteFile, encryptionStatus, MAX_FILE_SIZE_BYTES, moveFile, statFile } from '../files';
 import { encryptFile } from './helpers';
 
 export async function encryptFiles(files, { folder, onEncrypted, password }) {
@@ -29,7 +27,7 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
       const success = await encryptFile(inputPath, outputPath, password);
 
       if (success) {
-        const { size: newSize } = await FS.stat(outputPath);
+        const { size: newSize } = await statFile(outputPath);
         result = {
           name: encryptedName,
           path: outputPath,
@@ -45,7 +43,7 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
       }
     }
 
-    encryptFiles.push(result);
+    encryptedFiles.push(result);
     if (onEncrypted) {
       onEncrypted(result);
     }

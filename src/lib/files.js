@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import RNFS from 'react-native-fs';
 import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
+
 import { isAndroid } from './device';
 
 export const MAX_FILE_SIZE_MEGA_BYTES = 200;
@@ -101,18 +102,21 @@ export async function readNotes(path) {
     .sort((a, b) => new Date(b.ctime).getTime() - new Date(a.ctime).getTime());
 }
 
-export async function makeFilesFolder(path) {
-  if (!path) {
+export async function makeFilesFolder(label, parentPath) {
+  if (!label) {
     return;
   }
 
   await makeFilesFolders();
 
-  const fullPath = `${filesFolder}/${path}`;
+  const fullPath = parentPath ? `${parentPath}/${label}` : `${filesFolder}/${label}`;
   const exists = await RNFS.exists(fullPath);
   if (!exists) {
     await RNFS.mkdir(fullPath);
   }
+
+  const info = await statFile(fullPath);
+  return info;
 }
 
 export async function makeFilesFolders() {
@@ -305,6 +309,25 @@ export async function downloadFile({ path, fileName }) {
   }
 }
 
+export async function statFile(path) {
+  try {
+    const info = await RNFS.stat(path);
+    return { ...info, name: info.path.split('/').pop() };
+  } catch (e) {
+    console.log('stat file failed', e);
+    return null;
+  }
+}
+
+export async function renameFile(file, label) {
+  const { extension } = extractFileNameAndExtension(file.name);
+  const newName = `${label.trim()}${extension}`;
+  const parts = file.path.split('/');
+  parts.pop();
+  const newPath = `${parts.join('/')}/${newName}`;
+  await moveFile(file.path, newPath);
+}
+
 export async function takePhoto() {
   try {
     const result = await launchCamera({
@@ -348,4 +371,26 @@ export function getSizeText(size) {
   }
 
   return `${toFixed2(kbs / 1024)}MB`;
+}
+
+export function getParentPath(path) {
+  if (!path) {
+    return null;
+  }
+
+  const parts = path.split('/');
+  parts.pop();
+  const parentPath = parts.join('/');
+
+  return parentPath;
+}
+
+export function isRootFolder(path) {
+  if (!path) {
+    return false;
+  }
+
+  const parentPath = getParentPath(path);
+
+  return parentPath === filesFolder;
 }

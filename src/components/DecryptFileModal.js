@@ -18,7 +18,18 @@ import MoveToButton from './MoveToButton';
 import OpenFileButton from './OpenFileButton';
 import ShareButton from './ShareButton';
 
-function DecryptFileModal({ isOpen, file, folder, onPrevious, onNext, hasPrevious, hasNext, onClose, navigate }) {
+function DecryptFileModal({
+  isOpen,
+  file,
+  folder,
+  onPrevious,
+  onNext,
+  hasPrevious,
+  hasNext,
+  onClose,
+  onDelete,
+  navigate,
+}) {
   const password = useStore(state => state.activePassword);
   const colors = useColors();
 
@@ -80,8 +91,22 @@ function DecryptFileModal({ isOpen, file, folder, onPrevious, onNext, hasPreviou
                   <OpenFileButton file={decryptedFile} />
                   <ShareButton file={decryptedFile} />
                   <DownloadButton file={decryptedFile} />
-                  <MoveToButton file={file} folder={folder} onMove={handleClose} navigate={navigate} />
-                  <DeleteButton file={file} onDelete={handleClose} />
+                  <MoveToButton
+                    file={file}
+                    folder={folder}
+                    onMove={file => {
+                      handleClose();
+                      onDelete(file);
+                    }}
+                    navigate={navigate}
+                  />
+                  <DeleteButton
+                    file={file}
+                    onDelete={() => {
+                      handleClose();
+                      onDelete(file);
+                    }}
+                  />
                 </HStack>
               </VStack>
 
