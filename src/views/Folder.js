@@ -17,14 +17,14 @@ import { useStore } from '../store/store';
 function Folder({ navigation, route: { params } }) {
   const colors = useColors();
   const folder = useStore(state => state.activeFolder);
-  const files = useStore(state => state.files);
   const defaultFolder = useStore(state => state.defaultFolder);
-  const setFiles = useStore(state => state.setFiles);
   const folders = useStore(state => state.folders);
   const setFolders = useStore(state => state.setFolders);
   const setActiveFolder = useStore(state => state.setActiveFolder);
   const updateDefaultFolder = useStore(state => state.updateDefaultFolder);
 
+  const [innerFolders, setInnerFolders] = useState([]);
+  const [innerFiles, setInnerFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -38,7 +38,8 @@ function Folder({ navigation, route: { params } }) {
 
     setIsLoading(true);
     readFiles(folder.path).then(result => {
-      setFiles(result.files);
+      setInnerFolders(result.folders);
+      setInnerFiles(result.files);
       setIsLoading(false);
     });
 
@@ -65,6 +66,8 @@ function Folder({ navigation, route: { params } }) {
         {!!folder && !isLoading && (
           <EncryptFile
             folder={folder}
+            files={innerFiles}
+            folders={innerFolders}
             navigate={navigation.navigate}
             selectedFiles={params?.selectedFiles}
           />
@@ -111,7 +114,7 @@ function Folder({ navigation, route: { params } }) {
           >
             Rename
           </Actionsheet.Item>
-          {files?.length > 0 && (
+          {innerFiles?.length > 0 && (
             <Actionsheet.Item
               startIcon={<Icon name="trash-outline" color={colors.text} />}
               onPress={() => {
@@ -142,15 +145,16 @@ function Folder({ navigation, route: { params } }) {
 
       <Confirm
         isOpen={showEmptyConfirm}
-        message="All files in this folder will be deleted. Are you sure?"
+        message="All files and folders in this folder will be deleted. Are you sure?"
         onClose={() => {
           setShowEmptyConfirm(false);
         }}
         onConfirm={async () => {
           setShowEmptyConfirm(false);
           await emptyFolder(folder.path);
-          setFiles([]);
-          showToast('All files in this folder are deleted.');
+          setInnerFiles([]);
+          setInnerFolders([]);
+          showToast('All files and folders in this folder are deleted.');
         }}
         isDanger
       />

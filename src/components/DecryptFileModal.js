@@ -8,7 +8,7 @@ import {
   fileCachePaths,
   makeFileCacheFolders,
 } from '../lib/files';
-import { decryptFile } from '../lib/openpgp';
+import { decryptFile } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import DeleteButton from './DeleteButton';

@@ -20,7 +20,7 @@ import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
-import { decryptText, encryptText } from '../lib/openpgp';
+import { decryptText, encryptText } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 

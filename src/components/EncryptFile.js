@@ -1,22 +1,13 @@
 import { Button, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
-import RNFS from 'react-native-fs';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
 import { platforms } from '../lib/constants';
-import {
-  deleteFile,
-  encryptionStatus,
-  extractFilePath,
-  MAX_FILE_SIZE_BYTES,
-  MAX_FILE_SIZE_MEGA_BYTES,
-  moveFile,
-  takePhoto,
-} from '../lib/files';
-import { encryptFile } from '../lib/openpgp';
+import { deleteFile, extractFilePath, MAX_FILE_SIZE_MEGA_BYTES, takePhoto } from '../lib/files';
+import { encryptFiles } from '../lib/openpgp/encryptFiles';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import DecryptFileModal from './DecryptFileModal';
@@ -24,26 +15,18 @@ import FileItem from './FileItem';
 import Icon from './Icon';
 import PlatformToggle from './PlatformToggle';
 
-let pickedFiles = [];
-let currentIndex = 0;
-
-async function deleteFiles(paths) {
-  await asyncForEach(paths, async path => {
-    await deleteFile(path);
-  });
+async function deleteFiles(pickedFiles) {
+  await asyncForEach(
+    pickedFiles.map(f => f.path),
+    async path => {
+      await deleteFile(path);
+    }
+  );
 }
 
-async function resetPickedFile() {
-  if (pickedFiles?.length) {
-    await deleteFiles(pickedFiles.map(f => f.path));
-    pickedFiles = [];
-  }
-}
-
-function EncryptFile({ folder, navigate, selectedFiles }) {
+function EncryptFile({ folder, files, folders, navigate, selectedFiles }) {
   const password = useStore(state => state.activePassword);
   const colors = useColors();
-  const files = useStore(state => state.files);
   const addFile = useStore(state => state.addFile);
 
   const [isEncryptingFiles, setIsEncryptingFiles] = useState(false);
@@ -55,154 +38,68 @@ function EncryptFile({ folder, navigate, selectedFiles }) {
 
   useEffect(() => {
     if (selectedFiles?.length) {
-      handleAfterPick(selectedFiles, setIsEncryptingNewImage);
+      handleEncrypt(selectedFiles, setIsEncryptingNewImage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFiles]);
 
-  function resetLoading() {
-    setIsEncryptingFiles(false);
-    setIsEncryptingImages(false);
-    setIsEncryptingNewImage(false);
-  }
-
-  async function triggerEncrypt({ name, size, path }) {
-    if (name.endsWith('.precloud')) {
-      const newPath = `${folder.path}/${name}`;
-      await moveFile(path, newPath);
-      addFile({ name, path: newPath, size });
-      await triggerNext();
-      return;
-    }
-
-    if (size > MAX_FILE_SIZE_BYTES) {
-      await deleteFile(path);
-      addFile({ name, path, size, status: encryptionStatus.tooLarge });
-      await triggerNext();
-      return;
-    }
-
-    const fileName = `${name}.precloud`;
-    const outputPath = `${folder.path}/${fileName}`;
-    const success = await encryptFile(path, outputPath, password);
-
-    let processedFile;
-    if (success) {
-      const { size: newSize } = await RNFS.stat(outputPath);
-      processedFile = {
-        name: fileName,
-        path: outputPath,
-        size: newSize,
-        status: encryptionStatus.encrypted,
-      };
-    } else {
-      processedFile = {
-        name,
-        path,
-        status: encryptionStatus.error,
-      };
-    }
-    addFile(processedFile);
-
-    await triggerNext();
-  }
-
-  async function triggerNext() {
-    if (currentIndex + 1 < pickedFiles.length) {
-      currentIndex = currentIndex + 1;
-      const nextFile = pickedFiles[currentIndex];
-
-      await triggerEncrypt({
-        name: nextFile.name,
-        size: nextFile.size,
-        path: nextFile.path,
-      });
-    } else {
-      resetLoading();
-      await resetPickedFile();
-      showToast('Your files are encrypted and saved on your phone!');
-    }
-  }
-
-  function handleBeforePick() {
-    pickedFiles = [];
-    currentIndex = 0;
-  }
-
-  async function handleAfterPick(files, setIsEncrypting) {
-    if (!files?.length) {
-      return;
-    }
-    pickedFiles = files;
-
+  async function handleEncrypt(pickedFiles, setIsEncrypting) {
     setIsEncrypting(true);
-    const firstFile = files[0];
-    await triggerEncrypt({
-      name: firstFile.name,
-      size: firstFile.size,
-      path: firstFile.path,
-    });
+
+    await encryptFiles(pickedFiles, { folder, onEncrypted: addFile, password });
+
+    setIsEncrypting(false);
+    showToast('Your files are encrypted and saved on your phone!');
+    await deleteFiles(pickedFiles);
   }
 
   async function handlePickImages() {
     try {
-      handleBeforePick();
-
       const result = await launchImageLibrary({
         mediaType: 'mixed',
         selectionLimit: 0,
       });
-      const files = result?.assets?.map(f => ({
+      const images = result?.assets?.map(f => ({
         name: f.fileName,
         size: f.fileSize,
         path: extractFilePath(f.uri),
       }));
 
-      await handleAfterPick(files, setIsEncryptingImages);
+      await handleEncrypt(images, setIsEncryptingImages);
     } catch (e) {
-      await resetPickedFile();
-      setIsEncryptingImages(false);
       console.log('Pick images failed', e);
     }
   }
 
   async function handleTakePhoto() {
     try {
-      handleBeforePick();
-
       const photo = await takePhoto();
       if (photo) {
-        const files = [photo];
+        const photos = [photo];
 
-        await handleAfterPick(files, setIsEncryptingNewImage);
+        await handleEncrypt(photos, setIsEncryptingNewImage);
       }
     } catch (e) {
-      await resetPickedFile();
-      setIsEncryptingNewImage(false);
       console.log('Take photo failed', e);
     }
   }
 
   async function handlePickFiles() {
     try {
-      handleBeforePick();
-
       const result = await DocumentPicker.pick({
         allowMultiSelection: true,
         type: types.allFiles,
         presentationStyle: 'fullScreen',
         copyTo: 'cachesDirectory',
       });
-      const files = result.map(f => ({
+      const pickedFiles = result.map(f => ({
         name: f.name,
         size: f.size,
         path: extractFilePath(f.fileCopyUri),
       }));
 
-      await handleAfterPick(files, setIsEncryptingFiles);
+      await handleEncrypt(pickedFiles, setIsEncryptingFiles);
     } catch (e) {
-      await resetPickedFile();
-      setIsEncryptingFiles(false);
       console.log('Pick files failed', e);
     }
   }

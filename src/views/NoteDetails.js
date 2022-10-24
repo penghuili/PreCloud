@@ -13,7 +13,7 @@ import {
   readNotes,
   writeFile,
 } from '../lib/files';
-import { encryptFile } from '../lib/openpgp';
+import { encryptFile } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 

@@ -18,7 +18,7 @@ import {
   makeFileCacheFolders,
   readNotes,
 } from '../lib/files';
-import { decryptFile } from '../lib/openpgp';
+import { decryptFile } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
