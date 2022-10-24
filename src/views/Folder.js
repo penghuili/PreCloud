@@ -140,7 +140,7 @@ function Folder({
                 </Actionsheet.Item>
               ))}
             <Actionsheet.Item
-              startIcon={<Icon name="create-outline" color={colors.text} />}
+              startIcon={<Icon name="folder-outline" color={colors.text} />}
               onPress={() => {
                 setShowActions(false);
                 navigation.navigate(routeNames.folderForm, {
