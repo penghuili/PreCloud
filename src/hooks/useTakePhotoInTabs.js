@@ -6,12 +6,10 @@ import { useStore } from '../store/store';
 function useTakePhotoInTabs() {
   const defaultFolder = useStore(state => state.defaultFolder);
   const rootFolders = useStore(state => state.rootFolders);
-  const setActiveFolder = useStore(state => state.setActiveFolder);
 
   function handleTakePhoto() {
     const folder = rootFolders.find(f => f.name === defaultFolder);
     if (folder) {
-      setActiveFolder(folder);
       takePhoto().then(photo => {
         if (photo) {
           navigationRef.navigate(routeNames.folder, { selectedFiles: [photo], path: folder.path });
