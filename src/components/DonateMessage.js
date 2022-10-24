@@ -18,10 +18,10 @@ function DonateMessage({ onDonate, color }) {
           if (onDonate) {
             onDonate();
           }
-          Linking.openURL(`https://paypal.me/penghuili/`);
+          Linking.openURL(`https://ko-fi.com/penghuili`);
         }}
       >
-        PayPal
+        Ko-Fi
       </Text>{' '}
       or{' '}
       <Text
@@ -32,10 +32,10 @@ function DonateMessage({ onDonate, color }) {
           if (onDonate) {
             onDonate();
           }
-          Linking.openURL(`https://ko-fi.com/penghuili`);
+          Linking.openURL(`https://paypal.me/penghuili/`);
         }}
       >
-        Ko-Fi
+        PayPal
       </Text>
     </Text>
   );

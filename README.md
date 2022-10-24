@@ -37,4 +37,4 @@ Write to me, I reply to all emails: peng@duck.com
 
 ## Donate
 
-❤️ Consider donating to this free and open source app: [PayPal](https://paypal.me/penghuili/) or [Ko-Fi](https://ko-fi.com/penghuili)
+❤️ Consider donating to this free and open source app: [Ko-Fi](https://ko-fi.com/penghuili) or [PayPal](https://paypal.me/penghuili/)
