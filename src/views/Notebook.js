@@ -143,17 +143,17 @@ function Notebook({ navigation }) {
           <IconButton
             onPress={handleAddNote}
             isDisabled={!password}
-            icon={<Icon name="add-outline" color={colors.white} size={24} />}
+            icon={<Icon name="add-outline" color={colors.white} size={32} />}
             variant="solid"
-            size="xs"
+            size="md"
           />
 
           <IconButton
             onPress={() => setShowPickConfirm(true)}
             isDisabled={!password}
-            icon={<Icon name="folder-open-outline" color={colors.white} size={24} />}
+            icon={<Icon name="folder-open-outline" color={colors.white} size={32} />}
             variant="solid"
-            size="xs"
+            size="md"
           />
         </HStack>
         {notes.map(note => (
