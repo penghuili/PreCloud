@@ -1,4 +1,4 @@
-import { Actionsheet, Button, HStack, IconButton, Text, VStack } from 'native-base';
+import { Actionsheet, Button, HStack, IconButton, Spinner, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import FS from 'react-native-fs';
@@ -35,13 +35,16 @@ function Notebook({ navigation }) {
   const setActiveNotebook = useStore(state => state.setActiveNotebook);
   const setActiveNote = useStore(state => state.setActiveNote);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [showPickConfirm, setShowPickConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     readNotes(notebook.path).then(result => {
       setNotes(result);
+      setIsLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notebook]);
@@ -107,6 +110,10 @@ function Notebook({ navigation }) {
   }
 
   function renderNotes() {
+    if (isLoading) {
+      return <Spinner />;
+    }
+
     if (!notes.length) {
       return (
         <VStack space="sm" alignItems="center">
