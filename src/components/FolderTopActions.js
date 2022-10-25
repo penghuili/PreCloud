@@ -48,6 +48,13 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
   const isLoading = isEncryptingFiles || isEncryptingImages || isEncryptingNewImage;
   return (
     <HStack flexWrap="wrap" w="full">
+      <TakePhotoButton
+        isDisabled={!password || isLoading}
+        isLoading={isEncryptingNewImage}
+        onSelected={async photo => {
+          await handleEncrypt([photo], setIsEncryptingNewImage);
+        }}
+      />
       <PlatformToggle for={platforms.ios}>
         <PickImagesButton
           isLoading={isEncryptingImages}
@@ -62,13 +69,6 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
         isDisabled={!password || isLoading}
         onSelected={async files => {
           await handleEncrypt(files, setIsEncryptingFiles);
-        }}
-      />
-      <TakePhotoButton
-        isDisabled={!password || isLoading}
-        isLoading={isEncryptingNewImage}
-        onSelected={async photo => {
-          await handleEncrypt([photo], setIsEncryptingNewImage);
         }}
       />
     </HStack>
