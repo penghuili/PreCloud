@@ -60,6 +60,7 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
         <PickImagesButton
           isLoading={isEncryptingImages}
           isDisabled={!password || isLoading}
+          onStart={setIsEncryptingImages}
           onSelected={async images => {
             await handleEncrypt(images, setIsEncryptingImages);
           }}
@@ -68,6 +69,7 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
       <PickFilesButton
         isLoading={isEncryptingFiles}
         isDisabled={!password || isLoading}
+        onStart={setIsEncryptingFiles}
         onSelected={async files => {
           await handleEncrypt(files, setIsEncryptingFiles);
         }}

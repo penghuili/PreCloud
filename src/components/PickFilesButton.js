@@ -9,10 +9,11 @@ import { extractFilePath } from '../lib/files/helpers';
 import { unzipFolder } from '../lib/files/zip';
 import Icon from './Icon';
 
-function PickFilesButton({ isDisabled, isLoading, onSelected }) {
+function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
   const colors = useColors();
 
   async function handlePress() {
+    onStart(true)
     try {
       const result = await DocumentPicker.pick({
         allowMultiSelection: true,
@@ -44,6 +45,8 @@ function PickFilesButton({ isDisabled, isLoading, onSelected }) {
     } catch (e) {
       console.log('Pick files failed', e);
     }
+
+    onStart(false)
   }
 
   return (

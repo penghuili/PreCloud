@@ -2,6 +2,7 @@ import { asyncForEach } from '../array';
 import { moveFile } from '../files/actions';
 import { largeFileExtension, precloudExtension } from '../files/constant';
 import { getFolderSize } from '../files/helpers';
+import { showToast } from '../toast';
 import { openpgpStatus } from './constant';
 import { encryptLargeFile, LARGE_FILE_SIZE_IN_BYTES } from './encryptLargeFile';
 import { encryptSmallFile } from './encryptSmallFile';
@@ -30,7 +31,7 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
     } else if (file.name.endsWith(largeFileExtension)) {
       const newPath = `${folder.path}/${file.name}`;
       await moveFile(file.path, newPath);
-      const size = await getFolderSize(newPath)
+      const size = await getFolderSize(newPath);
 
       encrypted = {
         name: file.name,
@@ -41,6 +42,10 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
         isFile: () => false,
       };
     } else if (file.size > LARGE_FILE_SIZE_IN_BYTES) {
+      showToast(
+        'Oh you are encrypting big files, this will take a while, keep PreCloud active and be patient :)',
+        'info'
+      );
       encrypted = await encryptLargeFile(file, { folder, password });
     } else {
       encrypted = await encryptSmallFile(file, { folder, password });

@@ -1,13 +1,13 @@
 import { CachesDirectoryPath, mkdir, read } from 'react-native-fs';
 
 import { asyncForEach } from '../array';
-import { writeFile } from '../files/actions';
+import { deleteFile, writeFile } from '../files/actions';
 import { largeFileExtension, precloudExtension } from '../files/constant';
 import { extractFileNameAndExtension, getFolderSize, statFile } from '../files/helpers';
 import { openpgpStatus } from './constant';
 import { encryptFile } from './helpers';
 
-export const LARGE_FILE_SIZE_IN_BYTES = 50 * 1024 * 1024;
+export const LARGE_FILE_SIZE_IN_BYTES = 20 * 1024 * 1024;
 
 async function getChunkCount(path) {
   const info = await statFile(path);
@@ -59,11 +59,12 @@ export async function encryptLargeFile(file, { folder, password }) {
       isFile: () => false,
     };
   } catch (e) {
+    await deleteFile(encryptedPath);
     return {
       name: file.name,
       path: file.path,
       size: file.size,
-      status: openpgpStatus.encrypted,
+      status: openpgpStatus.error,
       isDirectory: () => true,
       isFile: () => false,
     };

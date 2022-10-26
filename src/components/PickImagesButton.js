@@ -6,10 +6,11 @@ import useColors from '../hooks/useColors';
 import { extractFilePath } from '../lib/files/helpers';
 import Icon from './Icon';
 
-function PickImagesButton({ isDisabled, isLoading, onSelected }) {
+function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
   const colors = useColors();
 
   async function handlePress() {
+    onStart(true);
     try {
       const result = await launchImageLibrary({
         mediaType: 'mixed',
@@ -25,6 +26,7 @@ function PickImagesButton({ isDisabled, isLoading, onSelected }) {
     } catch (e) {
       console.log('Pick images failed', e);
     }
+    onStart(false);
   }
 
   return (

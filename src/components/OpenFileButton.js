@@ -16,7 +16,8 @@ function OpenFileButton({ file }) {
     }
 
     const { extension } = extractFileNameAndExtension(file.name);
-    return viewableFileTypes.includes(extension);
+    const extensionWithoutDot = extension[0] === '.' ? extension.slice(1) : extension;
+    return viewableFileTypes.includes(extensionWithoutDot);
   }, [file]);
 
   async function handlePress() {
