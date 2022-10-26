@@ -5,14 +5,10 @@ import AppBar from '../components/AppBar';
 import Editor from '../components/Editor';
 import NoteItemActions from '../components/NoteItemActions';
 import ScreenWrapper from '../components/ScreenWrapper';
-import {
-  deleteFile,
-  fileCachePaths,
-  makeFileCacheFolders,
-  makeNotesFolders,
-  readNotes,
-  writeFile,
-} from '../lib/files';
+import { deleteFile, writeFile } from '../lib/files/actions';
+import { cachePath } from '../lib/files/cache';
+import { noteExtension } from '../lib/files/constant';
+import { makeNotesFolders, readNotes } from '../lib/files/note';
 import { encryptFile } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
@@ -41,12 +37,11 @@ function NoteDetails({ navigation }) {
       return;
     }
 
-    await makeFileCacheFolders();
     await makeNotesFolders();
     const trimedTitle = title.trim();
-    const inputPath = `${fileCachePaths.decrypted}/${trimedTitle}.txt`;
+    const inputPath = `${cachePath}/${trimedTitle}.txt`;
     await writeFile(inputPath, content || '', 'utf8');
-    const outputPath = `${activeNotebook.path}/${trimedTitle}.precloudnote`;
+    const outputPath = `${activeNotebook.path}/${trimedTitle}.${noteExtension}`;
     const success = await encryptFile(inputPath, outputPath, password);
 
     if (success) {

@@ -15,4 +15,4 @@ export const heights = {
   editorToolBar: 44,
 };
 
-export const imageLimit = 100;
+export const imageLimitInNote = 100;

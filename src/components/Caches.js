@@ -1,8 +1,8 @@
 import { Button, HStack, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import RNFS from 'react-native-fs';
 
-import { emptyFolder, getFolderSize, getSizeText } from '../lib/files';
+import { cachePath, emptyCache } from '../lib/files/cache';
+import { getFolderSize, getSizeText } from '../lib/files/helpers';
 import { routeNames } from '../router/routes';
 
 function Caches({ route }) {
@@ -15,12 +15,12 @@ function Caches({ route }) {
   }, [route]);
 
   async function readFilesInCache() {
-    const size = await getFolderSize(RNFS.CachesDirectoryPath);
+    const size = await getFolderSize(cachePath);
     setCacheSize(getSizeText(size));
   }
 
   async function handleClearCache() {
-    await emptyFolder(RNFS.CachesDirectoryPath);
+    await emptyCache();
     await readFilesInCache();
   }
 

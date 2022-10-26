@@ -2,7 +2,7 @@ import { IconButton } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { moveFile } from '../lib/files';
+import { moveFile } from '../lib/files/actions';
 import { showToast } from '../lib/toast';
 import FolderPicker from './FolderPicker';
 import Icon from './Icon';

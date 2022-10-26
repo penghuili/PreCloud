@@ -3,7 +3,7 @@ import React from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 import useColors from '../hooks/useColors';
-import { extractFilePath } from '../lib/files';
+import { extractFilePath } from '../lib/files/helpers';
 import Icon from './Icon';
 
 function PickImagesButton({ isDisabled, isLoading, onSelected }) {

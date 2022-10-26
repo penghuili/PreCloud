@@ -1,4 +1,4 @@
-import { takePhoto } from '../lib/files';
+import { takePhoto } from '../lib/files/actions';
 import { navigationRef } from '../router/navigationRef';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';

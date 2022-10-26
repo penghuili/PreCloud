@@ -1,7 +1,6 @@
 import { Text, VStack } from 'native-base';
 import React, { useState } from 'react';
 
-import { MAX_FILE_SIZE_MEGA_BYTES } from '../lib/files';
 import DecryptFileModal from './DecryptFileModal';
 import FileItem from './FileItem';
 
@@ -14,8 +13,7 @@ function FolderFiles({ folder, files, navigate, onDelete }) {
     <>
       {!files.length && (
         <Text>
-          Pick one or multiple files to encrypt. Currently each file size can&lsquo;t be bigger than{' '}
-          {MAX_FILE_SIZE_MEGA_BYTES}MB.
+          Pick one or multiple files to encrypt.
         </Text>
       )}
 

@@ -3,7 +3,8 @@ import React, { useMemo } from 'react';
 import FileViewer from 'react-native-file-viewer';
 
 import useColors from '../hooks/useColors';
-import { extractFileExtensionFromPath, viewableFileTypes } from '../lib/files';
+import { viewableFileTypes } from '../lib/files/constant';
+import { extractFileNameAndExtension } from '../lib/files/helpers';
 import Icon from './Icon';
 
 function OpenFileButton({ file }) {
@@ -14,7 +15,7 @@ function OpenFileButton({ file }) {
       return false;
     }
 
-    const extension = extractFileExtensionFromPath(file.name);
+    const { extension } = extractFileNameAndExtension(file.name);
     return viewableFileTypes.includes(extension);
   }, [file]);
 

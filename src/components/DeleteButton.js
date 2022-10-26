@@ -2,7 +2,7 @@ import { IconButton } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { deleteFile } from '../lib/files';
+import { deleteFile } from '../lib/files/actions';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 

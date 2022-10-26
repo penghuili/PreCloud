@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import AppBar from '../components/AppBar';
 import ContentWrapper from '../components/ContentWrapper';
 import ScreenWrapper from '../components/ScreenWrapper';
-import { extractFileNameAndExtension, renameFile } from '../lib/files';
+import { renameFile } from '../lib/files/actions';
+import { extractFileNameAndExtension } from '../lib/files/helpers';
 
 function RenameFileForm({
   navigation,

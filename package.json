@@ -32,6 +32,7 @@
     "react-native-use-keyboard-height": "0.1.1",
     "react-native-vector-icons": "9.2.0",
     "react-native-webview": "11.23.1",
+    "react-native-zip-archive": "^6.0.8",
     "zustand": "4.0.0"
   },
   "devDependencies": {

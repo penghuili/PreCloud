@@ -2,7 +2,7 @@ import { IconButton } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { shareFile } from '../lib/files';
+import { shareFile } from '../lib/files/actions';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
@@ -15,8 +15,8 @@ function ShareButton({ file }) {
     setIsPending(true);
     try {
       await shareFile({
-        fileName: file.name,
-        filePath: file.path,
+        name: file.name,
+        path: file.path,
         saveToFiles: false,
       });
       showToast('Shared!');

@@ -2,7 +2,7 @@ import { Box, HStack, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { readFiles } from '../lib/files';
+import { readFiles } from '../lib/files/file';
 import Icon from './Icon';
 
 function FolderPickerItem({ folder, selectedPath, onPress }) {

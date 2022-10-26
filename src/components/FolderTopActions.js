@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import { asyncForEach } from '../lib/array';
 import { platforms } from '../lib/constants';
-import { deleteFile } from '../lib/files';
+import { deleteFile } from '../lib/files/actions';
 import { encryptFiles } from '../lib/openpgp/encryptFiles';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
@@ -42,6 +42,7 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
 
     setIsEncrypting(false);
     showToast('Your files are encrypted and saved on your phone!');
+
     await deleteFiles(pickedFiles);
   }
 

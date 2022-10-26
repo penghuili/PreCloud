@@ -9,9 +9,9 @@ import useKeyboardHeight from 'react-native-use-keyboard-height';
 
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
-import { heights, imageLimit } from '../lib/constants';
+import { heights, imageLimitInNote } from '../lib/constants';
 import { isAndroid } from '../lib/device';
-import { takePhoto } from '../lib/files';
+import { takePhoto } from '../lib/files/actions';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
@@ -57,7 +57,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
         ref.current.insertImage(`data:${image.type};base64,${resized}`);
       });
     } catch (e) {
-      console.log(e, 'pick image failed');
+      console.log('pick image failed', e);
     }
   }
 
@@ -70,7 +70,7 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
 
       ref.current.insertImage(`data:${photo.type};base64,${resized}`);
     } catch (e) {
-      console.log(e, 'take photo failed');
+      console.log('take photo failed', e);
     }
   }
 
@@ -154,8 +154,8 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
               ref.current.blurContentEditor();
             }}
             onPressAddImage={() => {
-              if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length >= imageLimit) {
-                showToast(`You can only insert ${imageLimit} images.`, 'error');
+              if (innerValue.match(/<img([\w\W]+?)base64([\w\W]+?)>/g)?.length >= imageLimitInNote) {
+                showToast(`You can only insert ${imageLimitInNote} images.`, 'error');
                 return;
               }
 

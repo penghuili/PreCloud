@@ -2,7 +2,7 @@ import { IconButton } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { downloadFile } from '../lib/files';
+import { downloadFile } from '../lib/files/actions';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
@@ -14,7 +14,7 @@ function DownloadButton({ file }) {
   async function handlePress() {
     setIsPending(true);
 
-    const message = await downloadFile({ path: file.path, fileName: file.name });
+    const message = await downloadFile({ path: file.path, name: file.name });
     if (message) {
       showToast(message);
     }

@@ -1,16 +1,11 @@
 import { Actionsheet, HStack, IconButton, Pressable, Text, VStack } from 'native-base';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import {
-  deleteFile,
-  downloadFile,
-  encryptionStatus,
-  getSizeText,
-  MAX_FILE_SIZE_MEGA_BYTES,
-  moveFile,
-  shareFile,
-} from '../lib/files';
+import { deleteFile, downloadFile, moveFile, shareFile } from '../lib/files/actions';
+import { getFolderSize, getSizeText, isLargeFile } from '../lib/files/helpers';
+import { zipFolder } from '../lib/files/zip';
+import { openpgpStatus } from '../lib/openpgp/constant';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import FolderPicker from './FolderPicker';
@@ -21,10 +16,25 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
 
   const [showActions, setShowActions] = useState(false);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
+  const [fileSize, setFileSize] = useState(0);
+
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+
+    if (isLargeFile(file)) {
+      getFolderSize(file.path).then(s => {
+        setFileSize(s);
+      });
+    } else {
+      setFileSize(file.size);
+    }
+  }, [file]);
 
   function handleDecrypt() {
     setShowActions(false);
-    onDecrypt();
+    onDecrypt(file);
   }
 
   function handleRename() {
@@ -34,27 +44,37 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
     });
   }
 
-  const handleShareFile = async () => {
+  async function handleShareFile() {
     try {
       setShowActions(false);
-      await shareFile({
-        fileName: file.name,
-        filePath: file.path,
-        saveToFiles: false,
-      });
-      showToast('Shared!');
+      const zipped = await zipFolder(file.name, file.path);
+      if (zipped) {
+        await shareFile({
+          name: zipped.name,
+          path: zipped.path,
+          saveToFiles: false,
+        });
+        showToast('Shared!');
+      } else {
+        showToast('Share file failed.', 'error');
+      }
     } catch (error) {
       console.log('Share file failed:', error);
     }
-  };
+  }
 
-  const handleDownloadFile = async () => {
+  async function handleDownloadFile() {
     setShowActions(false);
-    const message = await downloadFile({ path: file.path, fileName: file.name });
-    if (message) {
-      showToast(message);
+    const zipped = await zipFolder(file.name, file.path);
+    if (zipped) {
+      const message = await downloadFile({ path: zipped.path, name: zipped.name });
+      if (message) {
+        showToast(message);
+      }
+    } else {
+      showToast('Download file failed', 'error');
     }
-  };
+  }
 
   async function handleMove(newFolder) {
     await moveFile(file.path, `${newFolder.path}/${file.name}`);
@@ -75,11 +95,7 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
   }
 
   function renderErrorMessage() {
-    if (file.status === encryptionStatus.tooLarge) {
-      return <Text highlight>File size can not be bigger than {MAX_FILE_SIZE_MEGA_BYTES}MB.</Text>;
-    }
-
-    if (file.status === encryptionStatus.error) {
+    if (file.status === openpgpStatus.error) {
       return <Text highlight>Encryption of this file failed.</Text>;
     }
 
@@ -158,9 +174,9 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
             Delete
           </Actionsheet.Item>
 
-          {!!file.size && (
+          {!!fileSize && (
             <Text fontSize="xs" color="gray.400">
-              {getSizeText(file.size)}
+              {getSizeText(fileSize)}
             </Text>
           )}
         </Actionsheet.Content>

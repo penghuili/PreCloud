@@ -2,7 +2,7 @@ import { Button, HStack, Pressable, Text, VStack } from 'native-base';
 import React, { useEffect } from 'react';
 
 import useColors from '../hooks/useColors';
-import { readNotebooks } from '../lib/files';
+import { readNotebooks } from '../lib/files/note';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 import Icon from './Icon';

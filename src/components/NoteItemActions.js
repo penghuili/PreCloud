@@ -2,7 +2,8 @@ import { Actionsheet, Text } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { deleteFile, downloadFile, getSizeText, moveFile, shareFile } from '../lib/files';
+import { deleteFile, downloadFile, moveFile, shareFile } from '../lib/files/actions';
+import { getSizeText } from '../lib/files/helpers';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import Icon from './Icon';
@@ -19,8 +20,8 @@ function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onView, onEdit,
     try {
       onClose();
       await shareFile({
-        fileName: note.name,
-        filePath: note.path,
+        name: note.name,
+        path: note.path,
         saveToFiles: false,
       });
       showToast('Shared!');
@@ -32,7 +33,7 @@ function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onView, onEdit,
   async function handleDownload() {
     onClose();
     const message = await downloadFile({
-      fileName: note.name,
+      name: note.name,
       path: note.path,
     });
     if (message) {

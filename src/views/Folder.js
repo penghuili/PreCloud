@@ -12,15 +12,9 @@ import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
-import {
-  deleteFile,
-  emptyFolder,
-  getFolderSize,
-  getSizeText,
-  isRootFolder,
-  readFiles,
-  statFile,
-} from '../lib/files';
+import { deleteFile } from '../lib/files/actions';
+import { readFiles } from '../lib/files/file';
+import { emptyFolder, getFolderSize, getSizeText, isRootFolder, statFile } from '../lib/files/helpers';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
@@ -112,7 +106,9 @@ function Folder({
               files={innerFiles}
               navigate={navigation.navigate}
               onDelete={file => {
-                setInnerFiles(innerFiles.filter(f => f.path !== file.path));
+                const newFiles = innerFiles.filter(f => f.path !== file.path);
+                setInnerFiles(newFiles);
+                tempFiles = newFiles;
               }}
             />
           )}

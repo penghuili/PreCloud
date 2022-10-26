@@ -1,6 +1,10 @@
 import { asyncForEach } from '../array';
-import { deleteFile, encryptionStatus, MAX_FILE_SIZE_BYTES, moveFile, statFile } from '../files';
-import { encryptFile } from './helpers';
+import { moveFile } from '../files/actions';
+import { largeFileExtension, precloudExtension } from '../files/constant';
+import { getFolderSize } from '../files/helpers';
+import { openpgpStatus } from './constant';
+import { encryptLargeFile, LARGE_FILE_SIZE_IN_BYTES } from './encryptLargeFile';
+import { encryptSmallFile } from './encryptSmallFile';
 
 export async function encryptFiles(files, { folder, onEncrypted, password }) {
   if (!files?.length) {
@@ -8,44 +12,43 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
   }
 
   const encryptedFiles = [];
+  let encrypted;
 
   await asyncForEach(files, async file => {
-    const { name, path, size } = file;
+    if (file.name.endsWith(precloudExtension)) {
+      const newPath = `${folder.path}/${file.name}`;
+      await moveFile(file.path, newPath);
 
-    let result;
-    if (name.endsWith('.precloud')) {
-      const newPath = `${folder.path}/${name}`;
-      await moveFile(path, newPath);
-      result = { name, path: newPath, size, status: encryptionStatus.encrypted };
-    } else if (size > MAX_FILE_SIZE_BYTES) {
-      await deleteFile(path);
-      result = { name, path, size, status: encryptionStatus.tooLarge };
+      encrypted = {
+        name: file.name,
+        path: newPath,
+        size: file.size,
+        status: openpgpStatus.encrypted,
+        isDirectory: () => false,
+        isFile: () => true,
+      };
+    } else if (file.name.endsWith(largeFileExtension)) {
+      const newPath = `${folder.path}/${file.name}`;
+      await moveFile(file.path, newPath);
+      const size = await getFolderSize(newPath)
+
+      encrypted = {
+        name: file.name,
+        path: newPath,
+        size,
+        status: openpgpStatus.encrypted,
+        isDirectory: () => true,
+        isFile: () => false,
+      };
+    } else if (file.size > LARGE_FILE_SIZE_IN_BYTES) {
+      encrypted = await encryptLargeFile(file, { folder, password });
     } else {
-      const inputPath = path;
-      const encryptedName = `${name}.precloud`;
-      const outputPath = `${folder.path}/${encryptedName}`;
-      const success = await encryptFile(inputPath, outputPath, password);
-
-      if (success) {
-        const { size: newSize } = await statFile(outputPath);
-        result = {
-          name: encryptedName,
-          path: outputPath,
-          size: newSize,
-          status: encryptionStatus.encrypted,
-        };
-      } else {
-        result = {
-          name,
-          path,
-          status: encryptionStatus.error,
-        };
-      }
+      encrypted = await encryptSmallFile(file, { folder, password });
     }
 
-    encryptedFiles.push(result);
+    encryptedFiles.push(encrypted);
     if (onEncrypted) {
-      onEncrypted(result);
+      onEncrypted(encrypted);
     }
   });
 

@@ -11,13 +11,11 @@ import NoteItem from '../components/NoteItem';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
-import {
-  deleteFile,
-  extractFilePath,
-  fileCachePaths,
-  makeFileCacheFolders,
-  readNotes,
-} from '../lib/files';
+import { copyFile, deleteFile } from '../lib/files/actions';
+import { cachePath } from '../lib/files/cache';
+import { noteExtension } from '../lib/files/constant';
+import { extractFilePath } from '../lib/files/helpers';
+import { readNotes } from '../lib/files/note';
 import { decryptFile } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
@@ -64,7 +62,7 @@ function Notebook({ navigation }) {
         copyTo: 'cachesDirectory',
       });
       const files = result
-        .filter(f => f.name.endsWith('.precloudnote'))
+        .filter(f => f.name.endsWith(noteExtension))
         .map(f => ({
           name: f.name,
           size: f.size,
@@ -72,7 +70,7 @@ function Notebook({ navigation }) {
         }));
 
       await asyncForEach(files, async file => {
-        await FS.copyFile(file.path, `${notebook.path}/${file.name}`);
+        await copyFile(file.path, `${notebook.path}/${file.name}`);
         await deleteFile(file.path);
       });
 
@@ -91,8 +89,7 @@ function Notebook({ navigation }) {
 
   async function handleOpenNote(note) {
     setActiveNote(note);
-    await makeFileCacheFolders();
-    const outputPath = `${fileCachePaths.decrypted}/${note.fileName}.txt`;
+    const outputPath = `${cachePath}/${note.fileName}.txt`;
     const success = await decryptFile(note.path, outputPath, password);
 
     if (success) {
@@ -131,7 +128,7 @@ function Notebook({ navigation }) {
             Select notes
           </Button>
           <Text>
-            (Only select files ending with <Text highlight>.precloudnote</Text>)
+            (Only select files ending with <Text highlight>.{noteExtension}</Text>)
           </Text>
         </VStack>
       );
@@ -211,7 +208,7 @@ function Notebook({ navigation }) {
         isOpen={showPickConfirm}
         message={
           <Text>
-            Only select files ending with <Text highlight>.precloudnote</Text>
+            Only select files ending with <Text highlight>.{noteExtension}</Text>
           </Text>
         }
         onClose={() => {

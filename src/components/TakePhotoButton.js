@@ -2,7 +2,7 @@ import { IconButton, Spinner } from 'native-base';
 import React from 'react';
 
 import useColors from '../hooks/useColors';
-import { takePhoto } from '../lib/files';
+import { takePhoto } from '../lib/files/actions';
 import Icon from './Icon';
 
 function TakePhotoButton({ isDisabled, isLoading, onSelected }) {

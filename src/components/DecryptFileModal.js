@@ -2,13 +2,9 @@ import { Button, HStack, IconButton, Modal, Spinner, Text, VStack } from 'native
 import React, { useEffect, useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import {
-  deleteFile,
-  extractFileNameFromPath,
-  fileCachePaths,
-  makeFileCacheFolders,
-} from '../lib/files';
-import { decryptFile } from '../lib/openpgp/helpers';
+import { emptyCache } from '../lib/files/cache';
+import { largeFileExtension, precloudExtension } from '../lib/files/constant';
+import { decryptFile } from '../lib/openpgp/decryptFile';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 import DeleteButton from './DeleteButton';
@@ -45,23 +41,20 @@ function DecryptFileModal({
   }, [file, password]);
 
   async function triggerDecrypt() {
-    if (!file.name.endsWith('precloud')) {
-      await deleteFile(file.path);
-      showToast('Only select files ending with .precloud', 'error');
+    if (!file.name.endsWith(precloudExtension) && !file.name.endsWith(largeFileExtension)) {
+      showToast(
+        `Only select files ending with .${precloudExtension} or .${largeFileExtension}`,
+        'error'
+      );
+      return;
     }
 
     setIsDecrypting(true);
 
-    await makeFileCacheFolders();
-    const name = extractFileNameFromPath(file.path);
-    const paths = name.split('.');
-    paths.pop();
-    const fileName = paths.join('.');
-    const newPath = `${fileCachePaths.decrypted}/${fileName}`;
-    const success = await decryptFile(file.path, newPath, password);
+    const decrypted = await decryptFile(file, password);
 
-    if (success) {
-      setDecryptedFile({ path: newPath, name: fileName });
+    if (decrypted) {
+      setDecryptedFile(decrypted);
     } else {
       showToast('Decrypt file failed.', 'error');
       handleClose();
@@ -73,8 +66,8 @@ function DecryptFileModal({
   function handleClose() {
     setIsDecrypting(false);
     setDecryptedFile(false);
-    deleteFile(fileCachePaths.decrypted);
     onClose();
+    emptyCache();
   }
 
   return (
@@ -94,7 +87,7 @@ function DecryptFileModal({
                   <MoveToButton
                     file={file}
                     folder={folder}
-                    onMove={file => {
+                    onMove={() => {
                       handleClose();
                       onDelete(file);
                     }}

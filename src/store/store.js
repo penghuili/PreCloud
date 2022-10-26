@@ -1,16 +1,10 @@
 import create from 'zustand';
 
-import {
-  deleteFile as deleteFileFromPhone,
-  filesFolder,
-  getParentPath,
-  makeFilesFolder,
-  makeNotebook,
-  moveFile,
-  notesFolder,
-  readFilesFolders,
-  readNotebooks,
-} from '../lib/files';
+import { deleteFile as deleteFileFromPhone, moveFile } from '../lib/files/actions';
+import { filesFolder, notesFolder } from '../lib/files/constant';
+import { createFolder, readFolders } from '../lib/files/file';
+import { getParentPath } from '../lib/files/helpers';
+import { makeNotebook, readNotebooks } from '../lib/files/note';
 import { getPasswords, savePasswords } from '../lib/keychain';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
@@ -29,8 +23,8 @@ async function makeDefaultFolders(get, set, folders) {
   let defaultFolder;
   if (!innerFolders?.length) {
     defaultFolder = 'Inbox';
-    await makeFilesFolder(defaultFolder);
-    innerFolders = await readFilesFolders();
+    await createFolder(defaultFolder);
+    innerFolders = await readFolders();
   } else {
     defaultFolder = await LocalStorage.get(LocalStorageKeys.defaultFileFolder);
     if (!defaultFolder || !innerFolders.find(f => f.name === defaultFolder)) {
@@ -154,7 +148,7 @@ export const useStore = create((set, get) => ({
   rootFolders: [],
   setRootFolders: value => set({ rootFolders: value }),
   getRootFolders: async () => {
-    const currentFolders = await readFilesFolders();
+    const currentFolders = await readFolders();
     const { defaultFolder, folders } = await makeDefaultFolders(get, set, currentFolders);
 
     set({
@@ -164,10 +158,10 @@ export const useStore = create((set, get) => ({
   },
   defaultFolder: null,
   createFolder: async (label, parentPath) => {
-    const newFolder = await makeFilesFolder(label, parentPath);
+    const newFolder = await createFolder(label, parentPath);
 
     if (!parentPath) {
-      const newFolders = await readFilesFolders();
+      const newFolders = await readFolders();
       const isFirst = newFolders.length === 1;
       if (isFirst) {
         await LocalStorage.set(LocalStorageKeys.defaultFileFolder, newFolders[0].name);
@@ -188,7 +182,7 @@ export const useStore = create((set, get) => ({
 
     const isRoot = parentPath === filesFolder;
     if (isRoot) {
-      const newFolders = await readFilesFolders();
+      const newFolders = await readFolders();
       const currentDefault = get().defaultFolder;
       const isDefault = currentDefault === folder.name;
       if (isDefault) {
