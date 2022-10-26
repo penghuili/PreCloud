@@ -4,6 +4,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 
 import useColors from '../hooks/useColors';
 import { extractFilePath } from '../lib/files/helpers';
+import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
 function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
@@ -12,6 +13,7 @@ function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
   async function handlePress() {
     onStart(true);
     try {
+      showToast('Copying files ...', 'info');
       const result = await launchImageLibrary({
         mediaType: 'mixed',
         selectionLimit: 0,

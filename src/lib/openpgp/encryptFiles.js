@@ -43,7 +43,7 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
       };
     } else if (file.size > LARGE_FILE_SIZE_IN_BYTES) {
       showToast(
-        'Oh you are encrypting big files, this will take a while, keep PreCloud active and be patient :)',
+        `${file.name} is a large file, encryption may take a while, keep PreCloud active and be patient :)`,
         'info'
       );
       encrypted = await encryptLargeFile(file, { folder, password });

@@ -7,6 +7,7 @@ import { asyncForEach } from '../lib/array';
 import { deleteFile } from '../lib/files/actions';
 import { extractFilePath } from '../lib/files/helpers';
 import { unzipFolder } from '../lib/files/zip';
+import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
 function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
@@ -15,6 +16,7 @@ function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
   async function handlePress() {
     onStart(true)
     try {
+      showToast('Copying files ...', 'info');
       const result = await DocumentPicker.pick({
         allowMultiSelection: true,
         type: types.allFiles,
