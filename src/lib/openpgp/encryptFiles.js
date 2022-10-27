@@ -18,9 +18,10 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
   }
 
   const encryptedFiles = [];
-  let encrypted;
-
+  
   await asyncForEach(files, async file => {
+    let encrypted = null;
+
     if (file.name.endsWith(precloudExtension)) {
       const newPath = `${folder.path}/${file.name}`;
       await moveFile(file.path, newPath);

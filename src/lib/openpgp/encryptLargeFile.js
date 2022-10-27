@@ -7,7 +7,6 @@ import { extractFileNameAndExtension, getFolderSize, statFile } from '../files/h
 import { openpgpStatus } from './constant';
 import { encryptFile } from './helpers';
 
-
 const CHUNK_SIZE_IN_BYTES = 20 * 1024 * 1024;
 
 async function getChunkCount(path) {
