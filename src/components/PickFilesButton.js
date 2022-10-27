@@ -7,22 +7,23 @@ import { asyncForEach } from '../lib/array';
 import { deleteFile } from '../lib/files/actions';
 import { extractFilePath } from '../lib/files/helpers';
 import { unzipFolder } from '../lib/files/zip';
-import { showToast } from '../lib/toast';
+import { hideToast, showToast } from '../lib/toast';
 import Icon from './Icon';
 
 function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
   const colors = useColors();
 
   async function handlePress() {
-    onStart(true)
+    onStart(true);
     try {
-      showToast('Copying files ...', 'info');
+      showToast('Copying files ...', 'info', 300);
       const result = await DocumentPicker.pick({
         allowMultiSelection: true,
         type: types.allFiles,
         presentationStyle: 'fullScreen',
         copyTo: 'cachesDirectory',
       });
+      hideToast();
 
       const mapped = result.map(f => ({
         name: f.name,
@@ -48,7 +49,7 @@ function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
       console.log('Pick files failed', e);
     }
 
-    onStart(false)
+    onStart(false);
   }
 
   return (
