@@ -3,8 +3,13 @@ import { moveFile } from '../files/actions';
 import { largeFileExtension, precloudExtension } from '../files/constant';
 import { getFolderSize } from '../files/helpers';
 import { showToast } from '../toast';
-import { openpgpStatus } from './constant';
-import { encryptLargeFile, LARGE_FILE_SIZE_IN_BYTES } from './encryptLargeFile';
+import {
+  ENCRYPTION_LIMIT_IN_BYTES,
+  ENCRYPTION_LIMIT_IN_GIGABYTES,
+  LARGE_FILE_SIZE_IN_BYTES,
+  openpgpStatus,
+} from './constant';
+import { encryptLargeFile } from './encryptLargeFile';
 import { encryptSmallFile } from './encryptSmallFile';
 
 export async function encryptFiles(files, { folder, onEncrypted, password }) {
@@ -41,6 +46,11 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
         isDirectory: () => true,
         isFile: () => false,
       };
+    } else if (file.size > ENCRYPTION_LIMIT_IN_BYTES) {
+      showToast(
+        `${file.name} is bigger than ${ENCRYPTION_LIMIT_IN_GIGABYTES}GB, PreCloud can't encrypt such large files for now.`,
+        'info'
+      );
     } else if (file.size > LARGE_FILE_SIZE_IN_BYTES) {
       showToast(
         `${file.name} is a large file, encryption may take a while, keep PreCloud active and be patient :)`,
@@ -51,9 +61,11 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
       encrypted = await encryptSmallFile(file, { folder, password });
     }
 
-    encryptedFiles.push(encrypted);
-    if (onEncrypted) {
-      onEncrypted(encrypted);
+    if (encrypted) {
+      encryptedFiles.push(encrypted);
+      if (onEncrypted) {
+        onEncrypted(encrypted);
+      }
     }
   });
 

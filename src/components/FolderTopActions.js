@@ -38,11 +38,16 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
   async function handleEncrypt(pickedFiles, setIsEncrypting) {
     setIsEncrypting(true);
 
-    await encryptFiles(pickedFiles, { folder, onEncrypted: onAddFile, password });
+    const encryptedFiles = await encryptFiles(pickedFiles, {
+      folder,
+      onEncrypted: onAddFile,
+      password,
+    });
+    if (encryptedFiles.length) {
+      showToast('Your files are encrypted and saved on your phone!');
+    }
 
     setIsEncrypting(false);
-    showToast('Your files are encrypted and saved on your phone!');
-
     await deleteFiles(pickedFiles);
   }
 
