@@ -7,12 +7,13 @@ import { extractFileNameAndExtension, getFolderSize, statFile } from '../files/h
 import { openpgpStatus } from './constant';
 import { encryptFile } from './helpers';
 
-export const LARGE_FILE_SIZE_IN_BYTES = 20 * 1024 * 1024;
+export const LARGE_FILE_SIZE_IN_BYTES = 100 * 1024 * 1024;
+const CHUNK_SIZE_IN_BYTES = 20 * 1024 * 1024;
 
 async function getChunkCount(path) {
   const info = await statFile(path);
-  const reminder = info.size % LARGE_FILE_SIZE_IN_BYTES;
-  return (info.size - reminder) / LARGE_FILE_SIZE_IN_BYTES + (reminder > 0 ? 1 : 0);
+  const reminder = info.size % CHUNK_SIZE_IN_BYTES;
+  return (info.size - reminder) / CHUNK_SIZE_IN_BYTES + (reminder > 0 ? 1 : 0);
 }
 
 function append0(index) {
@@ -33,8 +34,8 @@ export async function encryptLargeFile(file, { folder, password }) {
     await asyncForEach(Array(chunkCount).fill(0), async (_, index) => {
       const chunk = await read(
         file.path,
-        LARGE_FILE_SIZE_IN_BYTES,
-        index * LARGE_FILE_SIZE_IN_BYTES,
+        CHUNK_SIZE_IN_BYTES,
+        index * CHUNK_SIZE_IN_BYTES,
         'base64'
       );
       const tmpPath = `${CachesDirectoryPath}/chunk.${precloudExtension}`;
