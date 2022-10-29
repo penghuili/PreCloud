@@ -1,5 +1,6 @@
 import { Text, VStack } from 'native-base';
 import React, { useState } from 'react';
+import { ENCRYPTION_LIMIT_IN_GIGABYTES } from '../lib/openpgp/constant';
 
 import DecryptFileModal from './DecryptFileModal';
 import FileItem from './FileItem';
@@ -13,7 +14,8 @@ function FolderFiles({ folder, files, navigate, onDelete }) {
     <>
       {!files.length && (
         <Text>
-          Pick one or multiple files to encrypt.
+          Pick one or multiple files to encrypt. File size can not be bigger than{' '}
+          {ENCRYPTION_LIMIT_IN_GIGABYTES}GB.
         </Text>
       )}
 
