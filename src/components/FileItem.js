@@ -47,11 +47,16 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
   async function handleShareFile() {
     try {
       setShowActions(false);
-      const zipped = await zipFolder(file.name, file.path);
-      if (zipped) {
+
+      let updated = file;
+      if (file.isDirectory()) {
+        updated = await zipFolder(file.name, file.path);
+      }
+
+      if (updated) {
         await shareFile({
-          name: zipped.name,
-          path: zipped.path,
+          name: updated.name,
+          path: updated.path,
           saveToFiles: false,
         });
         showToast('Shared!');
@@ -65,9 +70,13 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
 
   async function handleDownloadFile() {
     setShowActions(false);
-    const zipped = await zipFolder(file.name, file.path);
-    if (zipped) {
-      const message = await downloadFile({ path: zipped.path, name: zipped.name });
+
+    let updated = file;
+    if (file.isDirectory()) {
+      updated = await zipFolder(file.name, file.path);
+    }
+    if (updated) {
+      const message = await downloadFile({ path: updated.path, name: updated.name });
       if (message) {
         showToast(message);
       }

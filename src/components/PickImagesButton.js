@@ -13,7 +13,10 @@ function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
   async function handlePress() {
     onStart(true);
     try {
-      showToast('Copying files ...', 'info', 300);
+      setTimeout(() => {
+        showToast('Copying files ...', 'info', 300);
+      }, 1000);
+
       const result = await launchImageLibrary({
         mediaType: 'mixed',
         selectionLimit: 0,
@@ -28,6 +31,7 @@ function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
 
       await onSelected(images);
     } catch (e) {
+      hideToast();
       console.log('Pick images failed', e);
     }
     onStart(false);

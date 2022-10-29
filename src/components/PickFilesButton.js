@@ -16,7 +16,10 @@ function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
   async function handlePress() {
     onStart(true);
     try {
-      showToast('Copying files ...', 'info', 300);
+      setTimeout(() => {
+        showToast('Copying files ...', 'info', 300);
+      }, 1000);
+
       const result = await DocumentPicker.pick({
         allowMultiSelection: true,
         type: types.allFiles,
@@ -46,6 +49,7 @@ function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
 
       await onSelected(pickedFiles);
     } catch (e) {
+      hideToast();
       console.log('Pick files failed', e);
     }
 

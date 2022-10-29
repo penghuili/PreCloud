@@ -18,6 +18,8 @@ export async function encryptSmallFile(file, { folder, password }) {
       path: outputPath,
       size: newSize,
       status: openpgpStatus.encrypted,
+      isDirectory: () => false,
+      isFile: () => true,
     };
   }
 
@@ -26,5 +28,7 @@ export async function encryptSmallFile(file, { folder, password }) {
     path,
     size,
     status: openpgpStatus.error,
+    isDirectory: () => false,
+    isFile: () => true,
   };
 }
