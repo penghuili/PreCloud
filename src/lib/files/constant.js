@@ -1,20 +1,38 @@
 import FS from 'react-native-fs';
 
-export const viewableFileTypes = [
+export const imageExtensions = ['gif', 'heic', 'jpg', 'jpeg', 'png', 'psd', 'webp'];
+export const videoExtensions = [
+  '3gp',
+  'avi',
+  'flv',
+  'm4v',
+  'mkv',
+  'mov',
+  'mp4',
+  'mpeg',
+  'mpg',
+  'ogv',
+  'webm',
+];
+const audioExtensions = [
+  'mp3',
+  'wav',
+  'ogg',
+  'm4a',
+  'aac',
+  'flac',
+  'midi',
+];
+export const viewableFileExtensions = [
+  ...imageExtensions,
+  ...videoExtensions,
+  ...audioExtensions,
   'css',
   'csv',
-  'gif',
-  'heic',
   'html',
-  'jpeg',
-  'jpg',
   'json',
-  'png',
   'pdf',
   'txt',
-  'webp',
-  'mp4',
-  'mov',
 ];
 
 export const androidDownloadFolder = FS.DownloadDirectoryPath;

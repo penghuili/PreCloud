@@ -1,3 +1,4 @@
+import FileViewer from 'react-native-file-viewer';
 import FS from 'react-native-fs';
 
 import { filesFolder, largeFileExtension } from './constant';
@@ -55,4 +56,12 @@ export async function readFiles(path) {
     });
 
   return { files, folders };
+}
+
+export async function viewFile(path) {
+  try {
+    await FileViewer.open(path);
+  } catch (e) {
+    console.log('open file failed', e);
+  }
 }

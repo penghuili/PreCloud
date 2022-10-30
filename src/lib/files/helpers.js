@@ -4,27 +4,35 @@ import { filesFolder, largeFileExtension, precloudExtension } from './constant';
 
 export function extractFileNameAndExtension(name) {
   const parts = name.split('.');
-  const last = parts[parts.length - 1];
+  const last = (parts[parts.length - 1] || '').toLowerCase();
   let extension = '';
-  if (last.toLowerCase() === precloudExtension) {
+  let extensionWithoutDot = '';
+  if (last === precloudExtension) {
     extension = `.${precloudExtension}`;
+    extensionWithoutDot = precloudExtension;
     parts.pop();
   }
 
-  if (last.toLowerCase() === largeFileExtension) {
+  if (last === largeFileExtension) {
     extension = `.${largeFileExtension}`;
+    extensionWithoutDot = largeFileExtension;
     parts.pop();
   }
 
   if (parts.length === 1) {
     return name.startsWith('.')
-      ? { fileName: '', extension: `.${parts[0]}${extension}` }
-      : { fileName: parts[0], extension: `${extension}` };
+      ? {
+          fileName: '',
+          extension: `.${parts[0]}${extension}`,
+          extensionWithoutDot: `${parts[0]}${extension}`,
+        }
+      : { fileName: parts[0], extension, extensionWithoutDot };
   }
 
   return {
     fileName: parts.slice(0, parts.length - 1).join('.'),
     extension: `.${parts[parts.length - 1]}${extension}`,
+    extensionWithoutDot: `${parts[parts.length - 1]}${extension}`,
   };
 }
 

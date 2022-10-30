@@ -1,9 +1,21 @@
-import { Button, HStack, IconButton, Modal, Spinner, Text, VStack } from 'native-base';
+import {
+  Button,
+  HStack,
+  IconButton,
+  Image,
+  Modal,
+  Pressable,
+  Spinner,
+  Text,
+  VStack,
+} from 'native-base';
 import React, { useEffect, useState } from 'react';
 
 import useColors from '../hooks/useColors';
 import { emptyCache } from '../lib/files/cache';
-import { largeFileExtension, precloudExtension } from '../lib/files/constant';
+import { imageExtensions, largeFileExtension, precloudExtension } from '../lib/files/constant';
+import { viewFile } from '../lib/files/file';
+import { extractFileNameAndExtension } from '../lib/files/helpers';
 import { decryptFile } from '../lib/openpgp/decryptFile';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
@@ -70,6 +82,25 @@ function DecryptFileModal({
     emptyCache();
   }
 
+  function renderImage() {
+    if (decryptedFile?.name) {
+      const { extensionWithoutDot } = extractFileNameAndExtension(decryptedFile.name);
+      if (imageExtensions.includes(extensionWithoutDot)) {
+        return (
+          <Pressable
+            onPress={() => {
+              viewFile(decryptedFile.path);
+            }}
+          >
+            <Image source={{ uri: `file://${decryptedFile.path}` }} size="2xl" />
+          </Pressable>
+        );
+      }
+    }
+
+    return null;
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <Modal.Content maxWidth="400px">
@@ -79,6 +110,7 @@ function DecryptFileModal({
           {!isDecrypting && !!decryptedFile && (
             <>
               <VStack>
+                {renderImage()}
                 <Text>{decryptedFile.name}</Text>
                 <HStack mt="1">
                   <OpenFileButton file={decryptedFile} />

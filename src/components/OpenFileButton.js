@@ -1,9 +1,9 @@
 import { IconButton } from 'native-base';
 import React, { useMemo } from 'react';
-import FileViewer from 'react-native-file-viewer';
 
 import useColors from '../hooks/useColors';
-import { viewableFileTypes } from '../lib/files/constant';
+import { viewableFileExtensions } from '../lib/files/constant';
+import { viewFile } from '../lib/files/file';
 import { extractFileNameAndExtension } from '../lib/files/helpers';
 import Icon from './Icon';
 
@@ -15,17 +15,12 @@ function OpenFileButton({ file }) {
       return false;
     }
 
-    const { extension } = extractFileNameAndExtension(file.name);
-    const extensionWithoutDot = extension[0] === '.' ? extension.slice(1) : extension;
-    return viewableFileTypes.includes(extensionWithoutDot);
+    const { extensionWithoutDot } = extractFileNameAndExtension(file.name);
+    return viewableFileExtensions.includes(extensionWithoutDot);
   }, [file]);
 
   async function handlePress() {
-    try {
-      await FileViewer.open(file.path);
-    } catch (e) {
-      console.log('open file failed', e);
-    }
+    await viewFile(file.path)
   }
 
   if (!canBeOpened) {
