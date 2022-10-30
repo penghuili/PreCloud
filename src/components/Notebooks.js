@@ -1,26 +1,16 @@
 import { Button, HStack, Pressable, Text, VStack } from 'native-base';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import useColors from '../hooks/useColors';
-import { readNotebooks } from '../lib/files/note';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 import Icon from './Icon';
 
-function Notebooks({ navigation }) {
+function Notebooks({ navigation, notebooks }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
-  const notebooks = useStore(state => state.notebooks);
-  const setNotebooks = useStore(state => state.setNotebooks);
   const setActiveNotebook = useStore(state => state.setActiveNotebook);
   const setNotes = useStore(state => state.setNotes);
-
-  useEffect(() => {
-    readNotebooks().then(value => {
-      setNotebooks(value);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   async function handleOpenNotebook(notebook) {
     setActiveNotebook(notebook);
@@ -33,7 +23,7 @@ function Notebooks({ navigation }) {
   }
 
   function renderNotebooks() {
-    if (!notebooks.length) {
+    if (!notebooks?.length) {
       return (
         <VStack space="sm" alignItems="center">
           <Text>Create your first notebook.</Text>
@@ -81,11 +71,7 @@ function Notebooks({ navigation }) {
     );
   }
 
-  return (
-    <VStack space="sm">
-      {renderNotebooks()}
-    </VStack>
-  );
+  return <VStack space="sm">{renderNotebooks()}</VStack>;
 }
 
 export default Notebooks;

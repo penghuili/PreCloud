@@ -7,7 +7,7 @@ import { zipFolder } from '../lib/files/zip';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
-function ZipAndShareAction({ folder, onShared }) {
+function ZipAndShareAction({ folder, label, onShared }) {
   const colors = useColors();
 
   const [isPending, setIsPending] = useState(false);
@@ -38,7 +38,7 @@ function ZipAndShareAction({ folder, onShared }) {
       isLoading={isPending}
       isDisabled={isPending}
     >
-      Zip and share folder
+      {label || 'Zip and share folder'}
     </Actionsheet.Item>
   );
 }

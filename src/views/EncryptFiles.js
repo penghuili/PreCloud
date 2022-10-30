@@ -51,9 +51,14 @@ function EncryptFiles({ navigation }) {
             </Actionsheet.Item>
             {rootFolders?.length > 0 && (
               <>
-                <ZipAndShareAction folder={rootFolder} onShared={() => setShowActions(false)} />
+                <ZipAndShareAction
+                  folder={rootFolder}
+                  label="Zip and share all files"
+                  onShared={() => setShowActions(false)}
+                />
                 <ZipAndDownloadAction
                   folder={rootFolder}
+                  label="Zip and download all files"
                   onDownloaded={() => setShowActions(false)}
                 />
               </>

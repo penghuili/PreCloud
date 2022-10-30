@@ -7,7 +7,7 @@ import { zipFolder } from '../lib/files/zip';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
-function ZipAndDownloadAction({ folder, onDownloaded }) {
+function ZipAndDownloadAction({ folder, label, onDownloaded }) {
   const colors = useColors();
 
   const [isPending, setIsPending] = useState(false);
@@ -36,7 +36,7 @@ function ZipAndDownloadAction({ folder, onDownloaded }) {
       isLoading={isPending}
       isDisabled={isPending}
     >
-      Zip and download folder
+      {label || 'Zip and download folder'}
     </Actionsheet.Item>
   );
 }
