@@ -30,6 +30,7 @@ import DownloadButton from './DownloadButton';
 import Icon from './Icon';
 import MoveToButton from './MoveToButton';
 import OpenFileButton from './OpenFileButton';
+import RenameButton from './RenameButton';
 import ShareButton from './ShareButton';
 
 function DecryptFileModal({
@@ -134,6 +135,7 @@ function DecryptFileModal({
                   <Text>{decryptedFile.name}</Text>
                   <HStack mt="1">
                     <OpenFileButton file={decryptedFile} />
+                    <RenameButton file={file} navigate={navigate} onRename={handleClose} />
                     <ShareButton file={decryptedFile} />
                     <DownloadButton file={decryptedFile} />
                     <MoveToButton
