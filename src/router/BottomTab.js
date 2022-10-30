@@ -20,10 +20,10 @@ function BottomTab() {
   const handleTakePhoto = useTakePhotoInTabs();
 
   function getIconName(routeName, focused) {
-    if (routeName === routeNames.encryptNotes) {
-      return focused ? 'text' : 'text-outline';
-    } else if (routeName === routeNames.encryptFiles) {
+    if (routeName === routeNames.encryptFiles) {
       return focused ? 'document-attach' : 'document-attach-outline';
+    } else if (routeName === routeNames.encryptNotes) {
+      return focused ? 'text' : 'text-outline';
     } else if (routeName === routeNames.takePhoto) {
       return 'camera-outline';
     } else if (routeName === routeNames.passwords) {
@@ -62,8 +62,8 @@ function BottomTab() {
         },
       })}
     >
-      <Tab.Screen name={routeNames.encryptNotes} component={EncryptNotes} />
       <Tab.Screen name={routeNames.encryptFiles} component={EncryptFiles} />
+      <Tab.Screen name={routeNames.encryptNotes} component={EncryptNotes} />
       <Tab.Screen name={routeNames.takePhoto} component={TakePhoto} />
       <Tab.Screen name={routeNames.passwords} component={Passwords} />
       <Tab.Screen name={routeNames.settings} component={Settings} />
