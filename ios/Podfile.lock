@@ -249,8 +249,6 @@ PODS:
     - React-Core
   - react-native-image-picker (4.10.0):
     - React-Core
-  - react-native-pager-view (5.4.25):
-    - React-Core
   - react-native-safe-area-context (4.3.1):
     - RCT-Folly
     - RCTRequired
@@ -386,7 +384,6 @@ DEPENDENCIES:
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-fast-openpgp (from `../node_modules/react-native-fast-openpgp`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
-  - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -473,8 +470,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-openpgp"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
-  react-native-pager-view:
-    :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-splash-screen:
@@ -559,7 +554,6 @@ SPEC CHECKSUMS:
   react-native-document-picker: f5ec1a712ca2a975c233117f044817bb8393cad4
   react-native-fast-openpgp: 8a362ccb7d22e0c54ce397e43fe111d93e49cd9d
   react-native-image-picker: 4bc9ed38c8be255b515d8c88babbaf74973f91a8
-  react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581
