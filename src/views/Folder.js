@@ -12,8 +12,10 @@ import FolderTopActions from '../components/FolderTopActions';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
+import ZipAndDownloadAction from '../components/ZipAndDownloadAction';
+import ZipAndShareAction from '../components/ZipAndShareAction';
 import useColors from '../hooks/useColors';
-import { deleteFile, downloadFile, moveFile, shareFile } from '../lib/files/actions';
+import { deleteFile, moveFile } from '../lib/files/actions';
 import { readFiles } from '../lib/files/file';
 import {
   emptyFolder,
@@ -22,7 +24,6 @@ import {
   isRootFolder,
   statFile,
 } from '../lib/files/helpers';
-import { zipFolder } from '../lib/files/zip';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
@@ -52,8 +53,6 @@ function Folder({
   const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
   const [folderSize, setFolderSize] = useState(0);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     if (!path) {
@@ -90,38 +89,6 @@ function Folder({
     } else {
       showToast('Move folder failed.', 'error');
     }
-  }
-
-  async function handleZipAndShare() {
-    setIsSharing(true);
-
-    const zipped = await zipFolder(folder.name, folder.path);
-    if (zipped) {
-      const success = await shareFile({ name: zipped.name, path: zipped.path, saveToFiles: false });
-      if (success) {
-        showToast('Shared!');
-      }
-    } else {
-      showToast('Share folder failed.', 'error');
-    }
-
-    setIsSharing(false);
-    setShowActions(false);
-  }
-
-  async function handleZipAndDownload() {
-    setIsDownloading(true);
-
-    const zipped = await zipFolder(folder.name, folder.path);
-    if (zipped) {
-      const message = await downloadFile({ name: zipped.name, path: zipped.path });
-      if (message) {
-        showToast(message);
-      }
-    }
-
-    setIsDownloading(false);
-    setShowActions(false);
   }
 
   return (
@@ -233,22 +200,11 @@ function Folder({
               )}
               {(innerFiles?.length > 0 || innerFolders?.length > 0) && (
                 <>
-                  <Actionsheet.Item
-                    startIcon={<Icon name="share-outline" color={colors.text} />}
-                    onPress={handleZipAndShare}
-                    isLoading={isSharing}
-                    isDisabled={isSharing}
-                  >
-                    Zip and share folder
-                  </Actionsheet.Item>
-                  <Actionsheet.Item
-                    startIcon={<Icon name="download-outline" color={colors.text} />}
-                    onPress={handleZipAndDownload}
-                    isLoading={isDownloading}
-                    isDisabled={isDownloading}
-                  >
-                    Zip and download folder
-                  </Actionsheet.Item>
+                  <ZipAndShareAction folder={folder} onShared={() => setShowActions(false)} />
+                  <ZipAndDownloadAction
+                    folder={folder}
+                    onDownloaded={() => setShowActions(false)}
+                  />
                   <Actionsheet.Item
                     startIcon={<Icon name="trash-outline" color={colors.text} />}
                     onPress={() => {

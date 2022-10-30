@@ -8,10 +8,9 @@ import FoldersEmptyState from './FoldersEmptyState';
 import FoldersList from './FoldersList';
 import Icon from './Icon';
 
-function RootFolders({ navigation }) {
+function RootFolders({ navigation, rootFolders }) {
   const colors = useColors();
   const password = useStore(state => state.activePassword);
-  const rootFolders = useStore(state => state.rootFolders);
 
   function handleAddFolder() {
     navigation.navigate(routeNames.folderForm, { folder: null });
