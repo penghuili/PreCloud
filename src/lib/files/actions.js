@@ -2,18 +2,27 @@ import { format } from 'date-fns';
 import FS from 'react-native-fs';
 import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
+
 import { isAndroid } from '../device';
 import { cachePath } from './cache';
 import { androidDownloadFolder } from './constant';
 import { extractFileNameAndExtension, extractFilePath, getParentPath } from './helpers';
 
 export async function shareFile({ name, path, saveToFiles }) {
-  await Share.open({
-    title: name,
-    filename: name,
-    url: `file://${path}`,
-    saveToFiles,
-  });
+  try {
+    const { success } = await Share.open({
+      title: name,
+      filename: name,
+      url: `file://${path}`,
+      saveToFiles,
+      failOnCancel: false,
+    });
+
+    return !!success;
+  } catch (e) {
+    console.log('share file failed', e);
+    return false;
+  }
 }
 
 export async function deleteFile(path) {
@@ -66,12 +75,17 @@ export async function downloadFile({ path, name }) {
       return `File is downloaded to ${downloadPath}`;
     }
 
-    await shareFile({
+    const success = await shareFile({
       name,
       path,
       saveToFiles: true,
     });
-    return `File is downloaded.`;
+
+    if (success) {
+      return `File is downloaded.`;
+    }
+
+    return null;
   } catch (error) {
     console.log('Download file failed:', error);
     return null;

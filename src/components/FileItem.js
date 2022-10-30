@@ -54,12 +54,15 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
       }
 
       if (updated) {
-        await shareFile({
+        const success = await shareFile({
           name: updated.name,
           path: updated.path,
           saveToFiles: false,
         });
-        showToast('Shared!');
+
+        if (success) {
+          showToast('Shared!');
+        }
       } else {
         showToast('Share file failed.', 'error');
       }

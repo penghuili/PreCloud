@@ -13,16 +13,16 @@ function ShareButton({ file }) {
 
   async function handlePress() {
     setIsPending(true);
-    try {
-      await shareFile({
-        name: file.name,
-        path: file.path,
-        saveToFiles: false,
-      });
+
+    const success = await shareFile({
+      name: file.name,
+      path: file.path,
+      saveToFiles: false,
+    });
+    if (success) {
       showToast('Shared!');
-    } catch (error) {
-      console.log('Share file failed:', error);
     }
+
     setIsPending(false);
   }
 

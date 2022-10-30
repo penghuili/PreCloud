@@ -9,7 +9,16 @@ import { useStore } from '../store/store';
 import Icon from './Icon';
 import NotebookPicker from './NotebookPicker';
 
-function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onView, onEdit, navigation, notebook }) {
+function NoteItemActions({
+  note,
+  isOpen,
+  onClose,
+  isNoteDetails,
+  onView,
+  onEdit,
+  navigation,
+  notebook,
+}) {
   const colors = useColors();
   const notes = useStore(state => state.notes);
   const setNotes = useStore(state => state.setNotes);
@@ -17,16 +26,15 @@ function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onView, onEdit,
   const [showNotebookPicker, setShowNotebookPicker] = useState(false);
 
   async function handleShare() {
-    try {
-      onClose();
-      await shareFile({
-        name: note.name,
-        path: note.path,
-        saveToFiles: false,
-      });
+    onClose();
+    const success = await shareFile({
+      name: note.name,
+      path: note.path,
+      saveToFiles: false,
+    });
+
+    if (success) {
       showToast('Shared!');
-    } catch (error) {
-      console.log('Share file failed:', error);
     }
   }
 
@@ -81,11 +89,11 @@ function NoteItemActions({ note, isOpen, onClose, isNoteDetails, onView, onEdit,
             </Actionsheet.Item>
           ) : (
             <Actionsheet.Item
-            startIcon={<Icon name="eye-outline" color={colors.text} />}
-            onPress={onView}
-          >
-            Open
-          </Actionsheet.Item>
+              startIcon={<Icon name="eye-outline" color={colors.text} />}
+              onPress={onView}
+            >
+              Open
+            </Actionsheet.Item>
           )}
           <Actionsheet.Item
             startIcon={<Icon name="share-outline" color={colors.text} />}
