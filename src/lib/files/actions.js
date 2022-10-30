@@ -3,6 +3,7 @@ import FS from 'react-native-fs';
 import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
 import { isAndroid } from '../device';
+import { cachePath } from './cache';
 import { androidDownloadFolder } from './constant';
 import { extractFileNameAndExtension, extractFilePath, getParentPath } from './helpers';
 
@@ -98,11 +99,15 @@ export async function takePhoto() {
     const raw = result?.assets?.[0];
     if (raw) {
       const { extension } = extractFileNameAndExtension(raw.fileName);
+      const name = `${format(new Date(), 'yyyyMMdd_HHmmss')}${extension}`;
+      const path = `${cachePath}/${name}`;
+      await moveFile(extractFilePath(raw.uri), path);
+
       return {
         type: raw.type,
-        name: `${format(new Date(), 'yyyyMMdd_HHmmss')}${extension}`,
+        name,
         size: raw.fileSize,
-        path: extractFilePath(raw.uri),
+        path,
       };
     }
 
