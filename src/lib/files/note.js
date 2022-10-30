@@ -1,4 +1,5 @@
 import FS from 'react-native-fs';
+import { readFolder } from './actions';
 
 import { notesFolder } from './constant';
 import { extractFileNameAndExtension } from './helpers';
@@ -27,10 +28,8 @@ export async function makeNotebook(label) {
 
 export async function readNotebooks() {
   await makeNotesFolders();
-  const notes = await FS.readDir(notesFolder);
-  return notes
-    .filter(n => n.isDirectory())
-    .sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime());
+  const notes = await readFolder(notesFolder);
+  return notes.filter(n => n.isDirectory());
 }
 
 export async function readNotes(path) {
@@ -39,9 +38,8 @@ export async function readNotes(path) {
     return [];
   }
 
-  const notes = await FS.readDir(path);
+  const notes = await readFolder(path);
   return notes
     .filter(n => n.isFile())
-    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }))
-    .sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime());
+    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }));
 }

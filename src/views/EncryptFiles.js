@@ -8,18 +8,34 @@ import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import RootFolders from '../components/RootFolders';
 import ScreenWrapper from '../components/ScreenWrapper';
+import UnzipFolderAction from '../components/UnzipFolderAction';
 import ZipAndDownloadAction from '../components/ZipAndDownloadAction';
 import ZipAndShareAction from '../components/ZipAndShareAction';
 import useColors from '../hooks/useColors';
+import { asyncForEach } from '../lib/array';
+import { moveFile } from '../lib/files/actions';
 import { filesFolder } from '../lib/files/constant';
+import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 
 function EncryptFiles({ navigation }) {
   const colors = useColors();
   const rootFolders = useStore(state => state.rootFolders);
+  const getRootFolders = useStore(state => state.getRootFolders);
 
   const [showActions, setShowActions] = useState(false);
+
+  async function handleUnzipped(result) {
+    await asyncForEach(result, async folder => {
+      await moveFile(folder.path, `${filesFolder}/${folder.name}`);
+    });
+
+    await getRootFolders();
+
+    setShowActions(false);
+    showToast('Import files finished!');
+  }
 
   const rootFolder = {
     name: `PreCloud-files-${format(new Date(), 'yyyyMMddHHmm')}`,
@@ -60,6 +76,12 @@ function EncryptFiles({ navigation }) {
                   folder={rootFolder}
                   label="Zip and download all files"
                   onDownloaded={() => setShowActions(false)}
+                />
+                <UnzipFolderAction
+                  label="Import zipped files"
+                  folderPrefix="PreCloud-files"
+                  confirmMessage={`Please only pick zipped file, and file name should start with "PreCloud-files".\n\nImportant note: Imported folders will overwrite current folders.`}
+                  onUnzipped={handleUnzipped}
                 />
               </>
             )}

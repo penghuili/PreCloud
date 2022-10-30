@@ -19,7 +19,7 @@ function ZipAndDownloadAction({ folder, label, onDownloaded }) {
     if (zipped) {
       const message = await downloadFile({ name: zipped.name, path: zipped.path });
       if (message) {
-        showToast(message);
+        showToast(`${message} Please don't rename zipped file.`, 'success', 6);
       }
     }
 

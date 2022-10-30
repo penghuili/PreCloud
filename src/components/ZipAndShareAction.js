@@ -19,7 +19,7 @@ function ZipAndShareAction({ folder, label, onShared }) {
     if (zipped) {
       const success = await shareFile({ name: zipped.name, path: zipped.path, saveToFiles: false });
       if (success) {
-        showToast('Shared!');
+        showToast(`Shared! Please don't rename zipped file.`, 'success', 6);
       }
     } else {
       showToast('Share folder failed.', 'error');

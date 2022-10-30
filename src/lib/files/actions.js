@@ -1,12 +1,27 @@
 import { format } from 'date-fns';
+import DocumentPicker, { types } from 'react-native-document-picker';
 import FS from 'react-native-fs';
 import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
 
+import { asyncForEach } from '../array';
 import { isAndroid } from '../device';
+import { hideToast, showToast } from '../toast';
 import { cachePath } from './cache';
 import { androidDownloadFolder } from './constant';
 import { extractFileNameAndExtension, extractFilePath, getParentPath } from './helpers';
+import { unzipFolder } from './zip';
+
+export async function readFolder(path) {
+  try {
+    const result = await FS.readDir(path);
+
+    return result.sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime());
+  } catch (e) {
+    console.log('read folder failed', e);
+    return [];
+  }
+}
 
 export async function shareFile({ name, path, saveToFiles }) {
   try {
@@ -37,11 +52,17 @@ export async function deleteFile(path) {
 }
 
 export async function copyFile(src, dest) {
-  const exists = await FS.exists(dest);
-  if (exists) {
-    await FS.unlink(dest);
+  try {
+    const exists = await FS.exists(dest);
+    if (exists) {
+      await FS.unlink(dest);
+    }
+    await FS.copyFile(src, dest);
+    return true;
+  } catch (e) {
+    console.log('copy file failed', e);
+    return false;
   }
-  await FS.copyFile(src, dest);
 }
 
 export async function moveFile(src, dest) {
@@ -70,9 +91,9 @@ export async function downloadFile({ path, name }) {
   try {
     if (isAndroid()) {
       const downloadPath = `${androidDownloadFolder}/${name}`;
-      await copyFile(path, downloadPath);
+      const success = await copyFile(path, downloadPath);
 
-      return `File is downloaded to ${downloadPath}`;
+      return success ? `File is downloaded to ${downloadPath}` : null;
     }
 
     const success = await shareFile({
@@ -81,11 +102,7 @@ export async function downloadFile({ path, name }) {
       saveToFiles: true,
     });
 
-    if (success) {
-      return `File is downloaded.`;
-    }
-
-    return null;
+    return success ? `File is downloaded.` : null;
   } catch (error) {
     console.log('Download file failed:', error);
     return null;
@@ -129,5 +146,45 @@ export async function takePhoto() {
   } catch (e) {
     console.log('take photo failed', e);
     return null;
+  }
+}
+
+export async function pickFiles({ allowMultiSelection = true } = {}) {
+  try {
+    showToast('Copying files ...', 'info', 300);
+
+    const result = await DocumentPicker.pick({
+      allowMultiSelection,
+      type: types.allFiles,
+      presentationStyle: 'fullScreen',
+      copyTo: 'cachesDirectory',
+    });
+
+    hideToast();
+
+    const mapped = result.map(f => ({
+      name: f.name,
+      size: f.size,
+      path: extractFilePath(f.fileCopyUri),
+    }));
+
+    const pickedFiles = [];
+    await asyncForEach(mapped, async file => {
+      if (file.name.endsWith('zip')) {
+        const unzipped = await unzipFolder(file.name, file.path);
+        if (unzipped) {
+          pickedFiles.push({ ...file, ...unzipped });
+          await deleteFile(file.path);
+        }
+      } else {
+        pickedFiles.push(file);
+      }
+    });
+
+    return pickedFiles;
+  } catch (e) {
+    console.log('pick files failed', e);
+    hideToast();
+    return [];
   }
 }

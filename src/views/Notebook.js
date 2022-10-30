@@ -1,6 +1,5 @@
 import { Actionsheet, Button, HStack, IconButton, Spinner, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import DocumentPicker, { types } from 'react-native-document-picker';
 import FS from 'react-native-fs';
 
 import AppBar from '../components/AppBar';
@@ -11,10 +10,9 @@ import NoteItem from '../components/NoteItem';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
-import { copyFile, deleteFile } from '../lib/files/actions';
+import { copyFile, deleteFile, pickFiles } from '../lib/files/actions';
 import { cachePath } from '../lib/files/cache';
 import { noteExtension } from '../lib/files/constant';
-import { extractFilePath } from '../lib/files/helpers';
 import { readNotes } from '../lib/files/note';
 import { decryptFile } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
@@ -55,21 +53,9 @@ function Notebook({ navigation }) {
 
   async function handlePickNotes() {
     try {
-      const result = await DocumentPicker.pick({
-        allowMultiSelection: true,
-        type: types.allFiles,
-        presentationStyle: 'fullScreen',
-        copyTo: 'cachesDirectory',
-      });
-      const files = result
-        .filter(f => f.name.endsWith(noteExtension))
-        .map(f => ({
-          name: f.name,
-          size: f.size,
-          path: extractFilePath(f.fileCopyUri),
-        }));
-
-      await asyncForEach(files, async file => {
+      const picked = await pickFiles();
+      const filtered = picked.filter(f => f.name.endsWith(noteExtension));
+      await asyncForEach(filtered, async file => {
         await copyFile(file.path, `${notebook.path}/${file.name}`);
         await deleteFile(file.path);
       });
@@ -77,8 +63,8 @@ function Notebook({ navigation }) {
       const newNotes = await readNotes(notebook.path);
       setNotes(newNotes);
 
-      if (files.length) {
-        showToast(`Selected ${files.length} ${files.length === 1 ? 'note' : 'notes'}.`);
+      if (filtered.length) {
+        showToast(`Selected ${filtered.length} ${filtered.length === 1 ? 'note' : 'notes'}.`);
       } else {
         showToast('No notes selected.');
       }

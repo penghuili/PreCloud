@@ -13,9 +13,7 @@ function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
   async function handlePress() {
     onStart(true);
     try {
-      setTimeout(() => {
-        showToast('Copying files ...', 'info', 300);
-      }, 1000);
+      showToast('Copying files ...', 'info', 300);
 
       const result = await launchImageLibrary({
         mediaType: 'mixed',

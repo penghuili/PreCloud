@@ -1,5 +1,6 @@
 import FileViewer from 'react-native-file-viewer';
 import FS from 'react-native-fs';
+import { readFolder } from './actions';
 
 import { filesFolder, largeFileExtension } from './constant';
 import { statFile } from './helpers';
@@ -42,18 +43,16 @@ export async function readFiles(path) {
     return { files: [], folders: [] };
   }
 
-  const result = await FS.readDir(path);
+  const result = await readFolder(path);
   const files = [];
   const folders = [];
-  result
-    .sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime())
-    .forEach(r => {
-      if (r.isDirectory() && !r.name.endsWith(largeFileExtension)) {
-        folders.push(r);
-      } else {
-        files.push(r);
-      }
-    });
+  result.forEach(r => {
+    if (r.isDirectory() && !r.name.endsWith(largeFileExtension)) {
+      folders.push(r);
+    } else {
+      files.push(r);
+    }
+  });
 
   return { files, folders };
 }
