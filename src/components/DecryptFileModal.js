@@ -7,6 +7,7 @@ import {
   Pressable,
   Spinner,
   Text,
+  View,
   VStack,
 } from 'native-base';
 import React, { useEffect, useState } from 'react';
@@ -99,8 +100,14 @@ function DecryptFileModal({
             onPress={() => {
               viewFile(decryptedFile.path);
             }}
+            mb="4"
           >
-            <Image source={{ uri: `file://${decryptedFile.path}` }} size="2xl" />
+            <Image
+              source={{ uri: `file://${decryptedFile.path}` }}
+              size="2xl"
+              w="full"
+              resizeMode="contain"
+            />
           </Pressable>
         );
       }
@@ -111,36 +118,38 @@ function DecryptFileModal({
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
-      <Modal.Content maxWidth="400px">
+      <Modal.Content>
         <Modal.Header>Decrypt file</Modal.Header>
-        <Modal.Body>
+        <Modal.Body px="0">
           {isDecrypting && <Spinner />}
           {!isDecrypting && !!decryptedFile && (
             <>
               <VStack>
                 {renderImage()}
-                <Text>{decryptedFile.name}</Text>
-                <HStack mt="1">
-                  <OpenFileButton file={decryptedFile} />
-                  <ShareButton file={decryptedFile} />
-                  <DownloadButton file={decryptedFile} />
-                  <MoveToButton
-                    file={file}
-                    folder={folder}
-                    onMove={() => {
-                      handleClose();
-                      onDelete(file);
-                    }}
-                    navigate={navigate}
-                  />
-                  <DeleteButton
-                    file={file}
-                    onDelete={() => {
-                      handleClose();
-                      onDelete(file);
-                    }}
-                  />
-                </HStack>
+                <View px="4">
+                  <Text>{decryptedFile.name}</Text>
+                  <HStack mt="1">
+                    <OpenFileButton file={decryptedFile} />
+                    <ShareButton file={decryptedFile} />
+                    <DownloadButton file={decryptedFile} />
+                    <MoveToButton
+                      file={file}
+                      folder={folder}
+                      onMove={() => {
+                        handleClose();
+                        onDelete(file);
+                      }}
+                      navigate={navigate}
+                    />
+                    <DeleteButton
+                      file={file}
+                      onDelete={() => {
+                        handleClose();
+                        onDelete(file);
+                      }}
+                    />
+                  </HStack>
+                </View>
               </VStack>
 
               <HStack mt="1" justifyContent="space-between" alignItems="center">
