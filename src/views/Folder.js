@@ -12,8 +12,6 @@ import FolderTopActions from '../components/FolderTopActions';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
-import ZipAndDownloadAction from '../components/ZipAndDownloadAction';
-import ZipAndShareAction from '../components/ZipAndShareAction';
 import useColors from '../hooks/useColors';
 import { deleteFile, moveFile } from '../lib/files/actions';
 import { readFiles } from '../lib/files/file';
@@ -203,22 +201,15 @@ function Folder({
                 </Actionsheet.Item>
               )}
               {(innerFiles?.length > 0 || innerFolders?.length > 0) && (
-                <>
-                  <ZipAndShareAction folder={folder} onShared={() => setShowActions(false)} />
-                  <ZipAndDownloadAction
-                    folder={folder}
-                    onDownloaded={() => setShowActions(false)}
-                  />
-                  <Actionsheet.Item
-                    startIcon={<Icon name="trash-outline" color={colors.text} />}
-                    onPress={() => {
-                      setShowActions(false);
-                      setShowEmptyConfirm(true);
-                    }}
-                  >
-                    Empty folder
-                  </Actionsheet.Item>
-                </>
+                <Actionsheet.Item
+                  startIcon={<Icon name="trash-outline" color={colors.text} />}
+                  onPress={() => {
+                    setShowActions(false);
+                    setShowEmptyConfirm(true);
+                  }}
+                >
+                  Empty folder
+                </Actionsheet.Item>
               )}
               {folder?.name !== defaultFolder && (
                 <Actionsheet.Item
