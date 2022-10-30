@@ -2,7 +2,7 @@ import { Actionsheet } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { shareFile } from '../lib/files/actions';
+import { deleteFile, shareFile } from '../lib/files/actions';
 import { zipFolder } from '../lib/files/zip';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
@@ -27,6 +27,8 @@ function ZipAndShareAction({ folder, onShared }) {
 
     setIsPending(false);
     onShared();
+
+    deleteFile(zipped.path);
   }
 
   return (

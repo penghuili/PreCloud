@@ -2,7 +2,7 @@ import { Actionsheet } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
-import { downloadFile } from '../lib/files/actions';
+import { deleteFile, downloadFile } from '../lib/files/actions';
 import { zipFolder } from '../lib/files/zip';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
@@ -25,6 +25,8 @@ function ZipAndDownloadAction({ folder, onDownloaded }) {
 
     setIsPending(false);
     onDownloaded();
+
+    deleteFile(zipped.path);
   }
 
   return (
