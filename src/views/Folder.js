@@ -6,15 +6,22 @@ import AppBar from '../components/AppBar';
 import Confirm from '../components/Confirm';
 import ContentWrapper from '../components/ContentWrapper';
 import FolderFiles from '../components/FolderFiles';
+import FolderPicker from '../components/FolderPicker';
 import FoldersList from '../components/FoldersList';
 import FolderTopActions from '../components/FolderTopActions';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
-import { deleteFile } from '../lib/files/actions';
+import { deleteFile, moveFile } from '../lib/files/actions';
 import { readFiles } from '../lib/files/file';
-import { emptyFolder, getFolderSize, getSizeText, isRootFolder, statFile } from '../lib/files/helpers';
+import {
+  emptyFolder,
+  getFolderSize,
+  getSizeText,
+  isRootFolder,
+  statFile,
+} from '../lib/files/helpers';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
@@ -43,6 +50,7 @@ function Folder({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
   const [folderSize, setFolderSize] = useState(0);
+  const [showFolderPicker, setShowFolderPicker] = useState(false);
 
   useEffect(() => {
     if (!path) {
@@ -68,6 +76,17 @@ function Folder({
 
     const s = await getFolderSize(path);
     setFolderSize(s);
+  }
+
+  async function handleMove(newFolder) {
+    const success = await moveFile(folder.path, `${newFolder.path}/${folder.name}`);
+    if (success) {
+      setShowFolderPicker(false);
+      navigation.goBack();
+      showToast('Moved!');
+    } else {
+      showToast('Move folder failed.', 'error');
+    }
   }
 
   return (
@@ -116,76 +135,96 @@ function Folder({
       </ContentWrapper>
 
       {!!folder && (
-        <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
-          <Actionsheet.Content>
-            {isRoot &&
-              (defaultFolder === folder?.name ? (
-                <Actionsheet.Item startIcon={<Icon name="star" color={colors.text} />}>
-                  This is the default folder
-                </Actionsheet.Item>
-              ) : (
+        <>
+          <FolderPicker
+            isOpen={showFolderPicker}
+            onClose={() => setShowFolderPicker(false)}
+            onSave={handleMove}
+            navigate={navigation.navigate}
+            currentFolder={folder}
+          />
+          <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
+            <Actionsheet.Content>
+              {isRoot &&
+                (defaultFolder === folder?.name ? (
+                  <Actionsheet.Item startIcon={<Icon name="star" color={colors.text} />}>
+                    This is the default folder
+                  </Actionsheet.Item>
+                ) : (
+                  <Actionsheet.Item
+                    startIcon={<Icon name="star-outline" color={colors.text} />}
+                    onPress={() => {
+                      setShowActions(false);
+                      updateDefaultFolder(folder.name);
+                      showToast(`Default folder is now ${folder.name}`);
+                    }}
+                  >
+                    Set as default folder
+                  </Actionsheet.Item>
+                ))}
+              <Actionsheet.Item
+                startIcon={<Icon name="folder-outline" color={colors.text} />}
+                onPress={() => {
+                  setShowActions(false);
+                  navigation.navigate(routeNames.folderForm, {
+                    folder: null,
+                    parentPath: folder.path,
+                  });
+                }}
+              >
+                Add sub folder
+              </Actionsheet.Item>
+              <Actionsheet.Item
+                startIcon={<Icon name="folder-outline" color={colors.text} />}
+                onPress={() => {
+                  setShowActions(false);
+                  navigation.replace(routeNames.folderForm, {
+                    folder: { name: folder.name, path: folder.path },
+                  });
+                }}
+              >
+                Rename
+              </Actionsheet.Item>
+              {folder?.name !== defaultFolder && (
                 <Actionsheet.Item
-                  startIcon={<Icon name="star-outline" color={colors.text} />}
+                  startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
                   onPress={() => {
                     setShowActions(false);
-                    updateDefaultFolder(folder.name);
-                    showToast(`Default folder is now ${folder.name}`);
+                    setShowFolderPicker(true);
                   }}
                 >
-                  Set as default folder
+                  Move to ...
                 </Actionsheet.Item>
-              ))}
-            <Actionsheet.Item
-              startIcon={<Icon name="folder-outline" color={colors.text} />}
-              onPress={() => {
-                setShowActions(false);
-                navigation.navigate(routeNames.folderForm, {
-                  folder: null,
-                  parentPath: folder.path,
-                });
-              }}
-            >
-              Add sub folder
-            </Actionsheet.Item>
-            <Actionsheet.Item
-              startIcon={<Icon name="folder-outline" color={colors.text} />}
-              onPress={() => {
-                setShowActions(false);
-                navigation.replace(routeNames.folderForm, {
-                  folder: { name: folder.name, path: folder.path },
-                });
-              }}
-            >
-              Rename
-            </Actionsheet.Item>
-            {innerFiles?.length > 0 && (
-              <Actionsheet.Item
-                startIcon={<Icon name="trash-outline" color={colors.text} />}
-                onPress={() => {
-                  setShowActions(false);
-                  setShowEmptyConfirm(true);
-                }}
-              >
-                Empty folder
-              </Actionsheet.Item>
-            )}
-            {folder?.name !== defaultFolder && (
-              <Actionsheet.Item
-                startIcon={<Icon name="trash" color={colors.text} />}
-                onPress={() => {
-                  setShowDeleteConfirm(true);
-                  setShowActions(false);
-                }}
-              >
-                Delete
-              </Actionsheet.Item>
-            )}
+              )}
+              {innerFiles?.length > 0 && (
+                <Actionsheet.Item
+                  startIcon={<Icon name="trash-outline" color={colors.text} />}
+                  onPress={() => {
+                    setShowActions(false);
+                    setShowEmptyConfirm(true);
+                  }}
+                >
+                  Empty folder
+                </Actionsheet.Item>
+              )}
+              {folder?.name !== defaultFolder && (
+                <Actionsheet.Item
+                  startIcon={<Icon name="trash" color={colors.text} />}
+                  onPress={() => {
+                    setShowDeleteConfirm(true);
+                    setShowActions(false);
+                  }}
+                >
+                  Delete
+                </Actionsheet.Item>
+              )}
 
-            <Text fontSize="xs" color="gray.400">
-              {getSizeText(folderSize)}
-            </Text>
-          </Actionsheet.Content>
-        </Actionsheet>
+              <Text fontSize="xs" color="gray.400">
+                {getSizeText(folderSize)}
+              </Text>
+            </Actionsheet.Content>
+          </Actionsheet>
+        </>
       )}
 
       <Confirm

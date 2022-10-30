@@ -39,7 +39,7 @@ export async function readFolders() {
 export async function readFiles(path) {
   const exists = await FS.exists(path);
   if (!exists) {
-    return [];
+    return { files: [], folders: [] };
   }
 
   const result = await FS.readDir(path);

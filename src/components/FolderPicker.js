@@ -39,7 +39,6 @@ function FolderPicker({ isOpen, onClose, onSave, navigate, currentFolder }) {
             key={f.path}
             folder={f}
             selectedPath={selectedFolder?.path}
-            currentFolder={currentFolder}
             onPress={selected => setSelectedFolder(selected)}
           />
         ))}

@@ -106,6 +106,7 @@ function DecryptFileModal({
               size="2xl"
               w="full"
               resizeMode="contain"
+              alt={decryptedFile.name}
             />
           </Pressable>
         );

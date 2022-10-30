@@ -35,11 +35,17 @@ export async function copyFile(src, dest) {
 }
 
 export async function moveFile(src, dest) {
-  const exists = await FS.exists(dest);
-  if (exists) {
-    await FS.unlink(dest);
+  try {
+    const exists = await FS.exists(dest);
+    if (exists) {
+      await FS.unlink(dest);
+    }
+    await FS.moveFile(src, dest);
+    return true;
+  } catch (e) {
+    console.log('move file failed', e);
+    return false;
   }
-  await FS.moveFile(src, dest);
 }
 
 export async function writeFile(path, content, encoding = 'base64') {
