@@ -13,7 +13,12 @@ import React, { useEffect, useState } from 'react';
 
 import useColors from '../hooks/useColors';
 import { emptyCache } from '../lib/files/cache';
-import { imageExtensions, largeFileExtension, precloudExtension } from '../lib/files/constant';
+import {
+  imageExtensions,
+  largeFileExtension,
+  precloudExtension,
+  videoExtensions,
+} from '../lib/files/constant';
 import { viewFile } from '../lib/files/file';
 import { extractFileNameAndExtension } from '../lib/files/helpers';
 import { decryptFile } from '../lib/openpgp/decryptFile';
@@ -85,7 +90,10 @@ function DecryptFileModal({
   function renderImage() {
     if (decryptedFile?.name) {
       const { extensionWithoutDot } = extractFileNameAndExtension(decryptedFile.name);
-      if (imageExtensions.includes(extensionWithoutDot)) {
+      if (
+        imageExtensions.includes(extensionWithoutDot) ||
+        videoExtensions.includes(extensionWithoutDot)
+      ) {
         return (
           <Pressable
             onPress={() => {
