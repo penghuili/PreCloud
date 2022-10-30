@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Actionsheet } from 'native-base';
 import React, { useState } from 'react';
 
@@ -20,7 +21,10 @@ function EncryptFiles({ navigation }) {
 
   const [showActions, setShowActions] = useState(false);
 
-  const rootFolder = { name: 'PreCloud-files', path: filesFolder };
+  const rootFolder = {
+    name: `PreCloud-files-${format(new Date(), 'yyyyMMddHHmm')}`,
+    path: filesFolder,
+  };
 
   return (
     <ScreenWrapper>
