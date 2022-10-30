@@ -14,15 +14,7 @@ export const videoExtensions = [
   'ogv',
   'webm',
 ];
-const audioExtensions = [
-  'mp3',
-  'wav',
-  'ogg',
-  'm4a',
-  'aac',
-  'flac',
-  'midi',
-];
+const audioExtensions = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac', 'midi'];
 export const viewableFileExtensions = [
   ...imageExtensions,
   ...videoExtensions,
@@ -36,10 +28,14 @@ export const viewableFileExtensions = [
 ];
 
 export const androidDownloadFolder = FS.DownloadDirectoryPath;
-
-export const notesFolder = `${FS.DocumentDirectoryPath}/notes`;
-
-export const filesFolder = `${FS.DocumentDirectoryPath}/files`;
+export const documentPath = FS.DocumentDirectoryPath;
+export const precloudFolder = `${documentPath}/PRECLOUD`;
+export const notesFolderName = 'notes';
+export const filesFolderName = 'files';
+export const notesFolder = `${precloudFolder}/${notesFolderName}`;
+export const filesFolder = `${precloudFolder}/${filesFolderName}`;
+export const legacyNotesFolder = `${documentPath}/${notesFolderName}`;
+export const legacyFilesFolder = `${documentPath}/${filesFolderName}`;
 
 export const largeFileExtension = 'precloudlarge';
 export const precloudExtension = 'precloud';

@@ -13,4 +13,5 @@ export const routeNames = {
   settings: 'settings',
   plainText: 'plainText',
   passwordGenerator: 'passwordGenerator',
+  backup: 'backup',
 };

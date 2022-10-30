@@ -1,13 +1,23 @@
 import FS from 'react-native-fs';
-import { readFolder } from './actions';
+import { moveFile, readFolder } from './actions';
 
-import { notesFolder } from './constant';
+import { legacyNotesFolder, notesFolder, precloudFolder } from './constant';
 import { extractFileNameAndExtension } from './helpers';
 
 export async function makeNotesFolders() {
-  const exists = await FS.exists(notesFolder);
-  if (!exists) {
+  const preCloudExists = await FS.exists(precloudFolder);
+  if (!preCloudExists) {
+    await FS.mkdir(precloudFolder);
+  }
+
+  const notesExists = await FS.exists(notesFolder);
+  if (!notesExists) {
     await FS.mkdir(notesFolder);
+  }
+
+  const legacyExists = await FS.exists(legacyNotesFolder);
+  if (legacyExists) {
+    await moveFile(legacyNotesFolder, notesFolder);
   }
 }
 

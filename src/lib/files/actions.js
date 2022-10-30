@@ -41,6 +41,10 @@ export async function shareFile({ name, path, saveToFiles }) {
 }
 
 export async function deleteFile(path) {
+  if (!path) {
+    return;
+  }
+
   try {
     const exists = await FS.exists(path);
     if (exists) {

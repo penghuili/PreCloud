@@ -41,7 +41,7 @@ function Folder({
   const defaultFolder = useStore(state => state.defaultFolder);
   const rootFolders = useStore(state => state.rootFolders);
   const setRootFolders = useStore(state => state.setRootFolders);
-  const getRootFolders = useStore(state => state.getRootFolders);
+  const loadRootFolders = useStore(state => state.loadRootFolders);
   const updateDefaultFolder = useStore(state => state.updateDefaultFolder);
   const isRoot = useMemo(() => isRootFolder(path), [path]);
 
@@ -87,7 +87,7 @@ function Folder({
       setShowFolderPicker(false);
       showToast('Moved!');
       if (isRoot) {
-        await getRootFolders();
+        await loadRootFolders();
       }
       navigation.goBack();
     } else {

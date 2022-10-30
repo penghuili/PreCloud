@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 
+import Backup from '../views/Backup';
 import Folder from '../views/Folder';
 import FolderForm from '../views/FolderForm';
 import Notebook from '../views/Notebook';
@@ -30,6 +31,7 @@ function Router() {
         <NavStack.Screen name={routeNames.plainText} component={PlainText} />
         <NavStack.Screen name={routeNames.passwordGenerator} component={PasswordGenerator} />
         <NavStack.Screen name={routeNames.passwordForm} component={PasswordForm} />
+        <NavStack.Screen name={routeNames.backup} component={Backup} />
       </NavStack.Group>
     </NavStack.Navigator>
   );

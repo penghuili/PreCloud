@@ -1,14 +1,24 @@
 import FileViewer from 'react-native-file-viewer';
 import FS from 'react-native-fs';
-import { readFolder } from './actions';
+import { moveFile, readFolder } from './actions';
 
-import { filesFolder, largeFileExtension } from './constant';
+import { filesFolder, largeFileExtension, legacyFilesFolder, precloudFolder } from './constant';
 import { statFile } from './helpers';
 
 export async function makeFolders() {
-  const exists = await FS.exists(filesFolder);
-  if (!exists) {
+  const preCloudExists = await FS.exists(precloudFolder);
+  if (!preCloudExists) {
+    await FS.mkdir(precloudFolder);
+  }
+
+  const filesExists = await FS.exists(filesFolder);
+  if (!filesExists) {
     await FS.mkdir(filesFolder);
+  }
+
+  const legacyExists = await FS.exists(legacyFilesFolder);
+  if (legacyExists) {
+    await moveFile(legacyFilesFolder, filesFolder);
   }
 }
 

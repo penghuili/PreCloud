@@ -4,12 +4,12 @@ import { deleteFile } from './actions';
 import { cachePath } from './cache';
 import { getOriginalFileName, getParentPath } from './helpers';
 
-export async function zipFolder(name, path) {
+export async function zipFolder(name, paths) {
   try {
     const zippedName = `${name}.zip`;
     const targetPath = `${cachePath}/${zippedName}`;
     await deleteFile(targetPath);
-    await zip(path, targetPath);
+    await zip(paths, targetPath);
     return { name: zippedName, path: targetPath };
   } catch (e) {
     console.log('zip folder failed', e);

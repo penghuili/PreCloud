@@ -54,12 +54,11 @@ function Settings({ navigation, route: { name: routeName } }) {
 
           <Divider />
 
-          <Link onPress={() => navigation.navigate(routeNames.plainText)}>Encrypt plain text</Link>
-
+          <Link onPress={() => navigation.navigate(routeNames.backup)}>Backup</Link>
           <Link onPress={() => navigation.navigate(routeNames.passwordGenerator)}>
             Generate password
           </Link>
-
+          <Link onPress={() => navigation.navigate(routeNames.plainText)}>Encrypt plain text</Link>
           <Caches route={routeName} />
 
           <Divider />

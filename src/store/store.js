@@ -114,6 +114,10 @@ export const useStore = create((set, get) => ({
   // notes
   notebooks: [],
   setNotebooks: value => set({ notebooks: value }),
+  loadNotebooks: async () => {
+    const books = await readNotebooks();
+    set({ notebooks: books })
+  },
   activeNotebook: null,
   setActiveNotebook: value => set({ activeNotebook: value }),
   createNotebook: async label => {
@@ -147,7 +151,7 @@ export const useStore = create((set, get) => ({
   // files
   rootFolders: [],
   setRootFolders: value => set({ rootFolders: value }),
-  getRootFolders: async () => {
+  loadRootFolders: async () => {
     const currentFolders = await readFolders();
     const { defaultFolder, folders } = await makeDefaultFolders(get, set, currentFolders);
 
