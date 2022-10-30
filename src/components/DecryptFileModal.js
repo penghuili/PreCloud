@@ -100,7 +100,6 @@ function DecryptFileModal({
             onPress={() => {
               viewFile(decryptedFile.path);
             }}
-            mb="4"
           >
             <Image
               source={{ uri: `file://${decryptedFile.path}` }}
@@ -120,13 +119,17 @@ function DecryptFileModal({
     <Modal isOpen={isOpen} onClose={handleClose}>
       <Modal.Content>
         <Modal.Header>Decrypt file</Modal.Header>
-        <Modal.Body px="0">
-          {isDecrypting && <Spinner />}
+        <Modal.Body p="0">
+          {isDecrypting && (
+            <View p="4">
+              <Spinner />
+            </View>
+          )}
           {!isDecrypting && !!decryptedFile && (
             <>
               <VStack>
                 {renderImage()}
-                <View px="4">
+                <View p="4">
                   <Text>{decryptedFile.name}</Text>
                   <HStack mt="1">
                     <OpenFileButton file={decryptedFile} />
