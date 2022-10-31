@@ -4,7 +4,7 @@ import FS from 'react-native-fs';
 import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
 
-import { asyncForEach } from '../array';
+import { asyncForEach, sortKeys, sortWith } from '../array';
 import { isAndroid } from '../device';
 import { hideToast, showToast } from '../toast';
 import { cachePath } from './cache';
@@ -12,11 +12,11 @@ import { androidDownloadFolder } from './constant';
 import { extractFileNameAndExtension, extractFilePath, getParentPath } from './helpers';
 import { unzipFolder } from './zip';
 
-export async function readFolder(path) {
+export async function readFolder(path, sortKey = sortKeys.mtime) {
   try {
     const result = await FS.readDir(path);
 
-    return result.sort((a, b) => new Date(b.mtime).getTime() - new Date(a.mtime).getTime());
+    return sortWith(result, sortKey);
   } catch (e) {
     console.log('read folder failed', e);
     return [];
