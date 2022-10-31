@@ -1,5 +1,5 @@
 import { HStack, Select, Text, VStack } from 'native-base';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useColors from '../hooks/useColors';
 
 import { sortKeys, sortWith } from '../lib/array';
@@ -17,6 +17,15 @@ function FolderFiles({ folder, files, navigate, onDelete }) {
   const [sortKey, setSortKey] = useState(sortKeys.mtime);
   const [sortedFiles, setSortedFiles] = useState(files);
 
+  useEffect(() => {
+    sortFiles(sortKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files]);
+
+  function sortFiles(newKey) {
+    setSortedFiles(sortWith(files, newKey));
+  }
+
   return (
     <>
       {!files?.length && (
@@ -28,19 +37,19 @@ function FolderFiles({ folder, files, navigate, onDelete }) {
 
       {!!files?.length && (
         <VStack space="sm">
-          <HStack justifyContent="flex-end">
+          <HStack justifyContent="flex-start">
             <Select
               selectedValue={sortKey}
               mt="1"
               minWidth="150"
               onValueChange={value => {
                 setSortKey(value);
-                setSortedFiles(sortWith(files, value));
+                sortFiles(value);
               }}
               _selectedItem={{
-                endIcon: <Icon name="checkmark-outline" size={24} color={colors.primary} />
+                endIcon: <Icon name="checkmark-outline" size={24} color={colors.primary} />,
               }}
-              color={colors.primary}
+              variant="filled"
             >
               <Select.Item label="Update time" value={sortKeys.mtime} />
               <Select.Item label="File name" value={sortKeys.name} />
