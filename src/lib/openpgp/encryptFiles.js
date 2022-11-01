@@ -7,7 +7,6 @@ import {
   ENCRYPTION_LIMIT_IN_BYTES,
   ENCRYPTION_LIMIT_IN_GIGABYTES,
   LARGE_FILE_SIZE_IN_BYTES,
-  openpgpStatus,
 } from './constant';
 import { encryptLargeFile } from './encryptLargeFile';
 import { encryptSmallFile } from './encryptSmallFile';
@@ -18,7 +17,7 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
   }
 
   const encryptedFiles = [];
-  
+
   await asyncForEach(files, async file => {
     let encrypted = null;
 
@@ -30,7 +29,6 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
         name: file.name,
         path: newPath,
         size: file.size,
-        status: openpgpStatus.encrypted,
         isDirectory: () => false,
         isFile: () => true,
       };
@@ -43,7 +41,6 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
         name: file.name,
         path: newPath,
         size,
-        status: openpgpStatus.encrypted,
         isDirectory: () => true,
         isFile: () => false,
       };
@@ -67,6 +64,8 @@ export async function encryptFiles(files, { folder, onEncrypted, password }) {
       if (onEncrypted) {
         onEncrypted(encrypted);
       }
+    } else {
+      showToast(`Encrypting ${file.name} failed.`, 'error');
     }
   });
 

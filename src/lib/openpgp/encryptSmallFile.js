@@ -1,10 +1,9 @@
 import { precloudExtension } from '../files/constant';
 import { statFile } from '../files/helpers';
-import { openpgpStatus } from './constant';
 import { encryptFile } from './helpers';
 
 export async function encryptSmallFile(file, { folder, password }) {
-  const { name, path, size } = file;
+  const { name, path } = file;
 
   const inputPath = path;
   const encryptedName = `${name}.${precloudExtension}`;
@@ -17,18 +16,10 @@ export async function encryptSmallFile(file, { folder, password }) {
       name: encryptedName,
       path: outputPath,
       size: newSize,
-      status: openpgpStatus.encrypted,
       isDirectory: () => false,
       isFile: () => true,
     };
   }
 
-  return {
-    name,
-    path,
-    size,
-    status: openpgpStatus.error,
-    isDirectory: () => false,
-    isFile: () => true,
-  };
+  return null;
 }

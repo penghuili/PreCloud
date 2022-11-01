@@ -5,7 +5,6 @@ import useColors from '../hooks/useColors';
 import { deleteFile, downloadFile, moveFile, shareFile } from '../lib/files/actions';
 import { getFolderSize, getSizeText, isLargeFile } from '../lib/files/helpers';
 import { zipFolder } from '../lib/files/zip';
-import { openpgpStatus } from '../lib/openpgp/constant';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import FolderPicker from './FolderPicker';
@@ -106,14 +105,6 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
     }
   }
 
-  function renderErrorMessage() {
-    if (file.status === openpgpStatus.error) {
-      return <Text highlight>Encryption of this file failed.</Text>;
-    }
-
-    return null;
-  }
-
   if (!file) {
     return null;
   }
@@ -133,8 +124,6 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
             onPress={() => setShowActions(true)}
           />
         </HStack>
-
-        {renderErrorMessage()}
       </VStack>
 
       <FolderPicker

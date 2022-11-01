@@ -123,6 +123,15 @@ export function getParentPath(path) {
   return parentPath;
 }
 
+export function getFileName(path) {
+  if (!path) {
+    return null;
+  }
+
+  const parts = path.split('/');
+  return parts.pop();
+}
+
 function toFixed2(number) {
   return +number.toFixed(2);
 }

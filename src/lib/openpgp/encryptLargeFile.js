@@ -54,19 +54,11 @@ export async function encryptLargeFile(file, { folder, password }) {
       name: encryptedName,
       path: encryptedPath,
       size,
-      status: openpgpStatus.encrypted,
       isDirectory: () => true,
       isFile: () => false,
     };
   } catch (e) {
     await deleteFile(encryptedPath);
-    return {
-      name: file.name,
-      path: file.path,
-      size: file.size,
-      status: openpgpStatus.error,
-      isDirectory: () => true,
-      isFile: () => false,
-    };
+    return null;
   }
 }

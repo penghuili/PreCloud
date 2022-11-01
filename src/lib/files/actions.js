@@ -3,13 +3,20 @@ import DocumentPicker, { types } from 'react-native-document-picker';
 import FS from 'react-native-fs';
 import { launchCamera } from 'react-native-image-picker';
 import Share from 'react-native-share';
+import { URL } from 'react-native-url-polyfill';
 
 import { asyncForEach, sortKeys, sortWith } from '../array';
 import { isAndroid } from '../device';
 import { hideToast, showToast } from '../toast';
 import { cachePath } from './cache';
 import { androidDownloadFolder } from './constant';
-import { extractFileNameAndExtension, extractFilePath, getParentPath } from './helpers';
+import {
+  extractFileNameAndExtension,
+  extractFilePath,
+  getFileName,
+  getParentPath,
+  statFile,
+} from './helpers';
 import { unzipFolder } from './zip';
 
 export async function readFolder(path, sortKey = sortKeys.mtime) {
@@ -109,6 +116,23 @@ export async function downloadFile({ path, name }) {
     return success ? `File is downloaded.` : null;
   } catch (error) {
     console.log('Download file failed:', error);
+    return null;
+  }
+}
+
+export async function downloadRemoteFile(url) {
+  try {
+    const parsed = new URL(url);
+    const name = getFileName(parsed.pathname);
+    const localPath = `${cachePath}/${name}`;
+    await deleteFile(localPath);
+
+    await FS.downloadFile({ fromUrl: url, toFile: localPath }).promise;
+
+    const info = await statFile(localPath);
+    return info;
+  } catch (error) {
+    console.log('Download remote file failed:', error);
     return null;
   }
 }

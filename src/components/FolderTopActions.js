@@ -7,6 +7,7 @@ import { deleteFile } from '../lib/files/actions';
 import { encryptFiles } from '../lib/openpgp/encryptFiles';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
+import DownloadRemoteFileButton from './DownloadRemoteFileButton';
 import PickFilesButton from './PickFilesButton';
 import PickImagesButton from './PickImagesButton';
 import PlatformToggle from './PlatformToggle';
@@ -27,6 +28,7 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
   const [isEncryptingFiles, setIsEncryptingFiles] = useState(false);
   const [isEncryptingImages, setIsEncryptingImages] = useState(false);
   const [isEncryptingNewImage, setIsEncryptingNewImage] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     if (selectedFiles?.length) {
@@ -51,7 +53,8 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
     await deleteFiles(pickedFiles);
   }
 
-  const isLoading = isEncryptingFiles || isEncryptingImages || isEncryptingNewImage;
+  const isLoading =
+    isEncryptingFiles || isEncryptingImages || isEncryptingNewImage || isDownloading;
   return (
     <HStack flexWrap="wrap" w="full">
       <TakePhotoButton
@@ -77,6 +80,14 @@ function FolderTopActions({ folder, onAddFile, selectedFiles }) {
         onStart={setIsEncryptingFiles}
         onSelected={async files => {
           await handleEncrypt(files, setIsEncryptingFiles);
+        }}
+      />
+      <DownloadRemoteFileButton
+        isLoading={isDownloading}
+        isDisabled={!password || isLoading}
+        onStart={setIsDownloading}
+        onDownloaded={async file => {
+          await handleEncrypt([file], setIsEncryptingFiles);
         }}
       />
     </HStack>
