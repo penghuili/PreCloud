@@ -54,6 +54,7 @@ function Settings({ navigation, route: { name: routeName } }) {
 
           <Divider />
 
+          <Link onPress={() => navigation.navigate(routeNames.donation)}>Donate</Link>
           <Link onPress={() => navigation.navigate(routeNames.backup)}>Backup</Link>
           <Link onPress={() => navigation.navigate(routeNames.passwordGenerator)}>
             Generate password

@@ -4,10 +4,12 @@ import 'fast-text-encoding';
 import { NavigationContainer } from '@react-navigation/native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useEffect } from 'react';
+import { withIAPContext } from 'react-native-iap';
 import SplashScreen from 'react-native-splash-screen';
 import Toast from 'react-native-toast-message';
 
 import DonateBanner from './components/DonateBanner';
+import useInAppPurchase from './hooks/useInAppPurchase';
 import { getTheme } from './lib/style';
 import { navigationRef } from './router/navigationRef';
 import Router from './router/Router';
@@ -15,6 +17,8 @@ import { useStore } from './store/store';
 
 function App() {
   const theme = getTheme();
+  useInAppPurchase();
+
   const getPasswords = useStore(state => state.getPasswords);
   const loadNotebooks = useStore(state => state.loadNotebooks);
   const loadRootFolders = useStore(state => state.loadRootFolders);
@@ -39,4 +43,4 @@ function App() {
   );
 }
 
-export default App;
+export default withIAPContext(App);

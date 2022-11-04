@@ -14,4 +14,5 @@ export const routeNames = {
   plainText: 'plainText',
   passwordGenerator: 'passwordGenerator',
   backup: 'backup',
+  donation: 'donation',
 };
