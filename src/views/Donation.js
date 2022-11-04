@@ -101,7 +101,6 @@ function Donation() {
               {donations.map(d => (
                 <DonationCard key={d.productId} product={d} onPress={handleDonate} />
               ))}
-              <Text>{JSON.stringify(donations)}</Text>
             </VStack>
           )}
         </VStack>
