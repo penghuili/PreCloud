@@ -33,7 +33,7 @@
     "react-native-use-keyboard-height": "0.1.1",
     "react-native-vector-icons": "9.2.0",
     "react-native-webview": "11.23.1",
-    "react-native-zip-archive": "^6.0.8",
+    "react-native-zip-archive": "6.0.8",
     "zustand": "4.0.0"
   },
   "devDependencies": {
@@ -63,7 +63,7 @@
     "test": "jest",
     "lint": "eslint .",
     "clean-android": "cd android && ./gradlew clean && cd ..",
-    "build-android-aab": "npm run bump-build-numbers && cd android && ./gradlew clean && ./gradlew bundleRelease && cd ..",
+    "build-android": "npm run bump-build-numbers && cd android && ./gradlew clean && ./gradlew bundleRelease && cd ..",
     "bump-build-numbers": "node ./scripts/bump-build-numbers.js",
     "bump-version": "node ./scripts/bump-version.js"
   },

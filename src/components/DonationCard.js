@@ -6,6 +6,12 @@ import useColors from '../hooks/useColors';
 function DonationCard({ product, onPress }) {
   const colors = useColors();
 
+  const price = product?.localizedPrice || product?.oneTimePurchaseOfferDetails?.formattedPrice;
+
+  if (!price) {
+    return null;
+  }
+
   return (
     <VStack
       borderWidth="2"
@@ -17,7 +23,7 @@ function DonationCard({ product, onPress }) {
       space="sm"
     >
       <Text>
-        Donate <Text>{product.localizedPrice}</Text> to PreCloud
+        Donate <Text>{price}</Text> to PreCloud
       </Text>
 
       <Button onPress={() => onPress(product)}>Donate</Button>

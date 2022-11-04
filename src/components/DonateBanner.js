@@ -1,12 +1,12 @@
 import { addMonths, addSeconds, addWeeks } from 'date-fns';
-import { Box, HStack } from 'native-base';
+import { Box, HStack, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import useColors from '../hooks/useColors';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
-import { showDonate } from '../lib/money';
-import DonateMessage from './DonateMessage';
+import { navigationRef } from '../router/navigationRef';
+import { routeNames } from '../router/routes';
 import Icon from './Icon';
 
 function DonateBanner() {
@@ -42,7 +42,7 @@ function DonateBanner() {
   }
 
   function canShowBanner() {
-    if (!showDonate() || !checkDate) {
+    if (!checkDate) {
       return false;
     }
 
@@ -84,13 +84,21 @@ function DonateBanner() {
       alignItems="flex-start"
       justifyContent="flex-start"
     >
-      <DonateMessage
-        color={colors.white}
-        onDonate={() => {
-          updateCheckDate();
-          updateDonateDate();
-        }}
-      />
+      <Text color={colors.white} bold>
+        🫶 Consider donating $1 to this free and open source app:{' '}
+        <Text
+          bold
+          underline
+          color={colors.primary}
+          onPress={() => {
+            updateCheckDate();
+            updateDonateDate();
+            navigationRef.navigate(routeNames.donation);
+          }}
+        >
+          Donate
+        </Text>
+      </Text>
       <Box position="absolute" right="2" top="2">
         <Icon name="close-outline" color={colors.white} onPress={updateCheckDate} />
       </Box>

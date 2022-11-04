@@ -9,13 +9,11 @@ import xiangcai from '../assets/xiangcai.jpeg';
 import AppBar from '../components/AppBar';
 import Caches from '../components/Caches';
 import ContentWrapper from '../components/ContentWrapper';
-import DonateMessage from '../components/DonateMessage';
 import Icon from '../components/Icon';
 import ScreenWrapper from '../components/ScreenWrapper';
 import useColors from '../hooks/useColors';
 import { appStoreLink, myEmail } from '../lib/constants';
 import { getStoreLink } from '../lib/device';
-import { showDonate } from '../lib/money';
 import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 
@@ -24,21 +22,6 @@ const recommendText = `PreCloud: Encrypt before upload\n\niOS: ${appStoreLink.io
 
 function Settings({ navigation, route: { name: routeName } }) {
   const colors = useColors();
-
-  function renderSupport() {
-    if (showDonate()) {
-      return (
-        <>
-          <Divider />
-          <VStack space="sm">
-            <DonateMessage color={colors.text} />
-          </VStack>
-        </>
-      );
-    }
-
-    return null;
-  }
 
   return (
     <ScreenWrapper>
@@ -50,11 +33,9 @@ function Settings({ navigation, route: { name: routeName } }) {
             Open source, no tracking, no server and free forever.
           </Heading>
 
-          {renderSupport()}
-
           <Divider />
 
-          <Link onPress={() => navigation.navigate(routeNames.donation)}>Donate</Link>
+          <Link onPress={() => navigation.navigate(routeNames.donation)}>Donate 🫶</Link>
           <Link onPress={() => navigation.navigate(routeNames.backup)}>Backup</Link>
           <Link onPress={() => navigation.navigate(routeNames.passwordGenerator)}>
             Generate password
