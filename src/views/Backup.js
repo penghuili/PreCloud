@@ -17,13 +17,7 @@ import {
   readFolder,
   shareFile,
 } from '../lib/files/actions';
-import {
-  filesFolder,
-  filesFolderName,
-  notesFolder,
-  notesFolderName,
-  precloudFolder,
-} from '../lib/files/constant';
+import { filesFolder, filesFolderName, precloudFolder } from '../lib/files/constant';
 import { zipFolder } from '../lib/files/zip';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
@@ -32,7 +26,6 @@ const backupPrefix = 'PreCloud-backup-';
 
 function Backup() {
   const colors = useColors();
-  const loadNotebooks = useStore(state => state.loadNotebooks);
   const loadRootFolders = useStore(state => state.loadRootFolders);
 
   const [isDownloading, setIsDownloading] = useState(false);
@@ -91,17 +84,7 @@ function Backup() {
         showToast(`Please only pick .zip file, and file name should start with "${backupPrefix}".`);
       } else {
         const res = await readFolder(unzipped.path);
-        const allNotes = res.find(r => r.name === notesFolderName);
         const allFiles = res.find(r => r.name === filesFolderName);
-
-        if (allNotes) {
-          const notebooks = await readFolder(allNotes.path);
-          await asyncForEach(notebooks, async notebook => {
-            await moveFile(notebook.path, `${notesFolder}/${notebook.name}`);
-          });
-
-          await loadNotebooks();
-        }
 
         if (allFiles) {
           const folders = await readFolder(allFiles.path);

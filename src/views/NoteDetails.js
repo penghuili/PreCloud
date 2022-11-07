@@ -8,19 +8,22 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import { deleteFile, writeFile } from '../lib/files/actions';
 import { cachePath } from '../lib/files/cache';
 import { noteExtension } from '../lib/files/constant';
-import { makeNotesFolders, readNotes } from '../lib/files/note';
+import { getNoteTitle } from '../lib/files/note';
 import { encryptFile } from '../lib/openpgp/helpers';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
 
-function NoteDetails({ navigation }) {
+function NoteDetails({
+  navigation,
+  route: {
+    params: { folder },
+  },
+}) {
   const editorRef = useRef();
 
   const password = useStore(state => state.activePassword);
-  const activeNotebook = useStore(state => state.activeNotebook);
   const activeNote = useStore(state => state.activeNote);
   const noteContent = useStore(state => state.noteContent);
-  const setNotes = useStore(state => state.setNotes);
 
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
@@ -28,7 +31,7 @@ function NoteDetails({ navigation }) {
   const [showActions, setShowActions] = useState(false);
 
   useEffect(() => {
-    setTitle(activeNote?.fileName || '');
+    setTitle(getNoteTitle(activeNote));
   }, [activeNote]);
 
   async function handleSave() {
@@ -37,11 +40,10 @@ function NoteDetails({ navigation }) {
       return;
     }
 
-    await makeNotesFolders();
     const trimedTitle = title.trim();
     const inputPath = `${cachePath}/${trimedTitle}.txt`;
     await writeFile(inputPath, content || '', 'utf8');
-    const outputPath = `${activeNotebook.path}/${trimedTitle}.${noteExtension}`;
+    const outputPath = `${folder.path}/${trimedTitle}.${noteExtension}`;
     const success = await encryptFile(inputPath, outputPath, password);
 
     if (success) {
@@ -49,16 +51,12 @@ function NoteDetails({ navigation }) {
         await deleteFile(activeNote.path);
       }
 
-      const notes = await readNotes(activeNotebook.path);
-      setNotes(notes);
-
+      showToast('Your note is encrypted and saved on your phone.');
       if (activeNote) {
         setIsEditing(false);
       } else {
         navigation.goBack();
       }
-
-      showToast('Your note is encrypted and saved on your phone.');
     } else {
       showToast('Encryption failed.', 'error');
     }
@@ -101,6 +99,7 @@ function NoteDetails({ navigation }) {
       </KeyboardAvoidingView>
 
       <NoteItemActions
+        folder={folder}
         note={activeNote}
         isOpen={showActions}
         onClose={() => setShowActions(false)}
@@ -110,7 +109,6 @@ function NoteDetails({ navigation }) {
           setIsEditing(true);
         }}
         navigation={navigation}
-        notebook={activeNotebook}
       />
     </ScreenWrapper>
   );

@@ -36,11 +36,14 @@ function Settings({ navigation, route: { name: routeName } }) {
           <Divider />
 
           <Link onPress={() => navigation.navigate(routeNames.donation)}>Donate 🫶</Link>
-          <Link onPress={() => navigation.navigate(routeNames.backup)}>Backup</Link>
+          <Link onPress={() => navigation.navigate(routeNames.passwords)}>
+            Manage passwords
+          </Link>
           <Link onPress={() => navigation.navigate(routeNames.passwordGenerator)}>
             Generate password
           </Link>
           <Link onPress={() => navigation.navigate(routeNames.plainText)}>Encrypt plain text</Link>
+          <Link onPress={() => navigation.navigate(routeNames.backup)}>Backup</Link>
           <Caches route={routeName} />
 
           <Divider />

@@ -16,7 +16,7 @@ function Passwords({ navigation }) {
 
   return (
     <ScreenWrapper>
-      <AppBar title="Manage passwords" />
+      <AppBar title="Manage passwords" hasBack />
       <ContentWrapper>
         <VStack space="sm" alignItems="flex-start">
           <Alert w="100%" status="warning" mb={8}>

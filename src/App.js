@@ -10,6 +10,7 @@ import Toast from 'react-native-toast-message';
 
 import DonateBanner from './components/DonateBanner';
 import useInAppPurchase from './hooks/useInAppPurchase';
+import { migrateNotesToFolders } from './lib/files/note';
 import { getTheme } from './lib/style';
 import { navigationRef } from './router/navigationRef';
 import Router from './router/Router';
@@ -20,14 +21,14 @@ function App() {
   useInAppPurchase();
 
   const getPasswords = useStore(state => state.getPasswords);
-  const loadNotebooks = useStore(state => state.loadNotebooks);
   const loadRootFolders = useStore(state => state.loadRootFolders);
 
   useEffect(() => {
     SplashScreen.hide();
     getPasswords();
-    loadRootFolders();
-    loadNotebooks();
+    migrateNotesToFolders().then(() => {
+      loadRootFolders();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

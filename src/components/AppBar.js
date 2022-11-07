@@ -16,7 +16,7 @@ function AppBar({ title, hasBack, rightIconName, onRightIconPress }) {
     if (navigationRef.canGoBack()) {
       navigationRef.goBack();
     } else {
-      navigationRef.navigate('BottomTab', { screen: routeNames.encryptFiles });
+      navigationRef.navigate('BottomTab', { screen: routeNames.folders });
     }
   }
 

@@ -3,6 +3,14 @@ import FS from 'react-native-fs';
 import { filesFolder, largeFileExtension, precloudExtension } from './constant';
 
 export function extractFileNameAndExtension(name) {
+  if (!name) {
+    return {
+      fileName: '',
+      extension: '',
+      extensionWithoutDot: '',
+    };
+  }
+
   const parts = name.split('.');
   const last = (parts[parts.length - 1] || '').toLowerCase();
   let extension = '';

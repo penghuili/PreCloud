@@ -5,9 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
 import useTakePhotoInTabs from '../hooks/useTakePhotoInTabs';
-import EncryptFiles from '../views/EncryptFiles';
-import EncryptNotes from '../views/EncryptNotes';
-import Passwords from '../views/Passwords';
+import Folders from '../views/Folders';
 import Settings from '../views/Settings';
 import TakePhoto from '../views/TakePhoto';
 import { routeNames } from './routes';
@@ -20,14 +18,10 @@ function BottomTab() {
   const handleTakePhoto = useTakePhotoInTabs();
 
   function getIconName(routeName, focused) {
-    if (routeName === routeNames.encryptFiles) {
-      return focused ? 'document-attach' : 'document-attach-outline';
-    } else if (routeName === routeNames.encryptNotes) {
-      return focused ? 'text' : 'text-outline';
+    if (routeName === routeNames.folders) {
+      return focused ? 'lock-closed' : 'lock-closed-outline';
     } else if (routeName === routeNames.takePhoto) {
       return 'camera-outline';
-    } else if (routeName === routeNames.passwords) {
-      return focused ? 'key' : 'key-outline';
     } else if (routeName === routeNames.settings) {
       return focused ? 'heart' : 'heart-outline';
     } else {
@@ -62,10 +56,8 @@ function BottomTab() {
         },
       })}
     >
-      <Tab.Screen name={routeNames.encryptFiles} component={EncryptFiles} />
-      <Tab.Screen name={routeNames.encryptNotes} component={EncryptNotes} />
+      <Tab.Screen name={routeNames.folders} component={Folders} />
       <Tab.Screen name={routeNames.takePhoto} component={TakePhoto} />
-      <Tab.Screen name={routeNames.passwords} component={Passwords} />
       <Tab.Screen name={routeNames.settings} component={Settings} />
     </Tab.Navigator>
   );

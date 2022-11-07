@@ -6,9 +6,9 @@ import AppBar from '../components/AppBar';
 import Confirm from '../components/Confirm';
 import ContentWrapper from '../components/ContentWrapper';
 import FolderFiles from '../components/FolderFiles';
+import FolderNotes from '../components/FolderNotes';
 import FolderPicker from '../components/FolderPicker';
 import FoldersList from '../components/FoldersList';
-import FolderTopActions from '../components/FolderTopActions';
 import Icon from '../components/Icon';
 import PasswordAlert from '../components/PasswordAlert';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -46,6 +46,7 @@ function Folder({
   const [folder, setFolder] = useState(null);
   const [innerFolders, setInnerFolders] = useState([]);
   const [innerFiles, setInnerFiles] = useState([]);
+  const [innerNotes, setInnerNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showActions, setShowActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -72,6 +73,7 @@ function Folder({
     const content = await readFiles(path);
     setInnerFolders(content.folders);
     setInnerFiles(content.files);
+    setInnerNotes(content.notes);
     tempFiles = content.files;
     setIsLoading(false);
 
@@ -105,18 +107,7 @@ function Folder({
       <ContentWrapper>
         <PasswordAlert navigate={navigation.navigate} />
 
-        <VStack space="sm">
-          {!!folder && (
-            <FolderTopActions
-              folder={folder}
-              onAddFile={file => {
-                tempFiles = [file, ...tempFiles];
-                setInnerFiles(tempFiles);
-              }}
-              selectedFiles={selectedFiles}
-            />
-          )}
-
+        <VStack>
           {isLoading && <Spinner />}
 
           {!!folder && !isLoading && (
@@ -124,10 +115,26 @@ function Folder({
           )}
 
           {!!folder && !isLoading && (
+            <FolderNotes
+              folder={folder}
+              notes={innerNotes}
+              onMoved={note => setInnerNotes(innerNotes.filter(n => n.path !== note.path))}
+              onPickNotes={notes => {
+                setInnerNotes([...notes, ...innerNotes]);
+              }}
+              navigation={navigation}
+            />
+          )}
+          {!!folder && !isLoading && (
             <FolderFiles
               folder={folder}
               files={innerFiles}
+              selectedFiles={selectedFiles}
               navigate={navigation.navigate}
+              onAddFile={file => {
+                tempFiles = [file, ...tempFiles];
+                setInnerFiles(tempFiles);
+              }}
               onDelete={file => {
                 const newFiles = innerFiles.filter(f => f.path !== file.path);
                 setInnerFiles(newFiles);

@@ -1,10 +1,9 @@
 import create from 'zustand';
 
 import { deleteFile as deleteFileFromPhone, moveFile } from '../lib/files/actions';
-import { filesFolder, notesFolder } from '../lib/files/constant';
+import { filesFolder } from '../lib/files/constant';
 import { createFolder, readFolders } from '../lib/files/file';
 import { getParentPath } from '../lib/files/helpers';
-import { makeNotebook, readNotebooks } from '../lib/files/note';
 import { getPasswords, savePasswords } from '../lib/keychain';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 
@@ -112,37 +111,6 @@ export const useStore = create((set, get) => ({
   },
 
   // notes
-  notebooks: [],
-  setNotebooks: value => set({ notebooks: value }),
-  loadNotebooks: async () => {
-    const books = await readNotebooks();
-    set({ notebooks: books })
-  },
-  activeNotebook: null,
-  setActiveNotebook: value => set({ activeNotebook: value }),
-  createNotebook: async label => {
-    await makeNotebook(label);
-    const newNotebooks = await readNotebooks();
-    set({
-      notebooks: newNotebooks,
-      activeNotebook: newNotebooks.find(n => n.name === label.trim()),
-    });
-  },
-  renameNotebook: async ({ notebook, label }) => {
-    const newNotebook = { path: `${notesFolder}/${label.trim()}`, name: label.trim() };
-    await moveFile(notebook.path, newNotebook.path);
-    const newNotebooks = await readNotebooks();
-    set({ notebooks: newNotebooks, activeNotebook: newNotebook });
-  },
-  deleteNotebook: async notebook => {
-    await deleteFileFromPhone(notebook.path);
-    set({
-      notebooks: get().notebooks.filter(n => n.path !== notebook.path),
-      activeNotebook: null,
-    });
-  },
-  notes: [],
-  setNotes: value => set({ notes: value }),
   activeNote: null,
   setActiveNote: value => set({ activeNote: value }),
   noteContent: '',

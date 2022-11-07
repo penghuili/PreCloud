@@ -5,25 +5,23 @@ import useColors from '../hooks/useColors';
 import { deleteFile, downloadFile, moveFile, shareFile } from '../lib/files/actions';
 import { getSizeText } from '../lib/files/helpers';
 import { showToast } from '../lib/toast';
-import { useStore } from '../store/store';
+import FolderPicker from './FolderPicker';
 import Icon from './Icon';
-import NotebookPicker from './NotebookPicker';
 
 function NoteItemActions({
+  folder,
   note,
   isOpen,
   onClose,
   isNoteDetails,
   onView,
   onEdit,
+  onMoved,
   navigation,
-  notebook,
 }) {
   const colors = useColors();
-  const notes = useStore(state => state.notes);
-  const setNotes = useStore(state => state.setNotes);
 
-  const [showNotebookPicker, setShowNotebookPicker] = useState(false);
+  const [showFolderPicker, setShowFolderPicker] = useState(false);
 
   async function handleShare() {
     onClose();
@@ -49,12 +47,13 @@ function NoteItemActions({
     }
   }
 
-  async function handleMove(newNotebook) {
-    await moveFile(note.path, `${newNotebook.path}/${note.name}`);
-    setNotes(notes.filter(n => n.path !== note.path));
-    setShowNotebookPicker(false);
+  async function handleMove(newFolder) {
+    await moveFile(note.path, `${newFolder.path}/${note.name}`);
+    setShowFolderPicker(false);
     if (isNoteDetails) {
       navigation.goBack();
+    } else {
+      onMoved(note);
     }
     showToast('Moved!');
   }
@@ -62,21 +61,22 @@ function NoteItemActions({
   async function handleDelete() {
     onClose();
     await deleteFile(note.path);
-    setNotes(notes.filter(n => n.path !== note.path));
     if (isNoteDetails) {
       navigation.goBack();
+    } else {
+      onMoved(note);
     }
     showToast('Deleted!');
   }
 
   return (
     <>
-      <NotebookPicker
-        isOpen={showNotebookPicker}
-        onClose={() => setShowNotebookPicker(false)}
+      <FolderPicker
+        isOpen={showFolderPicker}
+        onClose={() => setShowFolderPicker(false)}
         onSave={handleMove}
         navigate={navigation.navigate}
-        notebook={notebook}
+        currentFolder={folder}
       />
       <Actionsheet isOpen={isOpen} onClose={onClose}>
         <Actionsheet.Content>
@@ -111,7 +111,7 @@ function NoteItemActions({
             startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
             onPress={() => {
               onClose();
-              setShowNotebookPicker(true);
+              setShowFolderPicker(true);
             }}
           >
             Move to ...

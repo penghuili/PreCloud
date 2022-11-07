@@ -9,13 +9,11 @@ function FoldersList({ folders, navigate }) {
   }
 
   return (
-    <>
-      <HStack space="2" flexWrap="wrap" w="full">
-        {folders.map(folder => (
-          <FolderItem key={folder.path} folder={folder} navigate={navigate} />
-        ))}
-      </HStack>
-    </>
+    <HStack space="2" flexWrap="wrap" w="full" pb="2">
+      {folders.map(folder => (
+        <FolderItem key={folder.path} folder={folder} navigate={navigate} />
+      ))}
+    </HStack>
   );
 }
 

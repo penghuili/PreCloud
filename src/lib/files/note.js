@@ -1,55 +1,43 @@
 import FS from 'react-native-fs';
-import { moveFile, readFolder } from './actions';
 
-import { legacyNotesFolder, notesFolder, precloudFolder } from './constant';
+import { asyncForEach } from '../array';
+import { deleteFile, moveFile, readFolder } from './actions';
+import { filesFolder, legacyNotesFolder, noteExtension, notesFolder } from './constant';
 import { extractFileNameAndExtension } from './helpers';
 
-export async function makeNotesFolders() {
-  const preCloudExists = await FS.exists(precloudFolder);
-  if (!preCloudExists) {
-    await FS.mkdir(precloudFolder);
-  }
+export function getNoteTitle(note) {
+  return extractFileNameAndExtension(note?.name)?.fileName;
+}
+
+export async function migrateNotesToFolders() {
+  let notesPath = null;
 
   const notesExists = await FS.exists(notesFolder);
-  if (!notesExists) {
-    await FS.mkdir(notesFolder);
-  }
-
   const legacyExists = await FS.exists(legacyNotesFolder);
-  if (legacyExists) {
-    await moveFile(legacyNotesFolder, notesFolder);
-  }
-}
-
-export async function makeNotebook(label) {
-  const trimed = label?.trim();
-  if (!trimed) {
-    return;
+  if (notesExists) {
+    notesPath = notesFolder;
+  } else if (legacyExists) {
+    notesPath = legacyNotesFolder;
   }
 
-  await makeNotesFolders();
+  if (notesPath) {
+    const result = await readFolder(notesPath);
+    const notebooks = result.filter(n => n.isDirectory());
+    await asyncForEach(notebooks, async notebook => {
+      const newPath = `${filesFolder}/${notebook.name}`;
+      const notebookExists = await FS.exists(newPath);
+      if (notebookExists) {
+        const notes = await readFolder(notebook.path);
+        const filtered = notes.filter(n => n.isFile() && n.name.endsWith(noteExtension));
+        await asyncForEach(filtered, async note => {
+          await moveFile(note.path, `${newPath}/${note.name}`);
+        });
+        await deleteFile(notebook.path);
+      } else {
+        await moveFile(notebook.path, newPath);
+      }
+    });
 
-  const path = `${notesFolder}/${trimed}`;
-  const exists = await FS.exists(path);
-  if (!exists) {
-    await FS.mkdir(path);
+    await deleteFile(notesFolder);
   }
-}
-
-export async function readNotebooks() {
-  await makeNotesFolders();
-  const notes = await readFolder(notesFolder);
-  return notes.filter(n => n.isDirectory());
-}
-
-export async function readNotes(path) {
-  const exists = await FS.exists(path);
-  if (!exists) {
-    return [];
-  }
-
-  const notes = await readFolder(path);
-  return notes
-    .filter(n => n.isFile())
-    .map(n => ({ ...n, fileName: extractFileNameAndExtension(n.name).fileName }));
 }

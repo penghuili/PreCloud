@@ -1,14 +1,16 @@
 import { HStack, Select, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import useColors from '../hooks/useColors';
 
+import useColors from '../hooks/useColors';
 import { sortKeys, sortWith } from '../lib/array';
 import { ENCRYPTION_LIMIT_IN_GIGABYTES } from '../lib/openpgp/constant';
+import Collapsible from './Collapsible';
 import DecryptFileModal from './DecryptFileModal';
 import FileItem from './FileItem';
+import FilesTopActions from './FilesTopActions';
 import Icon from './Icon';
 
-function FolderFiles({ folder, files, navigate, onDelete }) {
+function FolderFiles({ folder, files, selectedFiles, navigate, onAddFile, onDelete }) {
   const colors = useColors();
 
   const [showDecryptModal, setShowDecryptModal] = useState(false);
@@ -28,51 +30,55 @@ function FolderFiles({ folder, files, navigate, onDelete }) {
 
   return (
     <>
-      {!files?.length && (
-        <Text>
-          Pick one or multiple files to encrypt. File size can not be bigger than{' '}
-          {ENCRYPTION_LIMIT_IN_GIGABYTES}GB.
-        </Text>
-      )}
+      <Collapsible title="Files">
+        <FilesTopActions folder={folder} onAddFile={onAddFile} selectedFiles={selectedFiles} />
 
-      {!!files?.length && (
-        <VStack space="sm">
-          <HStack justifyContent="flex-start">
-            <Select
-              selectedValue={sortKey}
-              mt="1"
-              minWidth="150"
-              onValueChange={value => {
-                setSortKey(value);
-                sortFiles(value);
-              }}
-              _selectedItem={{
-                endIcon: <Icon name="checkmark-outline" size={24} color={colors.primary} />,
-              }}
-              variant="filled"
-            >
-              <Select.Item label="Update time" value={sortKeys.mtime} />
-              <Select.Item label="File name" value={sortKeys.name} />
-              <Select.Item label="Random" value={sortKeys.random} />
-            </Select>
-          </HStack>
+        {!files?.length && (
+          <Text>
+            Pick one or multiple files to encrypt. File size can not be bigger than{' '}
+            {ENCRYPTION_LIMIT_IN_GIGABYTES}GB.
+          </Text>
+        )}
 
-          {sortedFiles.map((file, index) => (
-            <FileItem
-              key={file.name}
-              file={file}
-              folder={folder}
-              navigate={navigate}
-              onDecrypt={() => {
-                setShowDecryptModal(true);
-                setActiveFile(file);
-                setActiveFileIndex(index);
-              }}
-              onDelete={onDelete}
-            />
-          ))}
-        </VStack>
-      )}
+        {!!files?.length && (
+          <VStack space="sm">
+            <HStack justifyContent="flex-start">
+              <Select
+                selectedValue={sortKey}
+                mt="1"
+                minWidth="150"
+                onValueChange={value => {
+                  setSortKey(value);
+                  sortFiles(value);
+                }}
+                _selectedItem={{
+                  endIcon: <Icon name="checkmark-outline" size={24} color={colors.primary} />,
+                }}
+                variant="filled"
+              >
+                <Select.Item label="Update time" value={sortKeys.mtime} />
+                <Select.Item label="File name" value={sortKeys.name} />
+                <Select.Item label="Random" value={sortKeys.random} />
+              </Select>
+            </HStack>
+
+            {sortedFiles.map((file, index) => (
+              <FileItem
+                key={file.name}
+                file={file}
+                folder={folder}
+                navigate={navigate}
+                onDecrypt={() => {
+                  setShowDecryptModal(true);
+                  setActiveFile(file);
+                  setActiveFileIndex(index);
+                }}
+                onDelete={onDelete}
+              />
+            ))}
+          </VStack>
+        )}
+      </Collapsible>
 
       <DecryptFileModal
         isOpen={showDecryptModal}

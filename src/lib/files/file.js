@@ -2,7 +2,7 @@ import FileViewer from 'react-native-file-viewer';
 import FS from 'react-native-fs';
 import { moveFile, readFolder } from './actions';
 
-import { filesFolder, largeFileExtension, legacyFilesFolder, precloudFolder } from './constant';
+import { filesFolder, largeFileExtension, legacyFilesFolder, noteExtension, precloudFolder } from './constant';
 import { statFile } from './helpers';
 
 export async function makeFolders() {
@@ -56,15 +56,18 @@ export async function readFiles(path) {
   const result = await readFolder(path);
   const files = [];
   const folders = [];
+  const notes = [];
   result.forEach(r => {
     if (r.isDirectory() && !r.name.endsWith(largeFileExtension)) {
       folders.push(r);
+    } else if (r.name.endsWith(noteExtension)) {
+      notes.push(r);
     } else {
       files.push(r);
     }
   });
 
-  return { files, folders };
+  return { files, folders, notes };
 }
 
 export async function viewFile(path) {
