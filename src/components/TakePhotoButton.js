@@ -1,11 +1,11 @@
-import { IconButton, Spinner } from 'native-base';
+import { Actionsheet } from 'native-base';
 import React from 'react';
 
 import useColors from '../hooks/useColors';
 import { takePhoto } from '../lib/files/actions';
 import Icon from './Icon';
 
-function TakePhotoButton({ isDisabled, isLoading, onSelected }) {
+function TakePhotoButton({ isDisabled, isLoading, onClose, onSelected }) {
   const colors = useColors();
 
   async function handlePress() {
@@ -17,24 +17,19 @@ function TakePhotoButton({ isDisabled, isLoading, onSelected }) {
     } catch (e) {
       console.log('Take photo failed', e);
     }
+
+    onClose();
   }
 
   return (
-    <IconButton
-      icon={
-        isLoading ? (
-          <Spinner size={32} />
-        ) : (
-          <Icon name="camera-outline" size={32} color={colors.white} />
-        )
-      }
-      size="md"
-      variant="solid"
-      mr="2"
+    <Actionsheet.Item
       isLoading={isLoading}
       isDisabled={isDisabled || isLoading}
+      startIcon={<Icon name="camera-outline" color={colors.text} />}
       onPress={handlePress}
-    />
+    >
+      Take photo
+    </Actionsheet.Item>
   );
 }
 

@@ -1,4 +1,4 @@
-import { IconButton, Spinner, Text } from 'native-base';
+import { Actionsheet, Text } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
@@ -9,7 +9,7 @@ import { showToast } from '../lib/toast';
 import Confirm from './Confirm';
 import Icon from './Icon';
 
-function PickNotesButton({ folder, onStart, isDisabled, isLoading, onSelected }) {
+function PickNotesButton({ folder, onStart, isDisabled, isLoading, onClose, onSelected }) {
   const colors = useColors();
 
   const [showConfirm, setShowConfirm] = useState(false);
@@ -35,21 +35,18 @@ function PickNotesButton({ folder, onStart, isDisabled, isLoading, onSelected })
 
   return (
     <>
-      <IconButton
-        icon={
-          isLoading ? (
-            <Spinner size={32} />
-          ) : (
-            <Icon name="newspaper-outline" size={32} color={colors.white} />
-          )
-        }
-        size="md"
-        variant="solid"
-        mr="2"
+      <Actionsheet.Item
         isLoading={isLoading}
         isDisabled={isDisabled || isLoading}
-        onPress={() => setShowConfirm(true)}
-      />
+        startIcon={<Icon name="newspaper-outline" color={colors.text} />}
+        onPress={() => {
+          setShowConfirm(true);
+          onClose();
+        }}
+      >
+        Pick notes
+      </Actionsheet.Item>
+
       <Confirm
         isOpen={showConfirm}
         message={

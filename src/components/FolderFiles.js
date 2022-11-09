@@ -7,10 +7,9 @@ import { ENCRYPTION_LIMIT_IN_GIGABYTES } from '../lib/openpgp/constant';
 import Collapsible from './Collapsible';
 import DecryptFileModal from './DecryptFileModal';
 import FileItem from './FileItem';
-import FilesTopActions from './FilesTopActions';
 import Icon from './Icon';
 
-function FolderFiles({ folder, files, selectedFiles, navigate, onAddFile, onDelete }) {
+function FolderFiles({ folder, files, navigate, onDelete }) {
   const colors = useColors();
 
   const [showDecryptModal, setShowDecryptModal] = useState(false);
@@ -31,8 +30,6 @@ function FolderFiles({ folder, files, selectedFiles, navigate, onAddFile, onDele
   return (
     <>
       <Collapsible title="Files">
-        <FilesTopActions folder={folder} onAddFile={onAddFile} selectedFiles={selectedFiles} />
-
         {!files?.length && (
           <Text>
             Pick one or multiple files to encrypt. File size can not be bigger than{' '}

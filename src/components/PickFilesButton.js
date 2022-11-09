@@ -1,11 +1,11 @@
-import { IconButton, Spinner } from 'native-base';
+import { Actionsheet } from 'native-base';
 import React from 'react';
 
 import useColors from '../hooks/useColors';
 import { pickFiles } from '../lib/files/actions';
 import Icon from './Icon';
 
-function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
+function PickFilesButton({ isDisabled, isLoading, onClose, onStart, onSelected }) {
   const colors = useColors();
 
   async function handlePress() {
@@ -15,24 +15,18 @@ function PickFilesButton({ isDisabled, isLoading, onStart, onSelected }) {
     await onSelected(pickedFiles);
 
     onStart(false);
+    onClose();
   }
 
   return (
-    <IconButton
-      icon={
-        isLoading ? (
-          <Spinner size={32} />
-        ) : (
-          <Icon name="documents-outline" size={32} color={colors.white} />
-        )
-      }
-      size="md"
-      variant="solid"
-      mr="2"
+    <Actionsheet.Item
       isLoading={isLoading}
       isDisabled={isDisabled || isLoading}
+      startIcon={<Icon name="documents-outline" color={colors.text} />}
       onPress={handlePress}
-    />
+    >
+      Pick files
+    </Actionsheet.Item>
   );
 }
 

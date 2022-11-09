@@ -10,7 +10,7 @@ function Collapsible({ title, children, defaultValue = true }) {
   const [isOpen, setIsOpen] = useState(defaultValue);
 
   return (
-    <Box mb="4">
+    <Box mb="8">
       <Pressable onPress={() => setIsOpen(!isOpen)}>
         <HStack alignItems="center" space="sm">
           <Heading size="md"> {title}</Heading>

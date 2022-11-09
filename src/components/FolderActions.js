@@ -1,4 +1,4 @@
-import { HStack } from 'native-base';
+import { Actionsheet } from 'native-base';
 import React, { useEffect, useState } from 'react';
 
 import { asyncForEach } from '../lib/array';
@@ -7,9 +7,11 @@ import { deleteFile } from '../lib/files/actions';
 import { encryptFiles } from '../lib/openpgp/encryptFiles';
 import { showToast } from '../lib/toast';
 import { useStore } from '../store/store';
+import AddNoteButton from './AddNoteButton';
 import DownloadRemoteFileButton from './DownloadRemoteFileButton';
 import PickFilesButton from './PickFilesButton';
 import PickImagesButton from './PickImagesButton';
+import PickNotesButton from './PickNotesButton';
 import PlatformToggle from './PlatformToggle';
 import TakePhotoButton from './TakePhotoButton';
 
@@ -22,13 +24,14 @@ async function deleteFiles(pickedFiles) {
   );
 }
 
-function FilesTopActions({ folder, onAddFile, selectedFiles }) {
+function FolderActions({ folder, isOpen, onClose, onAddFile, onPickNotes, selectedFiles, navigate }) {
   const password = useStore(state => state.activePassword);
 
   const [isEncryptingFiles, setIsEncryptingFiles] = useState(false);
   const [isEncryptingImages, setIsEncryptingImages] = useState(false);
   const [isEncryptingNewImage, setIsEncryptingNewImage] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isPickingNotes, setIsPickingNotes] = useState(false);
 
   useEffect(() => {
     if (selectedFiles?.length) {
@@ -56,11 +59,12 @@ function FilesTopActions({ folder, onAddFile, selectedFiles }) {
   const isLoading =
     isEncryptingFiles || isEncryptingImages || isEncryptingNewImage || isDownloading;
   return (
-    <>
-      <HStack flexWrap="wrap" w="full" pb="2">
+    <Actionsheet isOpen={isOpen} onClose={onClose}>
+      <Actionsheet.Content>
         <TakePhotoButton
           isDisabled={!password || isLoading}
           isLoading={isEncryptingNewImage}
+          onClose={onClose}
           onSelected={async photo => {
             await handleEncrypt([photo], setIsEncryptingNewImage);
           }}
@@ -69,6 +73,7 @@ function FilesTopActions({ folder, onAddFile, selectedFiles }) {
           <PickImagesButton
             isLoading={isEncryptingImages}
             isDisabled={!password || isLoading}
+            onClose={onClose}
             onStart={setIsEncryptingImages}
             onSelected={async images => {
               await handleEncrypt(images, setIsEncryptingImages);
@@ -78,6 +83,7 @@ function FilesTopActions({ folder, onAddFile, selectedFiles }) {
         <PickFilesButton
           isLoading={isEncryptingFiles}
           isDisabled={!password || isLoading}
+          onClose={onClose}
           onStart={setIsEncryptingFiles}
           onSelected={async files => {
             await handleEncrypt(files, setIsEncryptingFiles);
@@ -86,14 +92,31 @@ function FilesTopActions({ folder, onAddFile, selectedFiles }) {
         <DownloadRemoteFileButton
           isLoading={isDownloading}
           isDisabled={!password || isLoading}
+          onClose={onClose}
           onStart={setIsDownloading}
           onDownloaded={async file => {
             await handleEncrypt([file], setIsEncryptingFiles);
           }}
         />
-      </HStack>
-    </>
+        <AddNoteButton
+          folder={folder}
+          isDisabled={!password}
+          onClose={onClose}
+          navigate={navigate}
+        />
+        <PickNotesButton
+          folder={folder}
+          isLoading={isPickingNotes}
+          isDisabled={!password}
+          onClose={onClose}
+          onStart={setIsPickingNotes}
+          onSelected={async notes => {
+            await onPickNotes(notes);
+          }}
+        />
+      </Actionsheet.Content>
+    </Actionsheet>
   );
 }
 
-export default FilesTopActions;
+export default FolderActions;

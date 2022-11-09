@@ -1,5 +1,5 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Button, IconButton, Modal, Spinner, Text } from 'native-base';
+import { Actionsheet, Button, Modal, Text } from 'native-base';
 import React, { useState } from 'react';
 
 import useColors from '../hooks/useColors';
@@ -7,7 +7,7 @@ import { downloadRemoteFile } from '../lib/files/actions';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
-function DownloadRemoteFileButton({ isDisabled, isLoading, onStart, onDownloaded }) {
+function DownloadRemoteFileButton({ isDisabled, isLoading, onClose, onStart, onDownloaded }) {
   const colors = useColors();
 
   const [showModal, setShowModal] = useState(false);
@@ -18,7 +18,6 @@ function DownloadRemoteFileButton({ isDisabled, isLoading, onStart, onDownloaded
     setIsDownloading(true);
     const file = await downloadRemoteFile(url);
 
-    console.log(file);
     if (file) {
       handleClose();
       showToast('Downloaded! Encrypting ...');
@@ -40,21 +39,17 @@ function DownloadRemoteFileButton({ isDisabled, isLoading, onStart, onDownloaded
 
   return (
     <>
-      <IconButton
-        icon={
-          isLoading ? (
-            <Spinner size={32} />
-          ) : (
-            <Icon name="cloud-download-outline" size={32} color={colors.white} />
-          )
-        }
-        size="md"
-        variant="solid"
-        mr="2"
+      <Actionsheet.Item
         isLoading={isLoading}
         isDisabled={isDisabled || isLoading}
-        onPress={() => setShowModal(true)}
-      />
+        startIcon={<Icon name="cloud-download-outline" color={colors.text} />}
+        onPress={() => {
+          setShowModal(true);
+          onClose();
+        }}
+      >
+        Download remote files
+      </Actionsheet.Item>
 
       <Modal isOpen={showModal} onClose={handleClose}>
         <Modal.Content maxWidth="400px">

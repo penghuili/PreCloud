@@ -12,7 +12,7 @@
     "fast-text-encoding": "1.0.6",
     "native-base": "3.4.19",
     "react": "18.1.0",
-    "react-native": "0.70.3",
+    "react-native": "0.70.5",
     "react-native-compressor": "1.6.1",
     "react-native-device-info": "10.0.2",
     "react-native-document-picker": "8.1.2",

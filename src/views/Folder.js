@@ -5,6 +5,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import AppBar from '../components/AppBar';
 import Confirm from '../components/Confirm';
 import ContentWrapper from '../components/ContentWrapper';
+import FabButton from '../components/FabButton';
+import FolderActions from '../components/FolderActions';
 import FolderFiles from '../components/FolderFiles';
 import FolderNotes from '../components/FolderNotes';
 import FolderPicker from '../components/FolderPicker';
@@ -48,7 +50,8 @@ function Folder({
   const [innerFiles, setInnerFiles] = useState([]);
   const [innerNotes, setInnerNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showActions, setShowActions] = useState(false);
+  const [showFolderActions, setShowFolderActions] = useState(false);
+  const [showFilesActions, setShowFilesActions] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showEmptyConfirm, setShowEmptyConfirm] = useState(false);
   const [folderSize, setFolderSize] = useState(0);
@@ -101,7 +104,7 @@ function Folder({
         title={folder?.name}
         hasBack
         rightIconName="ellipsis-vertical-outline"
-        onRightIconPress={() => setShowActions(true)}
+        onRightIconPress={() => setShowFolderActions(true)}
       />
 
       <ContentWrapper>
@@ -119,9 +122,6 @@ function Folder({
               folder={folder}
               notes={innerNotes}
               onMoved={note => setInnerNotes(innerNotes.filter(n => n.path !== note.path))}
-              onPickNotes={notes => {
-                setInnerNotes([...notes, ...innerNotes]);
-              }}
               navigation={navigation}
             />
           )}
@@ -129,12 +129,7 @@ function Folder({
             <FolderFiles
               folder={folder}
               files={innerFiles}
-              selectedFiles={selectedFiles}
               navigate={navigation.navigate}
-              onAddFile={file => {
-                tempFiles = [file, ...tempFiles];
-                setInnerFiles(tempFiles);
-              }}
               onDelete={file => {
                 const newFiles = innerFiles.filter(f => f.path !== file.path);
                 setInnerFiles(newFiles);
@@ -145,6 +140,22 @@ function Folder({
         </VStack>
       </ContentWrapper>
 
+      <FabButton onPress={() => setShowFilesActions(true)} />
+      <FolderActions
+        folder={folder}
+        isOpen={showFilesActions}
+        onClose={() => setShowFilesActions(false)}
+        onAddFile={file => {
+          tempFiles = [file, ...tempFiles];
+          setInnerFiles(tempFiles);
+        }}
+        onPickNotes={notes => {
+          setInnerNotes([...notes, ...innerNotes]);
+        }}
+        selectedFiles={selectedFiles}
+        navigate={navigation.navigate}
+      />
+
       {!!folder && (
         <>
           <FolderPicker
@@ -154,7 +165,7 @@ function Folder({
             navigate={navigation.navigate}
             currentFolder={folder}
           />
-          <Actionsheet isOpen={showActions} onClose={() => setShowActions(false)}>
+          <Actionsheet isOpen={showFolderActions} onClose={() => setShowFolderActions(false)}>
             <Actionsheet.Content>
               {isRoot &&
                 (defaultFolder === folder?.name ? (
@@ -165,7 +176,7 @@ function Folder({
                   <Actionsheet.Item
                     startIcon={<Icon name="star-outline" color={colors.text} />}
                     onPress={() => {
-                      setShowActions(false);
+                      setShowFolderActions(false);
                       updateDefaultFolder(folder.name);
                       showToast(`Default folder is now ${folder.name}`);
                     }}
@@ -176,7 +187,7 @@ function Folder({
               <Actionsheet.Item
                 startIcon={<Icon name="folder-outline" color={colors.text} />}
                 onPress={() => {
-                  setShowActions(false);
+                  setShowFolderActions(false);
                   navigation.navigate(routeNames.folderForm, {
                     folder: null,
                     parentPath: folder.path,
@@ -188,7 +199,7 @@ function Folder({
               <Actionsheet.Item
                 startIcon={<Icon name="folder-outline" color={colors.text} />}
                 onPress={() => {
-                  setShowActions(false);
+                  setShowFolderActions(false);
                   navigation.replace(routeNames.folderForm, {
                     folder: { name: folder.name, path: folder.path },
                   });
@@ -200,7 +211,7 @@ function Folder({
                 <Actionsheet.Item
                   startIcon={<Icon name="arrow-back-outline" color={colors.text} />}
                   onPress={() => {
-                    setShowActions(false);
+                    setShowFolderActions(false);
                     setShowFolderPicker(true);
                   }}
                 >
@@ -211,7 +222,7 @@ function Folder({
                 <Actionsheet.Item
                   startIcon={<Icon name="trash-outline" color={colors.text} />}
                   onPress={() => {
-                    setShowActions(false);
+                    setShowFolderActions(false);
                     setShowEmptyConfirm(true);
                   }}
                 >
@@ -223,7 +234,7 @@ function Folder({
                   startIcon={<Icon name="trash" color={colors.text} />}
                   onPress={() => {
                     setShowDeleteConfirm(true);
-                    setShowActions(false);
+                    setShowFolderActions(false);
                   }}
                 >
                   Delete

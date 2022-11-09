@@ -10,9 +10,8 @@ import { showToast } from '../lib/toast';
 import { routeNames } from '../router/routes';
 import { useStore } from '../store/store';
 import Collapsible from './Collapsible';
-import NotesTopActions from './NotesTopActions';
 
-function FolderNotes({ folder, notes, onMoved, onPickNotes, navigation }) {
+function FolderNotes({ folder, notes, onMoved, navigation }) {
   const password = useStore(state => state.activePassword);
   const setNoteContent = useStore(state => state.setNoteContent);
   const setActiveNote = useStore(state => state.setActiveNote);
@@ -62,8 +61,7 @@ function FolderNotes({ folder, notes, onMoved, onPickNotes, navigation }) {
   }
 
   return (
-    <Collapsible title="Notes" defaultValue={false}>
-      <NotesTopActions folder={folder} onPickNotes={onPickNotes} navigate={navigation.navigate} />
+    <Collapsible title="Notes">
       <VStack space="sm">{renderNotes()}</VStack>
     </Collapsible>
   );

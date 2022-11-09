@@ -1,4 +1,4 @@
-import { IconButton, Spinner } from 'native-base';
+import { Actionsheet } from 'native-base';
 import React from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
 
@@ -7,7 +7,7 @@ import { extractFilePath } from '../lib/files/helpers';
 import { hideToast, showToast } from '../lib/toast';
 import Icon from './Icon';
 
-function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
+function PickImagesButton({ isDisabled, isLoading, onClose, onStart, onSelected }) {
   const colors = useColors();
 
   async function handlePress() {
@@ -33,24 +33,18 @@ function PickImagesButton({ isDisabled, isLoading, onStart, onSelected }) {
       console.log('Pick images failed', e);
     }
     onStart(false);
+    onClose();
   }
 
   return (
-    <IconButton
-      icon={
-        isLoading ? (
-          <Spinner size={32} />
-        ) : (
-          <Icon name="image-outline" size={32} color={colors.white} />
-        )
-      }
-      size="md"
-      variant="solid"
-      mr="2"
+    <Actionsheet.Item
       isLoading={isLoading}
       isDisabled={isDisabled || isLoading}
+      startIcon={<Icon name="image-outline" color={colors.text} />}
       onPress={handlePress}
-    />
+    >
+      Pick images
+    </Actionsheet.Item>
   );
 }
 
