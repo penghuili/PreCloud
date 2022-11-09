@@ -38,6 +38,6 @@ export async function migrateNotesToFolders() {
       }
     });
 
-    await deleteFile(notesFolder);
+    await deleteFile(notesPath);
   }
 }
