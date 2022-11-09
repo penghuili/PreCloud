@@ -114,50 +114,46 @@ function Folder({
           {isLoading && <Spinner />}
 
           {!!folder && !isLoading && (
-            <FoldersList folders={innerFolders} navigate={navigation.push} />
-          )}
-
-          {!!folder && !isLoading && (
-            <FolderNotes
-              folder={folder}
-              notes={innerNotes}
-              onMoved={note => setInnerNotes(innerNotes.filter(n => n.path !== note.path))}
-              navigation={navigation}
-            />
-          )}
-          {!!folder && !isLoading && (
-            <FolderFiles
-              folder={folder}
-              files={innerFiles}
-              navigate={navigation.navigate}
-              onDelete={file => {
-                const newFiles = innerFiles.filter(f => f.path !== file.path);
-                setInnerFiles(newFiles);
-                tempFiles = newFiles;
-              }}
-            />
+            <>
+              <FoldersList folders={innerFolders} navigate={navigation.push} />
+              <FolderNotes
+                folder={folder}
+                notes={innerNotes}
+                onMoved={note => setInnerNotes(innerNotes.filter(n => n.path !== note.path))}
+                navigation={navigation}
+              />
+              <FolderFiles
+                folder={folder}
+                files={innerFiles}
+                navigate={navigation.navigate}
+                onDelete={file => {
+                  const newFiles = innerFiles.filter(f => f.path !== file.path);
+                  setInnerFiles(newFiles);
+                  tempFiles = newFiles;
+                }}
+              />
+            </>
           )}
         </VStack>
       </ContentWrapper>
 
-      <FabButton onPress={() => setShowFilesActions(true)} />
-      <FolderActions
-        folder={folder}
-        isOpen={showFilesActions}
-        onClose={() => setShowFilesActions(false)}
-        onAddFile={file => {
-          tempFiles = [file, ...tempFiles];
-          setInnerFiles(tempFiles);
-        }}
-        onPickNotes={notes => {
-          setInnerNotes([...notes, ...innerNotes]);
-        }}
-        selectedFiles={selectedFiles}
-        navigate={navigation.navigate}
-      />
-
       {!!folder && (
         <>
+          <FabButton onPress={() => setShowFilesActions(true)} />
+          <FolderActions
+            folder={folder}
+            isOpen={showFilesActions}
+            onClose={() => setShowFilesActions(false)}
+            onAddFile={file => {
+              tempFiles = [file, ...tempFiles];
+              setInnerFiles(tempFiles);
+            }}
+            onPickNotes={notes => {
+              setInnerNotes([...notes, ...innerNotes]);
+            }}
+            selectedFiles={selectedFiles}
+            navigate={navigation.navigate}
+          />
           <FolderPicker
             isOpen={showFolderPicker}
             onClose={() => setShowFolderPicker(false)}

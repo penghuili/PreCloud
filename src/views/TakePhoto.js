@@ -13,7 +13,7 @@ function TakePhoto() {
     <ScreenWrapper>
       <AppBar title="Take photo" />
       <ContentWrapper>
-        <Text alignItems="center">
+        <Text alignItems="center" fontSize="lg">
           Press the <Icon name="camera-outline" color={colors.text} size={20} /> below again.
         </Text>
       </ContentWrapper>
