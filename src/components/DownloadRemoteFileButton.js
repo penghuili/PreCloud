@@ -25,6 +25,7 @@ function DownloadRemoteFileButton({ isDisabled, isLoading, onClose, onStart, onD
       onStart(true);
       await onDownloaded(file);
       onStart(false);
+      onClose();
     } else {
       showToast('Download file failed', 'error');
       setIsDownloading(false);
@@ -45,7 +46,6 @@ function DownloadRemoteFileButton({ isDisabled, isLoading, onClose, onStart, onD
         startIcon={<Icon name="cloud-download-outline" color={colors.text} />}
         onPress={() => {
           setShowModal(true);
-          onClose();
         }}
       >
         Download remote files
@@ -55,6 +55,7 @@ function DownloadRemoteFileButton({ isDisabled, isLoading, onClose, onStart, onD
         <Modal.Content maxWidth="400px">
           <Modal.Header>Download and encrypt file from web</Modal.Header>
           <Modal.Body>
+            <Text mb="4">This feature is not very stable yet, please don&lsquo;t get angry if the download failed :)</Text>
             <Button
               onPress={async () => {
                 const copied = await Clipboard.getString();
