@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../components/Icon';
 import useColors from '../hooks/useColors';
 import useTakePhotoInTabs from '../hooks/useTakePhotoInTabs';
+import { tabbarHeight } from '../lib/constants';
 import Folders from '../views/Folders';
 import Settings from '../views/Settings';
 import TakePhoto from '../views/TakePhoto';
@@ -34,7 +35,7 @@ function BottomTab() {
       <Icon
         name={getIconName(routeName, focused)}
         color={color}
-        size={routeName === routeNames.takePhoto ? 32 : 20}
+        size={routeName === routeNames.takePhoto ? 40 : 32}
         onPress={routeName === routeNames.takePhoto ? handleTakePhoto : undefined}
       />
     );
@@ -51,7 +52,7 @@ function BottomTab() {
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
           paddingBottom: bottom,
-          height: 50 + bottom,
+          height: tabbarHeight + bottom,
           backgroundColor: colors.primary,
         },
       })}

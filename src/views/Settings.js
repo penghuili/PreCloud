@@ -117,7 +117,7 @@ function Settings({ navigation, route: { name: routeName } }) {
           <VStack space={1}>
             <Text>This is my cat, Xiangcai</Text>
 
-            <Image source={xiangcai} alt="My cat" size="2xl" resizeMode="cover" />
+            <Image source={xiangcai} alt="My cat" size="2xl" resizeMode="contain" />
 
             <Text fontSize="xs" mt="1" color="gray.500">
               Want to show your pets?{' '}

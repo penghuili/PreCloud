@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import useColors from '../hooks/useColors';
+import { tabbarHeight } from '../lib/constants';
 import { LocalStorage, LocalStorageKeys } from '../lib/localstorage';
 import { navigationRef } from '../router/navigationRef';
 import { routeNames } from '../router/routes';
@@ -76,7 +77,7 @@ function DonateBanner() {
   return (
     <HStack
       position="absolute"
-      bottom={50 + bottom}
+      bottom={tabbarHeight + bottom}
       bg={colors.orange}
       w="full"
       p="2"

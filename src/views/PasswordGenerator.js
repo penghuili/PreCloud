@@ -8,8 +8,10 @@ import ScreenWrapper from '../components/ScreenWrapper';
 import { generatePassword } from '../lib/password';
 import { showToast } from '../lib/toast';
 
+const defaultLength = 20;
+
 function PasswordGenerator() {
-  const [passwordLength, setPasswordLength] = useState(16);
+  const [passwordLength, setPasswordLength] = useState(defaultLength);
   const [hasSpecialCharacters, setHasSpecialCharacters] = useState(true);
   const [password, setPassword] = useState(generatePassword(passwordLength, hasSpecialCharacters));
 
@@ -19,7 +21,7 @@ function PasswordGenerator() {
       <ContentWrapper>
         <Text>Password length: {passwordLength}</Text>
         <Slider
-          defaultValue={16}
+          defaultValue={defaultLength}
           minValue={8}
           maxValue={50}
           accessibilityLabel="Password length"

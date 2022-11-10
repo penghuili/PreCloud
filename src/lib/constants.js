@@ -16,3 +16,5 @@ export const heights = {
 };
 
 export const imageLimitInNote = 100;
+
+export const tabbarHeight = 60;
