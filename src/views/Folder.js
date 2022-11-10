@@ -145,8 +145,10 @@ function Folder({
             isOpen={showFilesActions}
             onClose={() => setShowFilesActions(false)}
             onAddFile={file => {
-              tempFiles = [file, ...tempFiles];
-              setInnerFiles(tempFiles);
+              if (!tempFiles.find(f => f.name === file.name)) {
+                tempFiles = [file, ...tempFiles];
+                setInnerFiles(tempFiles);
+              }
             }}
             onPickNotes={notes => {
               setInnerNotes([...notes, ...innerNotes]);

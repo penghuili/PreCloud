@@ -2,7 +2,6 @@ import { AlertDialog, Box, Button, ScrollView, Text } from 'native-base';
 import React, { forwardRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Image } from 'react-native-compressor';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { actions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useKeyboardHeight from 'react-native-use-keyboard-height';
@@ -11,7 +10,7 @@ import useColors from '../hooks/useColors';
 import { asyncForEach } from '../lib/array';
 import { heights, imageLimitInNote } from '../lib/constants';
 import { isAndroid } from '../lib/device';
-import { takePhoto } from '../lib/files/actions';
+import { pickImages, takePhoto } from '../lib/files/actions';
 import { showToast } from '../lib/toast';
 import Icon from './Icon';
 
@@ -46,13 +45,9 @@ const Editor = forwardRef(({ disabled, onChange, onInitialized }, ref) => {
     setShowImageActions(false);
 
     try {
-      const result = await launchImageLibrary({
-        selectionLimit: 0,
-        mediaType: 'photo',
-        includeBase64: false,
-      });
+      const images = await pickImages();
 
-      await asyncForEach(result.assets, async image => {
+      await asyncForEach(images, async image => {
         const resized = await compressImage(image.uri);
         ref.current.insertImage(`data:${image.type};base64,${resized}`);
       });

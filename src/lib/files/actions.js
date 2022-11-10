@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import DocumentPicker, { types } from 'react-native-document-picker';
 import FS from 'react-native-fs';
-import { launchCamera } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Share from 'react-native-share';
 import { URL } from 'react-native-url-polyfill';
 
@@ -213,6 +213,31 @@ export async function pickFiles({ allowMultiSelection = true } = {}) {
   } catch (e) {
     console.log('pick files failed', e);
     hideToast();
+    return [];
+  }
+}
+
+export async function pickImages() {
+  try {
+    const result = await launchImageLibrary({
+      mediaType: 'mixed',
+      selectionLimit: 0,
+      includeBase64: false,
+    });
+
+    if (result?.assets) {
+      return result?.assets.map(f => ({
+        type: f.type,
+        name: f.fileName,
+        size: f.fileSize,
+        path: extractFilePath(f.uri),
+        uri: f.uri,
+      }));
+    }
+
+    return [];
+  } catch (e) {
+    console.log('pick images failed', e);
     return [];
   }
 }
