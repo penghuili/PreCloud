@@ -1,4 +1,4 @@
-import { Actionsheet } from 'native-base';
+import { Actionsheet, Divider } from 'native-base';
 import React, { useEffect, useState } from 'react';
 
 import { asyncForEach } from '../lib/array';
@@ -98,6 +98,7 @@ function FolderActions({ folder, isOpen, onClose, onAddFile, onPickNotes, select
             await handleEncrypt([file], setIsEncryptingFiles);
           }}
         />
+        <Divider />
         <AddNoteButton
           folder={folder}
           isDisabled={!password}
