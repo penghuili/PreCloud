@@ -1,4 +1,4 @@
-import { Actionsheet, HStack, IconButton, Pressable, Text, VStack } from 'native-base';
+import { Actionsheet, Checkbox, HStack, IconButton, Pressable, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 
 import useColors from '../hooks/useColors';
@@ -10,12 +10,23 @@ import { routeNames } from '../router/routes';
 import FolderPicker from './FolderPicker';
 import Icon from './Icon';
 
-function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
+function FileItem({
+  file,
+  folder,
+  isSelectingMultiple,
+  onSelect,
+  navigate,
+  onLongPress,
+  onDecrypt,
+  onDelete,
+}) {
   const colors = useColors();
 
   const [showActions, setShowActions] = useState(false);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
   const [fileSize, setFileSize] = useState(0);
+
+  const [isSelected, setIsSelected] = useState(false);
 
   useEffect(() => {
     if (!file) {
@@ -113,16 +124,37 @@ function FileItem({ file, folder, navigate, onDecrypt, onDelete }) {
     <>
       <VStack space="xs" alignItems="flex-start">
         <HStack justifyContent="flex-start">
-          <Pressable flexDirection="row" flex="1" onPress={handleDecrypt}>
+          <Pressable
+            flexDirection="row"
+            flex="1"
+            onPress={handleDecrypt}
+            onLongPress={() => {
+              setIsSelected(true);
+              onLongPress(file);
+            }}
+            pr="4"
+          >
             <Text flex="1" flexWrap="wrap">
               {file.name}
             </Text>
           </Pressable>
 
-          <IconButton
-            icon={<Icon name="ellipsis-vertical-outline" size={16} color={colors.text} />}
-            onPress={() => setShowActions(true)}
-          />
+          {isSelectingMultiple ? (
+            <Checkbox
+              isChecked={isSelected}
+              onChange={() => {
+                const newValue = !isSelected
+                setIsSelected(newValue);
+                onSelect(file, newValue);
+              }}
+              accessibilityLabel="Select this file"
+            />
+          ) : (
+            <IconButton
+              icon={<Icon name="ellipsis-vertical-outline" size={16} color={colors.text} />}
+              onPress={() => setShowActions(true)}
+            />
+          )}
         </HStack>
       </VStack>
 

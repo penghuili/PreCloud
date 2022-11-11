@@ -126,8 +126,13 @@ function Folder({
                 folder={folder}
                 files={innerFiles}
                 navigate={navigation.navigate}
+                onMoveFiles={movedFiles => {
+                  const newFiles = tempFiles.filter(f => !movedFiles[f.path]);
+                  setInnerFiles(newFiles);
+                  tempFiles = newFiles;
+                }}
                 onDelete={file => {
-                  const newFiles = innerFiles.filter(f => f.path !== file.path);
+                  const newFiles = tempFiles.filter(f => f.path !== file.path);
                   setInnerFiles(newFiles);
                   tempFiles = newFiles;
                 }}
