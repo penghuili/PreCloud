@@ -10,7 +10,7 @@ function TakePhotoButton({ isDisabled, isLoading, onClose, onSelected }) {
 
   async function handlePress() {
     try {
-      const photo = await takePhoto({ mediaType: 'mixed' });
+      const photo = await takePhoto();
       if (photo) {
         onSelected(photo);
       }
