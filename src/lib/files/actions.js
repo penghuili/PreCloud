@@ -151,8 +151,6 @@ export async function takePhoto({ mediaType = 'photo' } = {}) {
       mediaType,
       selectionLimit: 1,
       saveToPhotos: false,
-      maxWidth: 10000,
-      maxHeight: 10000,
     });
 
     const raw = result?.assets?.[0];
