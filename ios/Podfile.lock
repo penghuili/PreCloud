@@ -247,7 +247,7 @@ PODS:
     - React-Core
   - react-native-fast-openpgp (2.5.1):
     - React-Core
-  - react-native-image-picker (4.10.0):
+  - react-native-image-picker (4.10.1):
     - React-Core
   - react-native-safe-area-context (4.3.1):
     - RCT-Folly
@@ -558,7 +558,7 @@ SPEC CHECKSUMS:
   react-native-compressor: ebcf8bc36f8e44581a8f831583caee8a27e55a01
   react-native-document-picker: f5ec1a712ca2a975c233117f044817bb8393cad4
   react-native-fast-openpgp: 199ce4dbb0397ef8edb0a32ccb7b23bd9cfebe9c
-  react-native-image-picker: 4bc9ed38c8be255b515d8c88babbaf74973f91a8
+  react-native-image-picker: f2ab1215d17bcfe27b0eb6417cc236fd1f4775e7
   react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581

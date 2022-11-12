@@ -10,7 +10,7 @@ function useTakePhotoInTabs() {
   function handleTakePhoto() {
     const folder = rootFolders.find(f => f.name === defaultFolder);
     if (folder) {
-      takePhoto().then(photo => {
+      takePhoto({ mediaType: 'mixed' }).then(photo => {
         if (photo) {
           navigationRef.navigate(routeNames.folder, { selectedFiles: [photo], path: folder.path });
         }

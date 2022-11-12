@@ -145,10 +145,10 @@ export async function renameFile(file, label) {
   await moveFile(file.path, newPath);
 }
 
-export async function takePhoto() {
+export async function takePhoto({ mediaType = 'photo' } = {}) {
   try {
     const result = await launchCamera({
-      mediaType: 'photo',
+      mediaType,
       selectionLimit: 1,
       saveToPhotos: false,
       maxWidth: 10000,
